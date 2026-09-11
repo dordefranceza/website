@@ -1,0 +1,33 @@
+---
+import Legal from '../layouts/Legal.astro'
+import { site } from '../config/site'
+---
+<Legal title="Termeni și condiții" description="Regulile lecțiilor DorDeFranceza: programare, plată, reprogramare și anulare." actualizat="12 septembrie 2026">
+  <p>Acești termeni descriu cum funcționează lecțiile de franceză oferite de Dorina sub numele {site.nume}. Făcând o programare pe site, ești de acord cu ele.</p>
+
+  <h2>Serviciul</h2>
+  <p>Lecții de franceză online, pe Zoom, de {site.durataLectie} de minute, individuale sau în grup mic. Discuția de cunoaștere de 20 de minute este gratuită și nu te obligă la nimic.</p>
+
+  <h2>Programare și confirmare</h2>
+  <p>Programarea se face din calendarul de pe site sau prin WhatsApp. Primești confirmarea pe email, cu ziua, ora (ora României) și linkul de Zoom. Ora rămâne rezervată pentru tine.</p>
+
+  <h2>Prețuri și plată</h2>
+  <p>Prețurile afișate pe site sunt în euro, pe lecție: {site.preturi.individual} € lecția individuală și {site.preturi.grup} € lecția în grup mic. Plata se face prin transfer bancar sau Revolut, după fiecare lecție sau la finalul lunii, conform înțelegerii. [DE COMPLETAT: dacă se emit facturi și de către cine]</p>
+
+  <h2>Reprogramare și anulare</h2>
+  <ul>
+    <li>Poți reprograma sau anula gratuit cu cel puțin 24 de ore înainte de lecție.</li>
+    <li>Sub 24 de ore, lecția se consideră efectuată și se plătește, pentru că timpul a fost rezervat pentru tine.</li>
+    <li>Dacă Dorina trebuie să anuleze, primești o lecție în loc, la o dată aleasă împreună, fără niciun cost.</li>
+    <li>Dacă întârzii, lecția se termină la ora stabilită. Dacă nu apari în 15 minute fără să anunți, lecția se consideră efectuată.</li>
+  </ul>
+
+  <h2>Grupuri</h2>
+  <p>Grupurile au 3 sau 4 persoane de același nivel și un orar fix. Lecțiile de grup nu se reprogramează individual; dacă lipsești, primești materialele și rezumatul lecției.</p>
+
+  <h2>Materiale</h2>
+  <p>Materialele primite sunt pentru uzul tău personal. Nu le distribui și nu le publica fără acordul Dorinei.</p>
+
+  <h2>Contact</h2>
+  <p>Pentru orice întrebare legată de acești termeni: <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+</Legal>

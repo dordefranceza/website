@@ -1,0 +1,54 @@
+---
+import Logo from './Logo.astro'
+import { Icon } from 'astro-icon/components'
+import { site, linkWhatsApp } from '../config/site'
+const an = new Date().getFullYear()
+---
+
+<footer class="bg-cerneala text-alb">
+  <div class="container-site grid gap-10 py-16 md:grid-cols-[1.4fr_1fr_1fr] md:py-20">
+    <div>
+      <Logo culoare="#ffffff" />
+      <p class="mt-5 max-w-sm text-[0.98rem] leading-relaxed text-alb/70">
+        Lecții online de franceză pentru adulți din România. Individual sau în grup mic, 50 de minute, pe Zoom.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href={linkWhatsApp} target="_blank" rel="noopener" class="pastila !py-3 bg-whatsapp text-cerneala hover:bg-[#1fbd5a]">
+          <Icon name="solar:chat-round-line-bold" class="size-5" /> WhatsApp
+        </a>
+        <a href="/programare/" class="pastila pastila-alba !py-3">Programează o discuție</a>
+      </div>
+    </div>
+
+    <nav aria-label="Pagini">
+      <p class="mb-4 text-sm font-bold uppercase tracking-wider text-alb/50">Pagini</p>
+      <ul class="space-y-2.5 text-[0.98rem]">
+        <li><a class="text-alb/80 hover:text-alb" href="/#pentru-ce">Pentru ce înveți</a></li>
+        <li><a class="text-alb/80 hover:text-alb" href="/#cum-decurge">Cum decurge</a></li>
+        <li><a class="text-alb/80 hover:text-alb" href="/preturi/">Prețuri</a></li>
+        <li><a class="text-alb/80 hover:text-alb" href="/despre/">Despre Dorina</a></li>
+        <li><a class="text-alb/80 hover:text-alb" href="/contact/">Contact</a></li>
+        <li><a class="text-alb/80 hover:text-alb" href="/programare/">Programare</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      <p class="mb-4 text-sm font-bold uppercase tracking-wider text-alb/50">Contact</p>
+      <ul class="space-y-2.5 text-[0.98rem]">
+        <li><a class="text-alb/80 hover:text-alb" href={`mailto:${site.email}`}>{site.email}</a></li>
+        <li><a class="text-alb/80 hover:text-alb" href={`tel:${site.telefon.replace(/\s/g, '')}`}>{site.telefon}</a></li>
+        <li><a class="text-alb/80 hover:text-alb" href={site.instagram} target="_blank" rel="noopener">Instagram</a></li>
+        <li><a class="text-alb/80 hover:text-alb" href={site.tiktok} target="_blank" rel="noopener">TikTok</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-site flex flex-col gap-3 pb-10 text-sm text-alb/50 sm:flex-row sm:items-center sm:justify-between">
+    <p>© {an} {site.nume}. Toate drepturile rezervate.</p>
+    <div class="flex gap-5">
+      <a class="hover:text-alb" href="/confidentialitate/">Confidențialitate</a>
+      <a class="hover:text-alb" href="/termeni/">Termeni</a>
+      <a class="hover:text-alb" href="/cabinet/">Cabinet</a>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro'
+import Preturi from '../components/acasa/Preturi.astro'
+import Intrebari from '../components/acasa/Intrebari.astro'
+import Apel from '../components/acasa/Apel.astro'
+---
+
+<Base title="Prețuri · DorDeFranceza" description="Lecție individuală de franceză 40 € pentru 50 de minute, lecție în grup mic 25 €. Prima discuție de 20 de minute e gratuită. Fără abonament.">
+  <main id="continut" class="pt-24 sm:pt-28">
+    <Preturi titlu="Știi de la început cât costă" />
+    <section class="bg-alb py-16 sm:py-20">
+      <div class="container-site grid gap-8 md:grid-cols-3">
+        <div class="rounded-[1.5rem] bg-crem p-7">
+          <h2 class="font-sans text-lg font-medium">Cum plătești</h2>
+          <p class="mt-3 leading-relaxed text-gri">Prin transfer bancar sau Revolut, după fiecare lecție sau la finalul lunii. Nu ceri abonament și nu plătești în avans luni întregi.</p>
+        </div>
+        <div class="rounded-[1.5rem] bg-crem p-7">
+          <h2 class="font-sans text-lg font-medium">Dacă nu poți ajunge</h2>
+          <p class="mt-3 leading-relaxed text-gri">Reprogramezi gratuit cu cel puțin 24 de ore înainte. Sub 24 de ore, lecția se consideră făcută, pentru că locul a fost ținut pentru tine.</p>
+        </div>
+        <div class="rounded-[1.5rem] bg-crem p-7">
+          <h2 class="font-sans text-lg font-medium">Pachete</h2>
+          <p class="mt-3 leading-relaxed text-gri">Pentru planuri lungi, de exemplu pregătirea pentru BAC sau pentru o mutare, vorbim la discuția de cunoaștere despre un pachet lunar.</p>
+        </div>
+      </div>
+    </section>
+    <Intrebari />
+    <Apel />
+  </main>
+</Base>

@@ -1,0 +1,31 @@
+---
+import { Icon } from 'astro-icon/components'
+import { nevoi } from '../../config/continut'
+
+const fundal = { albastru: 'bg-albastru-5 text-albastru', verde: 'bg-verde-5 text-verde', portocaliu: 'bg-portocaliu-5 text-portocaliu', roz: 'bg-roz-5 text-[#c2479f]' }
+---
+
+<section id="pentru-ce" class="bg-crem py-20 sm:py-28" aria-labelledby="titlu-nevoi">
+  <div class="container-site">
+    <div class="dezvaluie max-w-2xl">
+      <p class="eticheta">Pentru ce ai nevoie de franceză</p>
+      <h2 id="titlu-nevoi" class="mt-3 text-4xl sm:text-5xl">Spune-mi ce vrei să obții. De acolo pornim.</h2>
+      <p class="mt-5 text-lg text-gri">Nu predau «franceză în general». Fiecare plan pleacă de la o situație reală din viața ta.</p>
+    </div>
+
+    <div class="dezvaluie-rand mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {nevoi.map((n) => (
+        <a href={`/programare/?scop=${encodeURIComponent(n.scop)}`} class="group flex flex-col rounded-[1.5rem] bg-alb p-7 transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-30px_rgba(8,3,49,0.35)]">
+          <span class:list={['flex size-12 items-center justify-center rounded-2xl', fundal[n.culoare]]}>
+            <Icon name={n.icon} class="size-6" />
+          </span>
+          <h3 class="mt-6 font-sans text-xl font-medium leading-snug">{n.titlu}</h3>
+          <p class="mt-3 text-[0.98rem] leading-relaxed text-gri">{n.text}</p>
+          <span class="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-albastru">
+            Programează pentru asta <Icon name="solar:arrow-right-linear" class="size-4 transition group-hover:translate-x-0.5" />
+          </span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

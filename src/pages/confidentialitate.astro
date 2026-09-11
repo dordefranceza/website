@@ -1,0 +1,36 @@
+---
+import Legal from '../layouts/Legal.astro'
+import { site } from '../config/site'
+---
+<Legal title="Politica de confidențialitate" description="Ce date colectează DorDeFranceza, de ce și cât timp le păstrează." actualizat="12 septembrie 2026">
+  <p>Această politică explică ce date personale colectează site-ul {site.nume} (denumit mai jos «site-ul»), în ce scop și care sunt drepturile tale, conform Regulamentului (UE) 2016/679 (GDPR).</p>
+
+  <h2>Cine prelucrează datele</h2>
+  <p>Operatorul de date este Dorina, profesoară de franceză, care oferă lecții online sub numele DorDeFranceza. Ne poți scrie la <a href={`mailto:${site.email}`}>{site.email}</a>. [DE COMPLETAT: numele complet, forma juridică și adresa]</p>
+
+  <h2>Ce date colectăm și de ce</h2>
+  <ul>
+    <li><strong>Formularul de programare:</strong> nume, email, telefon, nivelul și scopul declarat, mesajul tău, ziua și ora aleasă. Le folosim ca să ținem lecția, să îți trimitem confirmarea și linkul de Zoom și să te contactăm dacă ceva se schimbă. Temeiul: executarea contractului (art. 6 alin. 1 lit. b GDPR).</li>
+    <li><strong>Formularul de contact:</strong> nume, email, telefon (opțional) și mesajul. Le folosim ca să îți răspundem. Temeiul: interesul legitim de a răspunde solicitărilor (art. 6 alin. 1 lit. f).</li>
+    <li><strong>Sursa vizitei:</strong> dacă ai ajuns pe site dintr-un link de pe TikTok, Instagram sau Facebook, reținem numele platformei (nu identitatea ta) ca să știm de unde vin cursanții. Se păstrează în browserul tău, în localStorage, și se trimite odată cu formularul.</li>
+    <li><strong>Evidența lecțiilor:</strong> pentru cursanți, păstrăm istoricul lecțiilor și al plăților, pentru facturare și pentru continuitatea planului de studiu.</li>
+  </ul>
+
+  <h2>Cookie-uri și urmărire</h2>
+  <p>Site-ul nu folosește cookie-uri de urmărire și nu are Google Analytics sau alte instrumente de publicitate. Singurele date păstrate în browser sunt sursa vizitei și, pentru administrator, sesiunea de autentificare în cabinet.</p>
+
+  <h2>Cui transmitem datele</h2>
+  <ul>
+    <li><strong>Vercel Inc.</strong> (SUA), găzduirea site-ului și a funcțiilor care primesc formularele.</li>
+    <li><strong>Supabase</strong>, baza de date în care se păstrează programările și datele cursanților, pe servere în Uniunea Europeană.</li>
+    <li><strong>Resend</strong>, serviciul prin care se trimit emailurile de confirmare și notificare.</li>
+    <li><strong>Zoom</strong>, pentru lecțiile propriu-zise, conform politicii proprii Zoom.</li>
+  </ul>
+  <p>Nu vindem și nu cedăm datele către terți în scopuri de marketing.</p>
+
+  <h2>Cât timp păstrăm datele</h2>
+  <p>Mesajele din formularul de contact, cel mult 12 luni. Datele cursanților și istoricul lecțiilor, pe durata colaborării și încă 3 ani după ultima lecție, sau cât cere legea pentru documentele financiare.</p>
+
+  <h2>Drepturile tale</h2>
+  <p>Ai dreptul de acces, rectificare, ștergere, restricționare, portabilitate și opoziție, precum și dreptul de a depune o plângere la Autoritatea Națională de Supraveghere a Prelucrării Datelor cu Caracter Personal (ANSPDCP, <a href="https://www.dataprotection.ro" target="_blank" rel="noopener">dataprotection.ro</a>). Pentru orice cerere, scrie-ne la <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+</Legal>

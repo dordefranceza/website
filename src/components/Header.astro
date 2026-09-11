@@ -1,0 +1,59 @@
+---
+import Logo from './Logo.astro'
+import { Icon } from 'astro-icon/components'
+import { linkWhatsApp } from '../config/site'
+
+const linkuri = [
+  { href: '/#pentru-ce', text: 'Pentru ce' },
+  { href: '/#cum-decurge', text: 'Cum decurge' },
+  { href: '/preturi/', text: 'Prețuri' },
+  { href: '/despre/', text: 'Despre Dorina' },
+  { href: '/contact/', text: 'Contact' },
+]
+---
+
+<header class="fixed inset-x-0 top-3 z-50 px-3 sm:top-5 sm:px-5">
+  <div class="mx-auto flex max-w-6xl items-center justify-between rounded-full bg-alb/85 py-2 pl-4 pr-2 shadow-[0_8px_30px_-12px_rgba(8,3,49,0.25)] backdrop-blur-xl sm:pl-6">
+    <a href="/" class="shrink-0" aria-label="DorDeFranceza, pagina de start"><Logo culoare="#080331" /></a>
+
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="Meniu principal">
+      {linkuri.map((l) => (
+        <a href={l.href} class="rounded-full px-3.5 py-2 text-[0.95rem] font-medium text-cerneala/80 transition hover:bg-crem hover:text-cerneala">{l.text}</a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a href={linkWhatsApp} target="_blank" rel="noopener" class="hidden items-center gap-1.5 rounded-full px-3.5 py-2 text-[0.95rem] font-medium text-cerneala/80 transition hover:bg-crem hover:text-cerneala md:inline-flex">
+        <Icon name="solar:chat-round-line-bold" class="size-[18px] text-verde" />
+        WhatsApp
+      </a>
+      <a href="/programare/" class="pastila pastila-albastra !px-5 !py-2.5 text-[0.95rem]">Programează</a>
+      <button id="meniu-btn" type="button" class="inline-flex size-10 items-center justify-center rounded-full text-cerneala hover:bg-crem lg:hidden" aria-expanded="false" aria-controls="meniu-mobil" aria-label="Deschide meniul">
+        <Icon name="solar:hamburger-menu-linear" class="size-6" />
+      </button>
+    </div>
+  </div>
+
+  <div id="meniu-mobil" hidden class="mx-auto mt-2 max-w-6xl rounded-[1.5rem] bg-alb p-3 shadow-[0_18px_50px_-20px_rgba(8,3,49,0.35)] lg:hidden">
+    <nav class="flex flex-col" aria-label="Meniu mobil">
+      {linkuri.map((l) => (
+        <a href={l.href} class="rounded-2xl px-4 py-3 text-base font-medium text-cerneala hover:bg-crem">{l.text}</a>
+      ))}
+      <a href={linkWhatsApp} target="_blank" rel="noopener" class="mt-1 flex items-center gap-2 rounded-2xl bg-verde-5 px-4 py-3 text-base font-medium text-verde">
+        <Icon name="solar:chat-round-line-bold" class="size-5" /> Scrie pe WhatsApp
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('meniu-btn')
+  const meniu = document.getElementById('meniu-mobil')
+  btn?.addEventListener('click', () => {
+    const deschis = !meniu!.hidden
+    meniu!.hidden = deschis
+    btn.setAttribute('aria-expanded', String(!deschis))
+    btn.setAttribute('aria-label', deschis ? 'Deschide meniul' : 'Închide meniul')
+  })
+  meniu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => { meniu.hidden = true; btn?.setAttribute('aria-expanded', 'false') }))
+</script>

@@ -1,0 +1,90 @@
+---
+/**
+ * Antetul paginii de start, in spiritul August Health: titlu serif mare pe
+ * alb, cercuri colorate cu fotografii si carduri plutitoare in jur, banda
+ * crem ondulata jos. Pe telefon ramane un singur cerc cu Dorina.
+ */
+import { Icon } from 'astro-icon/components'
+import { site, linkWhatsApp } from '../../config/site'
+---
+
+<section class="relative overflow-hidden bg-alb pt-32 sm:pt-40 lg:pt-44" aria-labelledby="titlu-antet">
+  <div class="container-site relative z-10 flex flex-col items-center text-center">
+    <a href="/#cum-decurge" class="dezvaluie inline-flex items-center gap-2 rounded-full bg-albastru-5 px-4 py-2 text-sm font-medium text-navy transition hover:bg-albastru-10">
+      Prima discuție e gratuită
+      <Icon name="solar:arrow-right-linear" class="size-4" />
+    </a>
+
+    <h1 id="titlu-antet" class="dezvaluie mt-7 max-w-4xl text-[2.7rem] leading-[1.02] sm:text-6xl lg:text-[4.75rem]" style="--intarziere:80ms">
+      Franceza pe care <em class="not-italic text-albastru">ajungi</em> să o vorbești
+    </h1>
+
+    <p class="dezvaluie mt-6 max-w-2xl text-lg leading-relaxed text-gri sm:text-xl" style="--intarziere:160ms">
+      Lecții online cu Dorina, pentru adulți din România. Pentru job, pentru mutare în Franța, pentru BAC sau pur și simplu pentru tine. 50 de minute, pe Zoom, în ritmul tău.
+    </p>
+
+    <div class="dezvaluie mt-9 flex flex-col items-center gap-3 sm:flex-row" style="--intarziere:240ms">
+      <a href="/programare/" class="pastila pastila-albastra !px-7 !py-4 text-[1.05rem]">Programează o discuție gratuită</a>
+      <a href={linkWhatsApp} target="_blank" rel="noopener" class="pastila pastila-crem !px-6 !py-4 text-[1.05rem]">
+        <Icon name="solar:chat-round-line-bold" class="size-5 text-verde" /> Scrie pe WhatsApp
+      </a>
+    </div>
+
+    <ul class="dezvaluie mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-2 text-sm font-medium text-gri" style="--intarziere:320ms">
+      <li class="flex items-center gap-2"><Icon name="solar:clock-circle-bold" class="size-4 text-albastru" /> {site.durataLectie} de minute pe lecție</li>
+      <li class="flex items-center gap-2"><Icon name="solar:videocamera-record-bold" class="size-4 text-albastru" /> Online, pe Zoom</li>
+      <li class="flex items-center gap-2"><Icon name="solar:users-group-rounded-bold" class="size-4 text-albastru" /> Individual sau grup mic</li>
+    </ul>
+  </div>
+
+  {/* Cercurile din jurul textului, doar pe ecrane mari */}
+  <div class="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden="true">
+    <div class="plutitor absolute left-[2%] top-[22%] size-[300px] overflow-hidden rounded-full bg-roz xl:size-[340px]">
+      <img src="/images/dorina-placeholder.svg" alt="" class="absolute inset-0 size-full object-cover" width="340" height="340" loading="eager" />
+    </div>
+    <div class="plutitor-lent absolute right-[3%] top-[10%] size-[240px] rounded-full bg-verde xl:size-[280px]">
+      <div class="absolute inset-x-6 bottom-8 rounded-2xl bg-alb/95 p-4 shadow-lg">
+        <p class="text-xs font-bold uppercase tracking-wider text-verde">Următoarea lecție</p>
+        <p class="mt-1 font-medium">marți, 18:00 · Zoom</p>
+        <p class="text-sm text-gri">Interviul de angajare, partea a 2-a</p>
+      </div>
+    </div>
+    <div class="plutitor absolute left-[4%] top-[64%] size-[260px] rounded-full bg-albastru" style="animation-delay:-2s">
+      <div class="absolute left-10 top-12 w-[280px] rounded-2xl bg-alb/95 p-4 shadow-lg">
+        <p class="text-sm font-medium">Nivel</p>
+        <div class="mt-2 flex items-center gap-2">
+          <span class="rounded-full bg-albastru-5 px-2.5 py-1 text-xs font-bold text-navy">A2</span>
+          <Icon name="solar:arrow-right-linear" class="size-4 text-gri" />
+          <span class="rounded-full bg-verde-5 px-2.5 py-1 text-xs font-bold text-verde">B1</span>
+          <span class="ml-auto text-xs text-gri">după 12 lecții</span>
+        </div>
+      </div>
+    </div>
+    <div class="plutitor-lent absolute right-[5%] top-[50%] size-[300px] rounded-full bg-portocaliu xl:size-[330px]" style="animation-delay:-5s">
+      <div class="absolute left-[-40px] top-14 w-[300px] rounded-2xl bg-alb/95 p-4 shadow-lg">
+        <div class="flex items-center gap-3">
+          <span class="flex size-9 items-center justify-center rounded-full bg-crem"><Icon name="solar:chat-round-dots-bold" class="size-5 text-portocaliu" /></span>
+          <div>
+            <p class="text-sm font-medium">Dorina, pe WhatsApp</p>
+            <p class="text-xs text-gri">acum 5 minute</p>
+          </div>
+        </div>
+        <p class="mt-3 rounded-xl bg-crem px-3 py-2 text-sm">Bravo, «je voudrais» e perfect. Data viitoare trecem la condițional.</p>
+      </div>
+    </div>
+  </div>
+
+  {/* Pe telefon si tableta: cercul cu Dorina sub text */}
+  <div class="container-site relative z-10 mt-12 flex justify-center lg:hidden">
+    <div class="relative size-56 overflow-hidden rounded-full bg-roz sm:size-72">
+      <img src="/images/dorina-placeholder.svg" alt="Dorina, profesoară de franceză" class="absolute inset-0 size-full object-cover" width="288" height="288" loading="eager" />
+    </div>
+  </div>
+
+  {/* Banda crem ondulata */}
+  <div class="relative mt-16 h-24 lg:mt-40 lg:h-32" aria-hidden="true">
+    <svg class="absolute inset-x-0 bottom-0 h-full w-full" viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <path d="M0,60 C240,110 480,0 720,40 C960,80 1200,120 1440,50 L1440,120 L0,120 Z" fill="#f8f3eb" />
+    </svg>
+  </div>
+</section>

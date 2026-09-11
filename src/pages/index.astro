@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro'
+import Antet from '../components/acasa/Antet.astro'
+import Nevoi from '../components/acasa/Nevoi.astro'
+import CumDecurge from '../components/acasa/CumDecurge.astro'
+import Metoda from '../components/acasa/Metoda.astro'
+import Preturi from '../components/acasa/Preturi.astro'
+import Despre from '../components/acasa/Despre.astro'
+import Intrebari from '../components/acasa/Intrebari.astro'
+import Apel from '../components/acasa/Apel.astro'
+import { intrebari } from '../config/continut'
+import { site } from '../config/site'
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'LocalBusiness',
+      '@id': `${site.url}/#organizatie`,
+      name: site.nume,
+      description: site.descriere,
+      url: site.url,
+      email: site.email,
+      telephone: site.telefon,
+      priceRange: '€€',
+      areaServed: 'RO',
+      makesOffer: [
+        { '@type': 'Offer', name: 'Lecție individuală de franceză online', price: site.preturi.individual, priceCurrency: 'EUR' },
+        { '@type': 'Offer', name: 'Lecție de franceză în grup mic online', price: site.preturi.grup, priceCurrency: 'EUR' },
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: intrebari.map((i) => ({ '@type': 'Question', name: i.intrebare, acceptedAnswer: { '@type': 'Answer', text: i.raspuns } })),
+    },
+  ],
+}
+---
+
+<Base title="DorDeFranceza · Lecții online de franceză pentru adulți, cu Dorina" description={site.descriere} schemaFaq>
+  <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <main id="continut">
+    <Antet />
+    <Nevoi />
+    <CumDecurge />
+    <Metoda />
+    <Preturi />
+    <Despre />
+    <Intrebari />
+    <Apel />
+  </main>
+</Base>

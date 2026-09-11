@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro'
+import Programare from '../components/programare/Programare'
+import { site } from '../config/site'
+---
+
+<Base title="Programează o lecție · DorDeFranceza" description="Alege ziua și ora din calendarul Dorinei. Prima discuție de 20 de minute e gratuită. Confirmarea vine pe email imediat.">
+  <main id="continut" class="bg-crem pt-28 pb-20 sm:pt-36 sm:pb-28">
+    <div class="container-site">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="eticheta">Programare</p>
+        <h1 class="mt-3 text-4xl sm:text-5xl">Alege ziua și ora care îți convin</h1>
+        <p class="mt-4 text-lg text-gri">Trei pași, un minut. Confirmarea vine pe email imediat, cu linkul de Zoom.</p>
+      </div>
+      <Programare client:load whatsapp={site.whatsapp} />
+    </div>
+  </main>
+</Base>

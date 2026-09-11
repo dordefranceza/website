@@ -1,0 +1,103 @@
+---
+import '../styles/global.css'
+import { site } from '../config/site'
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+
+interface Props {
+  title: string
+  description: string
+  image?: string
+  /** true pe pagina de start, unde FAQ-ul e vizibil si intra in schema */
+  schemaFaq?: boolean
+  faraHeader?: boolean
+  faraFooter?: boolean
+  noindex?: boolean
+}
+
+const { title, description, image = '/images/og.png', faraHeader = false, faraFooter = false, noindex = false } = Astro.props
+const canonical = new URL(Astro.url.pathname, Astro.site).href
+const ogImage = new URL(image, Astro.site).href
+---
+
+<!doctype html>
+<html lang={site.limba}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" href="/fonts/erode-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/satoshi-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/satoshi-500.woff2" as="font" type="font/woff2" crossorigin />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:site_name" content={site.nume} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#ffffff" />
+    <slot name="head" />
+    <script is:inline>document.documentElement.classList.add('js')</script>
+  </head>
+  <body>
+    <a href="#continut" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-navy focus:px-4 focus:py-2 focus:text-alb">Sari la conținut</a>
+    {!faraHeader && <Header />}
+    <slot />
+    {!faraFooter && <Footer />}
+
+    <script>
+      // Intrarea lina a sectiunilor la derulare, cu plasa de siguranta pentru
+      // browserele in care observatorul nu emite niciodata.
+      const elemente = document.querySelectorAll<HTMLElement>('.dezvaluie, .dezvaluie-rand')
+      document.querySelectorAll<HTMLElement>('.dezvaluie-rand').forEach((rand) => {
+        ;[...rand.children].forEach((copil, i) => {
+          copil.classList.add('dezvaluie')
+          ;(copil as HTMLElement).style.setProperty('--intarziere', `${Math.min(i * 90, 540)}ms`)
+        })
+      })
+      const toate = document.querySelectorAll<HTMLElement>('.dezvaluie')
+      const arata = (el: Element) => el.classList.add('vizibil')
+      if ('IntersectionObserver' in window) {
+        let aEmis = false
+        const obs = new IntersectionObserver(
+          (intrari) => {
+            for (const i of intrari) {
+              if (!i.isIntersecting) continue
+              aEmis = true
+              arata(i.target)
+              obs.unobserve(i.target)
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+        )
+        toate.forEach((el) => obs.observe(el))
+        window.setTimeout(() => {
+          if (!aEmis) toate.forEach(arata)
+        }, 2500)
+      } else {
+        toate.forEach(arata)
+      }
+      void elemente
+
+      // Sursa vizitei (utm_source sau ?ref=), tinuta minte pentru formular.
+      try {
+        const p = new URLSearchParams(location.search)
+        const sursa = (p.get('utm_source') || p.get('ref') || '').trim().toLowerCase().slice(0, 40)
+        if (sursa) localStorage.setItem('ddf-sursa', sursa)
+        else if (!localStorage.getItem('ddf-sursa') && document.referrer) {
+          const gazda = new URL(document.referrer).hostname.replace(/^www\./, '')
+          if (gazda && gazda !== location.hostname) localStorage.setItem('ddf-sursa', gazda)
+        }
+      } catch {
+        /* fara localStorage, fara sursa */
+      }
+    </script>
+  </body>
+</html>

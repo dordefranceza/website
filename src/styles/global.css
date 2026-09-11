@@ -1,0 +1,194 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* ===========================================================================
+ *  FONTURI
+ *  Gazduite local, de pe Fontshare (licenta ITF Free Font License).
+ *  Erode pentru titluri, Satoshi pentru text si interfata.
+ * ======================================================================== */
+@font-face { font-family: 'Erode'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/erode-400.woff2') format('woff2'); }
+@font-face { font-family: 'Erode'; font-style: italic; font-weight: 400; font-display: swap; src: url('/fonts/erode-400-italic.woff2') format('woff2'); }
+@font-face { font-family: 'Erode'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/erode-500.woff2') format('woff2'); }
+@font-face { font-family: 'Satoshi'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/satoshi-400.woff2') format('woff2'); }
+@font-face { font-family: 'Satoshi'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/satoshi-500.woff2') format('woff2'); }
+@font-face { font-family: 'Satoshi'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/satoshi-700.woff2') format('woff2'); }
+
+/* ===========================================================================
+ *  TOKENI DE DESIGN
+ *  Paleta pornita de la August Health (extrasa din CSS-ul lor), adaptata.
+ * ======================================================================== */
+@theme {
+  --color-alb: #ffffff;
+  --color-crem: #f8f3eb;
+  --color-crem-inchis: #f1e9db;
+  --color-cerneala: #080331;
+  --color-navy: #1b1463;
+  --color-gri: #5b5a75;
+  --color-gri-deschis: #f4f5fa;
+  --color-albastru: #4865ff;
+  --color-albastru-inchis: #394bff;
+  --color-albastru-5: #eef2fc;
+  --color-albastru-10: #dce4fb;
+  --color-portocaliu: #ff6d39;
+  --color-portocaliu-5: #fff1eb;
+  --color-roz: #f098d7;
+  --color-roz-5: #fdeef8;
+  --color-verde: #328a3b;
+  --color-verde-5: #e1fae1;
+  --color-verde-10: #baf7bb;
+  --color-whatsapp: #25d366;
+  --color-rosu: #c52f54;
+
+  --font-display: 'Erode', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Satoshi', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --ease-afara: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Variabilele shadcn, legate de paleta de mai sus. */
+  --color-background: var(--color-alb);
+  --color-foreground: var(--color-cerneala);
+  --color-card: var(--color-alb);
+  --color-card-foreground: var(--color-cerneala);
+  --color-popover: var(--color-alb);
+  --color-popover-foreground: var(--color-cerneala);
+  --color-primary: var(--color-albastru);
+  --color-primary-foreground: var(--color-alb);
+  --color-secondary: var(--color-albastru-5);
+  --color-secondary-foreground: var(--color-navy);
+  --color-muted: var(--color-gri-deschis);
+  --color-muted-foreground: var(--color-gri);
+  --color-accent: var(--color-crem);
+  --color-accent-foreground: var(--color-cerneala);
+  --color-destructive: var(--color-rosu);
+  --color-border: #e4e5ee;
+  --color-input: #e4e5ee;
+  --color-ring: var(--color-albastru);
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+}
+
+/* ===========================================================================
+ *  BAZA
+ * ======================================================================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-alb);
+    color: var(--color-cerneala);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  p { text-wrap: pretty; }
+
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-albastru);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection { background: var(--color-albastru-10); color: var(--color-cerneala); }
+
+  /* Preflight pune margin:0 pe tot: <dialog> s-ar lipi in colt. */
+  dialog { margin: auto; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
+
+/* ===========================================================================
+ *  UTILITARE ALE SITE-ULUI
+ * ======================================================================== */
+@utility container-site {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (min-width: 640px) { padding-inline: 2rem; }
+}
+
+/* Buton pastila, forma din tot site-ul. */
+@utility pastila {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.9rem 1.5rem;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color 0.2s var(--ease-afara), color 0.2s var(--ease-afara), transform 0.2s var(--ease-afara);
+}
+
+@utility pastila-albastra {
+  background: var(--color-albastru);
+  color: var(--color-alb);
+  &:hover { background: var(--color-albastru-inchis); transform: translateY(-1px); }
+}
+
+@utility pastila-alba {
+  background: var(--color-alb);
+  color: var(--color-cerneala);
+  box-shadow: 0 1px 2px rgb(8 3 49 / 0.06), 0 8px 24px -12px rgb(8 3 49 / 0.25);
+  &:hover { transform: translateY(-1px); }
+}
+
+@utility pastila-crem {
+  background: var(--color-crem);
+  color: var(--color-cerneala);
+  &:hover { background: var(--color-crem-inchis); }
+}
+
+@utility pastila-navy {
+  background: var(--color-navy);
+  color: var(--color-alb);
+  &:hover { background: var(--color-cerneala); }
+}
+
+/* Eticheta mica de deasupra titlurilor de sectiune. */
+@utility eticheta {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-albastru);
+}
+
+/* Intrare lina la derulare. Fara JS elementele raman vizibile. */
+.js .dezvaluie {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s var(--ease-afara), transform 0.7s var(--ease-afara);
+  transition-delay: var(--intarziere, 0ms);
+}
+.js .dezvaluie.vizibil { opacity: 1; transform: none; }
+
+/* Plutirea usoara a cercurilor din antet. */
+@keyframes plutire {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.plutitor { animation: plutire 7s ease-in-out infinite; }
+.plutitor-lent { animation: plutire 9s ease-in-out infinite; animation-delay: -3s; }

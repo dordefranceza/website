@@ -1,0 +1,10 @@
+---
+import Base from '../../layouts/Base.astro'
+import App from '../../cabinet/App'
+---
+
+<Base title="Cabinet · DorDeFranceza" description="Cabinetul Dorinei." faraHeader faraFooter noindex>
+  <main id="continut" class="min-h-screen bg-crem">
+    <App client:only="react" />
+  </main>
+</Base>

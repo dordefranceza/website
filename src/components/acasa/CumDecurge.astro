@@ -1,0 +1,29 @@
+---
+import { Icon } from 'astro-icon/components'
+import { pasi } from '../../config/continut'
+---
+
+<section id="cum-decurge" class="bg-alb py-20 sm:py-28" aria-labelledby="titlu-pasi">
+  <div class="container-site grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
+    <div class="dezvaluie lg:sticky lg:top-32 lg:self-start">
+      <p class="eticheta">Cum decurge</p>
+      <h2 id="titlu-pasi" class="mt-3 text-4xl sm:text-5xl">Trei pași. Primul e gratuit.</h2>
+      <p class="mt-5 text-lg text-gri">Nu îți vând un pachet înainte să ne cunoaștem. Întâi vorbim, apoi decizi.</p>
+      <a href="/programare/" class="pastila pastila-albastra mt-8">
+        Programează discuția gratuită <Icon name="solar:arrow-right-linear" class="size-5" />
+      </a>
+    </div>
+
+    <ol class="dezvaluie-rand space-y-4">
+      {pasi.map((p, i) => (
+        <li class:list={['flex gap-6 rounded-[1.5rem] p-7 sm:p-8', i === 0 ? 'bg-navy text-alb' : 'bg-crem']}>
+          <span class:list={['font-display text-3xl leading-none', i === 0 ? 'text-alb/60' : 'text-albastru']}>{p.numar}</span>
+          <div>
+            <h3 class="font-sans text-xl font-medium">{p.titlu}</h3>
+            <p class:list={['mt-2 leading-relaxed', i === 0 ? 'text-alb/80' : 'text-gri']}>{p.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro'
+import Despre from '../components/acasa/Despre.astro'
+import Metoda from '../components/acasa/Metoda.astro'
+import Apel from '../components/acasa/Apel.astro'
+---
+
+<Base title="Despre Dorina · DorDeFranceza" description="Cine e Dorina, cum predă franceza online și de ce cursanții ei ajung să vorbească, nu doar să înțeleagă.">
+  <main id="continut" class="pt-16 sm:pt-20">
+    <Despre />
+    <Metoda />
+    <section class="bg-crem py-20 sm:py-28">
+      <div class="container-site max-w-3xl">
+        <p class="eticheta">Cum lucrez</p>
+        <h2 class="mt-3 text-4xl sm:text-5xl">O lecție obișnuită, de 50 de minute</h2>
+        <ol class="mt-10 space-y-6">
+          {[
+            ['Primele 5 minute', 'Vorbim liber, în franceză, despre ce ai făcut de la ultima lecție. Fără corecturi încă, doar notez.'],
+            ['20 de minute', 'Tema lecției: o situație reală din planul tău. Un email de trimis, un interviu, un formular, un dialog la doctor.'],
+            ['15 minute', 'Exersezi tu. Eu intervin doar cât să nu rămâi blocat, apoi trecem prin greșelile notate, cu explicații scurte.'],
+            ['Ultimele 10 minute', 'Fixăm ce ai învățat, stabilim tema și ce urmează. Primești rezumatul pe email în aceeași zi.'],
+          ].map(([cand, ce]) => (
+            <li class="flex gap-6 rounded-[1.5rem] bg-alb p-6">
+              <span class="w-28 shrink-0 font-display text-xl text-albastru">{cand}</span>
+              <p class="leading-relaxed text-gri">{ce}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+    <div class="bg-crem"><Apel /></div>
+  </main>
+</Base>
