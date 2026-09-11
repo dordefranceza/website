@@ -200,7 +200,8 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
       `${tip.nume} este programată pentru ${zi}, ora ${ora} (ora României), ${p.durata_min} de minute.`,
       link ? `Link Zoom: ${link}` : 'Linkul de Zoom vine pe email înainte de lecție.',
       '',
-      'Dacă nu mai poți ajunge, scrie-mi cu cel puțin 24 de ore înainte și reprogramăm gratuit.',
+      'Dacă nu mai poți ajunge, scrie-mi cu cel puțin 24 de ore înainte și reprogramăm gratuit. Sub 24 de ore, lecția se consideră efectuată.',
+      `Regulile complete de anulare și dreptul de retragere în 14 zile: ${adresaSite()}/anulare-si-rambursare/`,
       '',
       'Pe curând,',
       'Dorina, DorDeFranceza',
@@ -210,7 +211,7 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
       titlu: `${zi}, ora ${ora}`,
       intro,
       corp: randuri(lista),
-      butoane: butoane + `<p style="margin:12px 0 0;font-size:13px;line-height:1.6;color:${GRI}">Dacă nu mai poți ajunge, scrie-mi cu cel puțin 24 de ore înainte și reprogramăm gratuit.</p>`,
+      butoane: butoane + `<p style="margin:12px 0 0;font-size:13px;line-height:1.6;color:${GRI}">Dacă nu mai poți ajunge, scrie-mi cu cel puțin 24 de ore înainte și reprogramăm gratuit. Sub 24 de ore, lecția se consideră efectuată. Ai 14 zile în care te poți retrage pentru orice sumă plătită în avans pentru lecții neefectuate: <a href="${adresaSite()}/anulare-si-rambursare/" style="color:${GRI}">detalii</a>.</p>`,
       subsol: 'Ai primit acest email pentru că ai făcut o programare pe DorDeFranceza.',
     }),
   }

@@ -41,10 +41,10 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (cerere.nume.length < 2) return eroare(400, 'Scrie numele tău')
   if (!emailValid(cerere.email)) return eroare(400, 'Adresa de email nu pare corectă')
-  if (!cerere.telefon || !telefonValid(cerere.telefon)) return eroare(400, 'Numărul de telefon nu pare corect')
+  if (cerere.telefon && !telefonValid(cerere.telefon)) return eroare(400, 'Numărul de telefon nu pare corect')
   if (cerere.nivel && !(NIVELURI as readonly string[]).includes(cerere.nivel)) cerere.nivel = ''
   if (cerere.scop && !(SCOPURI as readonly string[]).includes(cerere.scop)) cerere.scop = ''
-  if (!cerere.gdpr) return eroare(400, 'Trebuie să fii de acord cu prelucrarea datelor')
+  if (!cerere.gdpr) return eroare(400, 'Confirmă că ai citit termenii și politica de confidențialitate')
 
   if (preaMulte(ipDin(request))) return raspunde(429, { ok: false, eroare: 'Prea multe încercări. Reîncearcă peste câteva minute.' }, { 'Retry-After': '600' })
 

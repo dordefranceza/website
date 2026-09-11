@@ -106,7 +106,7 @@ export default function Calendar() {
                     <span className="mt-1 block"><EtichetaTip tip={x.tip} /></span>
                   </button>
                 ))}
-                {aleZilei.length === 0 && blocajeZilei.length === 0 && <p className="py-2 text-xs text-gri/60">liber</p>}
+                {aleZilei.length === 0 && blocajeZilei.length === 0 && <p className="py-2 text-xs text-gri">liber</p>}
               </div>
             </div>
           )

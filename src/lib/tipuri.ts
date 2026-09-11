@@ -1,4 +1,5 @@
 /** Tipurile comune site-ului public, functiilor server si cabinetului. */
+import { site } from '../config/site'
 
 export type TipProgramare = 'cunoastere' | 'individual' | 'grup'
 export type StareProgramare = 'noua' | 'confirmata' | 'anulata' | 'finalizata'
@@ -91,8 +92,8 @@ export type CerereProgramare = {
 
 export const TIPURI: Record<TipProgramare, { nume: string; durata: number; pret: number }> = {
   cunoastere: { nume: 'Discuție de cunoaștere', durata: 20, pret: 0 },
-  individual: { nume: 'Lecție individuală', durata: 50, pret: 40 },
-  grup: { nume: 'Lecție în grup mic', durata: 50, pret: 25 },
+  individual: { nume: 'Lecție individuală', durata: site.durataLectie, pret: site.preturi.individual },
+  grup: { nume: 'Lecție în grup mic', durata: site.durataLectie, pret: site.preturi.grup },
 }
 
 export const NIVELURI = ['Încep de la zero', 'A1', 'A2', 'B1', 'B2', 'C1', 'Nu știu sigur'] as const
@@ -105,3 +106,24 @@ export const SCOPURI = [
   'Pentru copilul meu',
   'Altceva',
 ] as const
+
+/* --- Blog ------------------------------------------------------------------- */
+
+export type Articol = {
+  id: string
+  slug: string
+  titlu: string
+  rezumat: string
+  /** Markdown scris in cabinet. HTML-ul se genereaza pe server, curatat. */
+  continut: string
+  imagine: string
+  imagine_alt: string
+  meta_titlu: string
+  meta_descriere: string
+  publicat: boolean
+  publicat_la: string | null
+  creat: string
+  actualizat: string
+}
+
+export type ArticolSchimbari = Partial<Omit<Articol, 'id' | 'creat' | 'actualizat'>>

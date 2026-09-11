@@ -104,3 +104,29 @@ alter table public.admin_email enable row level security;
 alter table public.grupe enable row level security;
 
 revoke all on all tables in schema public from anon, authenticated;
+
+-- -----------------------------------------------------------------------------
+--  BLOG (adaugat 12 septembrie 2026)
+-- -----------------------------------------------------------------------------
+create table if not exists public.articole (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null default '',
+  titlu text not null default '',
+  rezumat text not null default '',
+  continut text not null default '',
+  imagine text not null default '',
+  imagine_alt text not null default '',
+  meta_titlu text not null default '',
+  meta_descriere text not null default '',
+  publicat boolean not null default false,
+  publicat_la timestamptz,
+  creat timestamptz not null default now(),
+  actualizat timestamptz not null default now()
+);
+create unique index if not exists articole_slug on public.articole (slug) where slug <> '';
+alter table public.articole enable row level security;
+revoke all on public.articole from anon, authenticated;
+
+-- Imaginile articolelor stau intr-un bucket PUBLIC numit "imagini" (Storage >
+-- New bucket > Public). Scrierea se face doar de pe server, cu cheia de
+-- serviciu, deci nu e nevoie de nicio politica de storage pentru anon.

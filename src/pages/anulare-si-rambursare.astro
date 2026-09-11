@@ -1,0 +1,35 @@
+---
+import Legal from '../layouts/Legal.astro'
+import { site } from '../config/site'
+import { firma } from '../config/firma'
+---
+<Legal title="Anulare, reprogramare și rambursare" description="Cum reprogramezi sau anulezi o lecție DorDeFranceza, când primești banii înapoi și cum îți exerciți dreptul legal de retragere în 14 zile." actualizat="12 septembrie 2026">
+  <p>Vrem să fie simplu și corect pentru amândoi. Regulile de mai jos fac parte din <a href="/termeni/">termenii și condițiile</a> și se aplică tuturor lecțiilor {site.nume}.</p>
+
+  <h2>Reprogramarea unei lecții</h2>
+  <ul>
+    <li>Poți reprograma orice lecție <strong>gratuit</strong>, cu cel puțin <strong>24 de ore</strong> înainte de ora stabilită. Scrii un mesaj pe WhatsApp sau pe email și alegem împreună altă zi.</li>
+    <li>Sub 24 de ore, lecția se consideră efectuată și se plătește, pentru că ora a fost rezervată pentru tine și nu mai poate fi oferită altcuiva. Excepție: situații medicale sau urgențe reale, discutate de la om la om.</li>
+    <li>Dacă Dorina trebuie să anuleze, primești o lecție în loc, la o dată aleasă împreună, fără niciun cost. Dacă nu vrei altă dată, primești banii înapoi pentru acea lecție.</li>
+  </ul>
+
+  <h2>Întârzieri</h2>
+  <p>Lecția se termină la ora stabilită, chiar dacă ai intrat mai târziu. Dacă nu ai intrat în 15 minute și nu ai anunțat, lecția se consideră efectuată.</p>
+
+  <h2>Lecțiile în grup</h2>
+  <p>Lecțiile de grup au orar fix și nu se reprogramează individual. Dacă lipsești, primești materialele și rezumatul lecției. Dacă Dorina anulează o lecție de grup, aceasta se recuperează cu tot grupul.</p>
+
+  <h2>Dreptul de retragere în 14 zile (OUG 34/2014)</h2>
+  <p>Ca și consumator, ai dreptul să te retragi din contract în <strong>14 zile</strong> de la data programării, fără să dai un motiv, pentru orice sumă plătită în avans pentru lecții care nu au avut loc încă.</p>
+  <ul>
+    <li>Pentru lecțiile deja efectuate în aceste 14 zile, la cererea ta expresă, se reține contravaloarea lor. Bifând confirmarea la programare, ești de acord ca lecția să înceapă înainte de expirarea celor 14 zile și înțelegi că, pentru lecțiile efectuate, pierzi dreptul de retragere.</li>
+    <li>Pentru a te retrage, trimite un mesaj clar la <a href={`mailto:${firma.email}`}>{firma.email}</a> cu numele tău, data programării și mențiunea că te retragi din contract. Poți folosi și <a href="/formular-retragere/">formularul de retragere</a>.</li>
+    <li>Banii se returnează în cel mult <strong>14 zile</strong> de la primirea cererii, prin aceeași metodă de plată folosită la achitare, fără costuri suplimentare.</li>
+  </ul>
+
+  <h2>Cum se plătește</h2>
+  <p>Lecțiile se plătesc prin transfer bancar sau Revolut, după fiecare lecție sau la finalul lunii, conform înțelegerii. Nu cerem abonamente și nu cerem plata în avans pentru luni întregi. Dacă alegi un pachet plătit în avans, lecțiile neefectuate din pachet se rambursează integral la cererea ta.</p>
+
+  <h2>Reclamații</h2>
+  <p>Orice nemulțumire o rezolvăm întâi direct: <a href={`mailto:${firma.email}`}>{firma.email}</a>. Dacă nu ajungem la o înțelegere, te poți adresa <a href={firma.anpc} target="_blank" rel="noopener">ANPC</a>, procedurii <a href={firma.anpcSal} target="_blank" rel="noopener">SAL</a> sau platformei europene de soluționare online a litigiilor <a href={firma.sol} target="_blank" rel="noopener">SOL</a>.</p>
+</Legal>

@@ -45,7 +45,7 @@ export default function FormularContact() {
     return (
       <div className="mt-8 rounded-[1.5rem] bg-verde-5 p-6">
         <p className="font-medium text-verde">Mesajul a ajuns la Dorina.</p>
-        <p className="mt-1 text-gri">Îți răspunde în aceeași zi, pe email sau pe telefon.</p>
+        <p className="mt-1 text-gri">Îți răspunde pe email sau pe telefon, de obicei în aceeași zi.</p>
       </div>
     )
   }
@@ -73,7 +73,7 @@ export default function FormularContact() {
       <input type="text" name="botcheck" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
       <label className="flex items-start gap-3 text-sm text-gri">
         <Checkbox checked={gdpr} onCheckedChange={(v) => setGdpr(v === true)} className="mt-0.5" />
-        <span>Sunt de acord ca datele mele să fie folosite ca să mi se răspundă, conform <a href="/confidentialitate/" className="text-albastru underline">politicii de confidențialitate</a>.</span>
+        <span>Am citit <a href="/confidentialitate/" className="text-albastru-text underline">politica de confidențialitate</a> și sunt de acord ca datele din formular să fie folosite ca să mi se răspundă.</span>
       </label>
       {stare === 'eroare' && <p role="alert" className="rounded-xl bg-[#fdeaee] px-4 py-3 text-sm text-rosu">{mesajEroare}</p>}
       <Button type="submit" disabled={stare === 'trimite' || !gdpr} className="h-12 rounded-full px-7 text-base">

@@ -29,11 +29,13 @@
   --color-albastru-inchis: #394bff;
   --color-albastru-5: #eef2fc;
   --color-albastru-10: #dce4fb;
+  /* Pentru text mic pe fundaluri crem sau colorate: albastrul de brand are doar 4,1:1 acolo. */
+  --color-albastru-text: #2e47e6;
   --color-portocaliu: #ff6d39;
   --color-portocaliu-5: #fff1eb;
   --color-roz: #f098d7;
   --color-roz-5: #fdeef8;
-  --color-verde: #328a3b;
+  --color-verde: #2c7a34;
   --color-verde-5: #e1fae1;
   --color-verde-10: #baf7bb;
   --color-whatsapp: #25d366;
@@ -173,7 +175,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-albastru);
+  color: var(--color-albastru-text);
 }
 
 /* Intrare lina la derulare. Fara JS elementele raman vizibile. */
@@ -184,6 +186,16 @@
   transition-delay: var(--intarziere, 0ms);
 }
 .js .dezvaluie.vizibil { opacity: 1; transform: none; }
+
+/* Primul ecran nu asteapta JS-ul: aceeasi intrare, dar pornita din CSS. */
+@keyframes intrare {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+.intrare {
+  animation: intrare 0.7s var(--ease-afara) both;
+  animation-delay: var(--intarziere, 0ms);
+}
 
 /* Plutirea usoara a cercurilor din antet. */
 @keyframes plutire {

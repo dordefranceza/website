@@ -1,3 +1,5 @@
+import { site } from './site'
+
 /**
  * Textele site-ului public, toate intr-un loc, ca sa se poata schimba fara
  * sa umbli prin componente. Fara linii de despartire, fara cratime lungi.
@@ -104,17 +106,17 @@ export const planuri = [
   {
     tip: 'individual',
     nume: 'Lecție individuală',
-    pret: '40 €',
-    detaliu: 'pe lecție, 50 de minute',
+    pret: `${site.preturi.individual} ${site.moneda}`,
+    detaliu: `pe lecție, ${site.durataLectie} de minute`,
     beneficii: ['Plan personalizat pe obiectivul tău', 'Materiale incluse', 'Feedback pe WhatsApp între lecții', 'Reprogramare gratuită cu 24 de ore înainte'],
     buton: 'Alege individual',
-    evidentiat: true,
+    evidentiat: true, // eticheta spune „Recomandat”, nu „cel mai ales”: nu avem inca date care sa sustina asta
   },
   {
     tip: 'grup',
     nume: 'Lecție în grup mic',
-    pret: '25 €',
-    detaliu: 'pe lecție, 50 de minute',
+    pret: `${site.preturi.grup} ${site.moneda}`,
+    detaliu: `pe lecție, ${site.durataLectie} de minute`,
     beneficii: ['3 sau 4 persoane de același nivel', 'Orar fix, în fiecare săptămână', 'Conversație și exerciții în echipă', 'Materiale incluse'],
     buton: 'Alege grup',
     evidentiat: false,
@@ -135,7 +137,7 @@ export const intrebari = [
   {
     intrebare: 'Cât durează până pot vorbi?',
     raspuns:
-      'Depinde de obiectiv și de cât exersezi. La două lecții pe săptămână, o conversație simplă vine de regulă în două sau trei luni. Pentru un job sau o mutare planificăm după termenul tău.',
+      'Sincer, nu pot promite un termen: depinde de nivelul de la care pornești, de obiectiv și de cât exersezi între lecții. La discuția de cunoaștere îți spun o estimare pentru situația ta, iar planul are obiective clare la 4, 8 și 12 lecții, ca să vezi singur progresul.',
   },
   {
     intrebare: 'Cum plătesc?',

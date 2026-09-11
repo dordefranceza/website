@@ -1,36 +1,54 @@
 ---
 import Legal from '../layouts/Legal.astro'
 import { site } from '../config/site'
+import { firma } from '../config/firma'
 ---
-<Legal title="Politica de confidențialitate" description="Ce date colectează DorDeFranceza, de ce și cât timp le păstrează." actualizat="12 septembrie 2026">
-  <p>Această politică explică ce date personale colectează site-ul {site.nume} (denumit mai jos «site-ul»), în ce scop și care sunt drepturile tale, conform Regulamentului (UE) 2016/679 (GDPR).</p>
+<Legal title="Politica de confidențialitate" description="Ce date personale colectează DorDeFranceza, în ce scop, cât timp le păstrează, cui le transmite și care sunt drepturile tale conform GDPR." actualizat="12 septembrie 2026">
+  <p>Această politică explică ce date personale colectează site-ul {site.nume} și lecțiile oferite prin el, de ce, cât timp le păstrăm și ce drepturi ai. Se aplică Regulamentul (UE) 2016/679 (GDPR) și Legea 190/2018.</p>
 
   <h2>Cine prelucrează datele</h2>
-  <p>Operatorul de date este Dorina, profesoară de franceză, care oferă lecții online sub numele DorDeFranceza. Ne poți scrie la <a href={`mailto:${site.email}`}>{site.email}</a>. [DE COMPLETAT: numele complet, forma juridică și adresa]</p>
+  <p>Operatorul de date este <strong>{firma.denumire}</strong>, CUI {firma.cui}, cu sediul în {firma.sediu}, reprezentată de Dorina, profesoară de franceză. Ne scrii la <a href={`mailto:${firma.email}`}>{firma.email}</a> pentru orice întrebare legată de datele tale.</p>
 
-  <h2>Ce date colectăm și de ce</h2>
+  <h2>Ce date colectăm, de ce și pe ce temei</h2>
   <ul>
-    <li><strong>Formularul de programare:</strong> nume, email, telefon, nivelul și scopul declarat, mesajul tău, ziua și ora aleasă. Le folosim ca să ținem lecția, să îți trimitem confirmarea și linkul de Zoom și să te contactăm dacă ceva se schimbă. Temeiul: executarea contractului (art. 6 alin. 1 lit. b GDPR).</li>
-    <li><strong>Formularul de contact:</strong> nume, email, telefon (opțional) și mesajul. Le folosim ca să îți răspundem. Temeiul: interesul legitim de a răspunde solicitărilor (art. 6 alin. 1 lit. f).</li>
-    <li><strong>Sursa vizitei:</strong> dacă ai ajuns pe site dintr-un link de pe TikTok, Instagram sau Facebook, reținem numele platformei (nu identitatea ta) ca să știm de unde vin cursanții. Se păstrează în browserul tău, în localStorage, și se trimite odată cu formularul.</li>
-    <li><strong>Evidența lecțiilor:</strong> pentru cursanți, păstrăm istoricul lecțiilor și al plăților, pentru facturare și pentru continuitatea planului de studiu.</li>
+    <li><strong>La programarea unei lecții:</strong> numele, adresa de email, ziua și ora aleasă, tipul lecției, nivelul și scopul declarat, mesajul tău și, dacă vrei să-l lași, numărul de telefon. Le folosim ca să ținem lecția, să îți trimitem confirmarea și linkul de Zoom și să te anunțăm dacă ceva se schimbă. Temei: executarea contractului (art. 6 alin. 1 lit. b GDPR). Telefonul este opțional și se folosește doar pentru WhatsApp, dacă îl dai.</li>
+    <li><strong>La formularul de contact:</strong> numele, emailul, mesajul și, opțional, telefonul. Le folosim ca să îți răspundem. Temei: interesul nostru legitim de a răspunde celor care ne scriu (art. 6 alin. 1 lit. f).</li>
+    <li><strong>Sursa vizitei:</strong> dacă ai ajuns pe site dintr-un link de pe TikTok, Instagram sau Facebook, reținem numele platformei (nu identitatea ta de acolo), citit din adresa paginii. Nu salvăm nimic în browserul tău pentru asta. Temei: interes legitim, ca să știm de unde vin cursanții.</li>
+    <li><strong>Evidența lecțiilor și a plăților:</strong> pentru cursanți, păstrăm istoricul lecțiilor, sumele plătite și notele profesoarei despre progres. Temei: executarea contractului și obligațiile legale de evidență financiar-contabilă (art. 6 alin. 1 lit. c).</li>
+    <li><strong>Jurnale tehnice:</strong> serverul care primește formularele reține temporar adresa IP, ca să oprească trimiterile automate în masă. Temei: interes legitim de securitate. Se șterg singure în cel mult 10 minute de la ultima trimitere.</li>
   </ul>
+  <p>Nu colectăm alte date decât cele de mai sus și nu cerem informații de care nu avem nevoie pentru lecții.</p>
 
   <h2>Cookie-uri și urmărire</h2>
-  <p>Site-ul nu folosește cookie-uri de urmărire și nu are Google Analytics sau alte instrumente de publicitate. Singurele date păstrate în browser sunt sursa vizitei și, pentru administrator, sesiunea de autentificare în cabinet.</p>
+  <p>Paginile publice nu folosesc cookie-uri, nu scriu în memoria browserului și nu au Google Analytics sau alte instrumente de urmărire. Detalii în <a href="/cookies/">politica de cookie-uri</a>.</p>
 
   <h2>Cui transmitem datele</h2>
+  <p>Datele nu se vând și nu se cedează pentru marketing. Le prelucrează în numele nostru, pe bază de contract, doar furnizorii fără de care site-ul nu ar funcționa:</p>
   <ul>
-    <li><strong>Vercel Inc.</strong> (SUA), găzduirea site-ului și a funcțiilor care primesc formularele.</li>
-    <li><strong>Supabase</strong>, baza de date în care se păstrează programările și datele cursanților, pe servere în Uniunea Europeană.</li>
-    <li><strong>Resend</strong>, serviciul prin care se trimit emailurile de confirmare și notificare.</li>
-    <li><strong>Zoom</strong>, pentru lecțiile propriu-zise, conform politicii proprii Zoom.</li>
+    <li><strong>Vercel Inc.</strong> (SUA), găzduirea site-ului și a funcțiilor care primesc formularele. Transferul în afara UE este acoperit de certificarea Data Privacy Framework și de clauzele contractuale standard.</li>
+    <li><strong>Supabase</strong>, baza de date în care se păstrează programările și datele cursanților, pe servere din Uniunea Europeană (Frankfurt).</li>
+    <li><strong>Resend</strong> (SUA), serviciul prin care se trimit emailurile de confirmare și notificare. Transfer acoperit de clauzele contractuale standard.</li>
+    <li><strong>Zoom Video Communications</strong>, pentru lecțiile propriu-zise. Când intri în lecție, se aplică și <a href="https://explore.zoom.us/en/privacy/" target="_blank" rel="noopener">politica Zoom</a>.</li>
+    <li><strong>WhatsApp (Meta)</strong>, doar dacă alegi tu să ne scrii acolo.</li>
   </ul>
-  <p>Nu vindem și nu cedăm datele către terți în scopuri de marketing.</p>
 
   <h2>Cât timp păstrăm datele</h2>
-  <p>Mesajele din formularul de contact, cel mult 12 luni. Datele cursanților și istoricul lecțiilor, pe durata colaborării și încă 3 ani după ultima lecție, sau cât cere legea pentru documentele financiare.</p>
+  <ul>
+    <li>Mesajele din formularul de contact: cel mult 12 luni.</li>
+    <li>Programările neonorate sau anulate, fără nicio lecție efectuată: 12 luni.</li>
+    <li>Datele cursanților și istoricul lecțiilor: pe durata colaborării și încă 3 ani după ultima lecție, pentru eventuale reclamații.</li>
+    <li>Documentele financiare (facturi, chitanțe): termenul cerut de legislația fiscală, în prezent 5 ani.</li>
+  </ul>
+
+  <h2>Minori</h2>
+  <p>Lecțiile pentru copii și adolescenți se programează de către părinte sau tutore, care furnizează datele și își dă acordul. Nu colectăm cu bună știință date de la persoane sub 16 ani fără acordul părintelui. Dacă afli că un minor ne-a trimis date fără acordul tău, scrie-ne și le ștergem.</p>
+
+  <h2>Securitate</h2>
+  <p>Datele stau în baza de date doar pe serverele noastre, la care browserul vizitatorilor nu are acces direct. Accesul administratorului este protejat cu parolă și, opțional, cu verificare în doi pași. Emailurile pleacă prin conexiuni criptate.</p>
 
   <h2>Drepturile tale</h2>
-  <p>Ai dreptul de acces, rectificare, ștergere, restricționare, portabilitate și opoziție, precum și dreptul de a depune o plângere la Autoritatea Națională de Supraveghere a Prelucrării Datelor cu Caracter Personal (ANSPDCP, <a href="https://www.dataprotection.ro" target="_blank" rel="noopener">dataprotection.ro</a>). Pentru orice cerere, scrie-ne la <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+  <p>Ai dreptul de acces, rectificare, ștergere, restricționare a prelucrării, portabilitate și opoziție, precum și dreptul de a depune o plângere la Autoritatea Națională de Supraveghere a Prelucrării Datelor cu Caracter Personal (<a href={firma.anspdcp} target="_blank" rel="noopener">dataprotection.ro</a>). Pentru orice cerere, scrie-ne la <a href={`mailto:${firma.email}`}>{firma.email}</a>. Răspundem în cel mult 30 de zile.</p>
+
+  <h2>Modificări</h2>
+  <p>Dacă schimbăm această politică, actualizăm data de sus. Pentru schimbări importante, cursanții activi primesc un email.</p>
 </Legal>

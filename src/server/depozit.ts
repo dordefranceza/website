@@ -16,7 +16,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import type { Blocaj, CerereProgramare, Client, Disponibilitate, Programare, Setari, StareProgramare } from '../lib/tipuri'
+import type { Articol, ArticolSchimbari, Blocaj, CerereProgramare, Client, Disponibilitate, Programare, Setari, StareProgramare } from '../lib/tipuri'
 import { SETARI_IMPLICITE } from '../lib/tipuri'
 import { inDezvoltare, supabaseLegat, variabila } from './mediu'
 
@@ -40,6 +40,13 @@ export interface Depozit {
   clienti(): Promise<Client[]>
   actualizeazaClient(id: string, s: SchimbariClient): Promise<Client>
   esteAdmin(email: string): Promise<boolean>
+  /** Toate articolele (cabinet) sau doar cele publicate (site). */
+  articole(doarPublicate: boolean): Promise<Articol[]>
+  articol(idSauSlug: string): Promise<Articol | null>
+  salveazaArticol(id: string | null, s: ArticolSchimbari): Promise<Articol>
+  stergeArticol(id: string): Promise<void>
+  /** Urca o imagine si intoarce adresa ei publica. */
+  urcaImagine(nume: string, tip: string, date: Uint8Array): Promise<string>
 }
 
 const id = () => crypto.randomUUID()
@@ -54,6 +61,7 @@ function normalizeazaEmail(e: string): string {
  * ========================================================================== */
 
 type Fisier = {
+  articole: Articol[]
   setari: Setari
   disponibilitate: Disponibilitate[]
   blocaje: Blocaj[]
@@ -62,6 +70,7 @@ type Fisier = {
 }
 
 const GOL: Fisier = {
+  articole: [],
   setari: { ...SETARI_IMPLICITE },
   // Un orar de pornire, ca sa se vada sloturi din prima: luni-vineri 17-21, sambata 10-14.
   disponibilitate: [
@@ -85,6 +94,7 @@ class DepozitLocal implements Depozit {
       if (!existsSync(this.cale)) return structuredClone(GOL)
       const d = JSON.parse(readFileSync(this.cale, 'utf8')) as Partial<Fisier>
       return {
+        articole: d.articole ?? [],
         setari: { ...SETARI_IMPLICITE, ...(d.setari ?? {}) },
         disponibilitate: d.disponibilitate ?? GOL.disponibilitate,
         blocaje: d.blocaje ?? [],
@@ -196,6 +206,39 @@ class DepozitLocal implements Depozit {
     return c
   }
   async esteAdmin() { return true }
+  async articole(doarPublicate: boolean) {
+    return this.citeste().articole
+      .filter((a) => !doarPublicate || a.publicat)
+      .sort((a, b) => (b.publicat_la ?? b.creat).localeCompare(a.publicat_la ?? a.creat))
+  }
+  async articol(idSauSlug: string) {
+    return this.citeste().articole.find((a) => a.id === idSauSlug || a.slug === idSauSlug) ?? null
+  }
+  async salveazaArticol(idA: string | null, s: ArticolSchimbari) {
+    const f = this.citeste()
+    if (s.slug && f.articole.some((a) => a.slug === s.slug && a.id !== idA)) throw new Error('Există deja un articol cu această adresă')
+    let a = idA ? f.articole.find((x) => x.id === idA) : undefined
+    if (idA && !a) throw new Error('Articolul nu există')
+    if (!a) {
+      a = { id: id(), slug: '', titlu: '', rezumat: '', continut: '', imagine: '', imagine_alt: '', meta_titlu: '', meta_descriere: '', publicat: false, publicat_la: null, creat: acum(), actualizat: acum() }
+      f.articole.push(a)
+    }
+    Object.assign(a, s, { actualizat: acum() })
+    if (a.publicat && !a.publicat_la) a.publicat_la = acum()
+    this.scrie(f)
+    return a
+  }
+  async stergeArticol(idA: string) {
+    const f = this.citeste()
+    f.articole = f.articole.filter((a) => a.id !== idA)
+    this.scrie(f)
+  }
+  async urcaImagine(nume: string, _tip: string, date: Uint8Array) {
+    const dosar = join(process.cwd(), 'public', 'blog-imagini')
+    mkdirSync(dosar, { recursive: true })
+    writeFileSync(join(dosar, nume), date)
+    return `/blog-imagini/${nume}`
+  }
 }
 
 /* =============================================================================
@@ -213,6 +256,9 @@ function normClient(c: Client): Client {
 }
 function normProgramare(p: Programare): Programare {
   return { ...p, incepe: iso(p.incepe), creat: iso(p.creat), suma: Number(p.suma) || 0, client: p.client ? normClient(p.client) : undefined }
+}
+function normArticol(a: Articol): Articol {
+  return { ...a, creat: iso(a.creat), actualizat: iso(a.actualizat), publicat_la: a.publicat_la ? iso(a.publicat_la) : null }
 }
 function normBlocaj(b: Blocaj): Blocaj {
   return { ...b, de_la: iso(b.de_la), pana_la: iso(b.pana_la) }
@@ -354,6 +400,46 @@ class DepozitSupabase implements Depozit {
     const { data, error } = await this.sb.from('admin_email').select('email').eq('email', normalizeazaEmail(email)).maybeSingle()
     this.arunca(error, 'admin_email')
     return Boolean(data)
+  }
+  async articole(doarPublicate: boolean) {
+    let q = this.sb.from('articole').select('*').order('publicat_la', { ascending: false, nullsFirst: true }).order('creat', { ascending: false })
+    if (doarPublicate) q = q.eq('publicat', true)
+    const { data, error } = await q
+    this.arunca(error, 'articole')
+    return ((data ?? []) as Articol[]).map(normArticol)
+  }
+  async articol(idSauSlug: string) {
+    const camp = /^[0-9a-f-]{36}$/i.test(idSauSlug) ? 'id' : 'slug'
+    const { data, error } = await this.sb.from('articole').select('*').eq(camp, idSauSlug).maybeSingle()
+    this.arunca(error, 'articol')
+    return data ? normArticol(data as Articol) : null
+  }
+  async salveazaArticol(idA: string | null, s: ArticolSchimbari) {
+    const acumIso = acum()
+    if (idA) {
+      const existent = await this.articol(idA)
+      if (!existent) throw new Error('Articolul nu există')
+      const publicat_la = s.publicat && !existent.publicat_la ? acumIso : existent.publicat_la
+      const { data, error } = await this.sb.from('articole').update({ ...s, publicat_la, actualizat: acumIso }).eq('id', idA).select().single()
+      this.arunca(error, 'salvare articol')
+      return normArticol(data as Articol)
+    }
+    const { data, error } = await this.sb
+      .from('articole')
+      .insert({ slug: '', titlu: '', rezumat: '', continut: '', imagine: '', imagine_alt: '', meta_titlu: '', meta_descriere: '', publicat: false, ...s, publicat_la: s.publicat ? acumIso : null })
+      .select()
+      .single()
+    this.arunca(error, 'creare articol')
+    return normArticol(data as Articol)
+  }
+  async stergeArticol(idA: string) {
+    const { error } = await this.sb.from('articole').delete().eq('id', idA)
+    this.arunca(error, 'stergere articol')
+  }
+  async urcaImagine(nume: string, tip: string, date: Uint8Array) {
+    const { error } = await this.sb.storage.from('imagini').upload(`blog/${nume}`, date, { contentType: tip, upsert: false, cacheControl: '31536000' })
+    this.arunca(error, 'urcare imagine')
+    return `${variabila('PUBLIC_SUPABASE_URL').replace(/\/+$/, '')}/storage/v1/object/public/imagini/blog/${nume}`
   }
 }
 

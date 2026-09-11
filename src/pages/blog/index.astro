@@ -1,0 +1,58 @@
+---
+/**
+ * Lista articolelor. Pagina se genereaza la cerere (nu la build), ca un
+ * articol publicat din cabinet sa apara fara redeploy. Raspunsul se
+ * pastreaza pe CDN-ul Vercel 5 minute.
+ */
+import Base from '../../layouts/Base.astro'
+import { dataRo } from '../../lib/timp'
+import { depozit } from '../../server/depozit'
+import { minuteCitit } from '../../server/markdown'
+
+export const prerender = false
+
+let articole: Awaited<ReturnType<ReturnType<typeof depozit>['articole']>> = []
+try {
+  articole = await depozit().articole(true)
+} catch (e) {
+  console.error('blog', e)
+}
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=86400')
+---
+
+<Base title="Blog · DorDeFranceza" description="Sfaturi de la Dorina pentru cei care învață franceza: cum treci de interviu, cum te pregătești de BAC și DELF, cum vorbești fără emoții.">
+  <main id="continut" class="bg-crem pt-32 pb-20 sm:pt-40 sm:pb-28">
+    <div class="container-site">
+      <div class="max-w-2xl">
+        <p class="eticheta">Blog</p>
+        <h1 class="mt-3 text-4xl sm:text-5xl">Ce scrie Dorina</h1>
+        <p class="mt-5 text-lg text-gri">Sfaturi scurte, din lecțiile de zi cu zi, pentru cei care învață franceza ca adulți.</p>
+      </div>
+
+      {articole.length === 0 ? (
+        <p class="mt-12 rounded-[1.5rem] bg-alb px-6 py-10 text-center text-gri">Primele articole sunt pe drum. Până atunci, scrie-i Dorinei pe WhatsApp.</p>
+      ) : (
+        <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {articole.map((a) => (
+            <li>
+              <a href={`/blog/${a.slug}/`} class="group flex h-full flex-col overflow-hidden rounded-[1.5rem] bg-alb transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-30px_rgba(8,3,49,0.35)]">
+                {a.imagine ? (
+                  <img src={a.imagine} alt={a.imagine_alt} class="aspect-[16/10] w-full object-cover" width="640" height="400" loading="lazy" decoding="async" />
+                ) : (
+                  <div class="flex aspect-[16/10] items-center justify-center bg-albastru-5" aria-hidden="true">
+                    <span class="font-display text-5xl text-albastru">Fr</span>
+                  </div>
+                )}
+                <div class="flex flex-1 flex-col p-6">
+                  <p class="text-xs font-medium text-gri">{a.publicat_la ? dataRo(a.publicat_la) : ''} · {minuteCitit(a.continut)} min de citit</p>
+                  <h2 class="mt-2 font-sans text-xl font-medium leading-snug group-hover:text-albastru-text">{a.titlu}</h2>
+                  <p class="mt-2 text-[0.95rem] leading-relaxed text-gri">{a.rezumat}</p>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </main>
+</Base>

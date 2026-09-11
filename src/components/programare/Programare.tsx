@@ -220,7 +220,7 @@ export default function Programare({ whatsapp }: Props) {
             const activ = pas === n
             const gata = pas > n
             return (
-              <li key={nume} className={cn('flex items-center gap-2', activ ? 'text-cerneala' : gata ? 'text-verde' : 'text-gri/60')}>
+              <li key={nume} className={cn('flex items-center gap-2', activ ? 'text-cerneala' : gata ? 'text-verde' : 'text-gri')}>
                 <span className={cn('flex size-6 items-center justify-center rounded-full text-xs', activ ? 'bg-albastru text-alb' : gata ? 'bg-verde-5 text-verde' : 'bg-gri-deschis')}>
                   {gata ? '✓' : n}
                 </span>
@@ -265,7 +265,7 @@ export default function Programare({ whatsapp }: Props) {
           <div className="mt-8">
             <div className="flex items-center justify-between gap-4">
               <h2 className="font-sans text-2xl font-medium">Alege ziua</h2>
-              <button type="button" onClick={() => setPas(1)} className="inline-flex items-center gap-1 text-sm font-medium text-albastru">
+              <button type="button" onClick={() => setPas(1)} className="inline-flex items-center gap-1 text-sm font-medium text-albastru-text">
                 <IconBack className="size-4" /> Schimbă tipul
               </button>
             </div>
@@ -351,7 +351,7 @@ export default function Programare({ whatsapp }: Props) {
           <form onSubmit={trimiteFormular} className="mt-8">
             <div className="flex items-center justify-between gap-4">
               <h2 className="font-sans text-2xl font-medium">Datele tale</h2>
-              <button type="button" onClick={() => setPas(2)} className="inline-flex items-center gap-1 text-sm font-medium text-albastru">
+              <button type="button" onClick={() => setPas(2)} className="inline-flex items-center gap-1 text-sm font-medium text-albastru-text">
                 <IconBack className="size-4" /> Schimbă ora
               </button>
             </div>
@@ -362,8 +362,8 @@ export default function Programare({ whatsapp }: Props) {
                 <Input id="p-nume" name="nume" required autoComplete="name" className="h-12 rounded-xl bg-crem" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="p-telefon">Telefon (WhatsApp)</Label>
-                <Input id="p-telefon" name="telefon" type="tel" required autoComplete="tel" inputMode="tel" placeholder="07xx xxx xxx" className="h-12 rounded-xl bg-crem" />
+                <Label htmlFor="p-telefon">Telefon, opțional (pentru WhatsApp)</Label>
+                <Input id="p-telefon" name="telefon" type="tel" autoComplete="tel" inputMode="tel" placeholder="07xx xxx xxx" className="h-12 rounded-xl bg-crem" />
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="p-email">Email, pentru confirmare și linkul de Zoom</Label>
@@ -398,8 +398,8 @@ export default function Programare({ whatsapp }: Props) {
             <label className="mt-5 flex items-start gap-3 text-sm text-gri">
               <Checkbox checked={gdpr} onCheckedChange={(v) => setGdpr(v === true)} className="mt-0.5" />
               <span>
-                Sunt de acord ca datele mele să fie folosite pentru programare și pentru contact, conform{' '}
-                <a href="/confidentialitate/" className="text-albastru underline">politicii de confidențialitate</a>.
+                Am citit <a href="/termeni/" className="text-albastru-text underline">termenii și condițiile</a> și{' '}
+                <a href="/confidentialitate/" className="text-albastru-text underline">politica de confidențialitate</a>. Vreau ca lecția să aibă loc la data aleasă, chiar dacă e înainte de expirarea celor 14 zile de retragere, și înțeleg că pentru lecțiile efectuate nu mai pot cere banii înapoi.
               </span>
             </label>
 

@@ -16,7 +16,7 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
     <div class="dezvaluie-rand mt-12 grid gap-5 lg:grid-cols-3">
       {planuri.map((p) => (
         <div class:list={['relative flex flex-col rounded-[1.5rem] p-8', p.evidentiat ? 'bg-navy text-alb lg:-translate-y-3' : 'bg-alb']}>
-          {p.evidentiat && <span class="absolute right-6 top-6 rounded-full bg-roz px-3 py-1 text-xs font-bold uppercase tracking-wider text-cerneala">Cel mai ales</span>}
+          {p.evidentiat && <span class="absolute right-6 top-6 rounded-full bg-roz px-3 py-1 text-xs font-bold uppercase tracking-wider text-cerneala">Recomandat</span>}
           <h3 class="font-sans text-lg font-medium">{p.nume}</h3>
           <p class="mt-4 font-display text-5xl">{p.pret}</p>
           <p class:list={['mt-1 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>{p.detaliu}</p>

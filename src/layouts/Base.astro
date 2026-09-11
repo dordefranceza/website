@@ -3,6 +3,7 @@ import '../styles/global.css'
 import { site } from '../config/site'
 import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
+import { firmaIncompleta } from '../config/firma'
 
 interface Props {
   title: string
@@ -51,6 +52,11 @@ const ogImage = new URL(image, Astro.site).href
     {!faraHeader && <Header />}
     <slot />
     {!faraFooter && <Footer />}
+    {import.meta.env.DEV && firmaIncompleta && (
+      <p class="fixed bottom-3 left-3 z-[90] max-w-xs rounded-2xl bg-portocaliu px-4 py-3 text-xs font-medium text-alb shadow-lg">
+        Datele firmei din src/config/firma.ts sunt necompletate. Se vede doar în dezvoltare.
+      </p>
+    )}
 
     <script>
       // Intrarea lina a sectiunilor la derulare, cu plasa de siguranta pentru
@@ -86,17 +92,21 @@ const ogImage = new URL(image, Astro.site).href
       }
       void elemente
 
-      // Sursa vizitei (utm_source sau ?ref=), tinuta minte pentru formular.
+      // Sursa vizitei (?ref=tiktok sau utm_source) se poarta pe linkurile
+      // interne, ca sa ajunga la formularul de programare. Nimic nu se
+      // salveaza in browser: fara cookie-uri, fara localStorage, fara banner.
       try {
         const p = new URLSearchParams(location.search)
-        const sursa = (p.get('utm_source') || p.get('ref') || '').trim().toLowerCase().slice(0, 40)
-        if (sursa) localStorage.setItem('ddf-sursa', sursa)
-        else if (!localStorage.getItem('ddf-sursa') && document.referrer) {
-          const gazda = new URL(document.referrer).hostname.replace(/^www\./, '')
-          if (gazda && gazda !== location.hostname) localStorage.setItem('ddf-sursa', gazda)
+        const sursa = (p.get('ref') || p.get('utm_source') || '').trim().toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 40)
+        if (sursa) {
+          document.querySelectorAll<HTMLAnchorElement>('a[href^="/"]').forEach((a) => {
+            const u = new URL(a.getAttribute('href') ?? '/', location.origin)
+            if (!u.searchParams.has('ref')) u.searchParams.set('ref', sursa)
+            a.setAttribute('href', `${u.pathname}${u.search}${u.hash}`)
+          })
         }
       } catch {
-        /* fara localStorage, fara sursa */
+        /* fara sursa */
       }
     </script>
   </body>

@@ -41,3 +41,14 @@ export async function descarcaExport(): Promise<void> {
   a.remove()
   URL.revokeObjectURL(url)
 }
+
+/** Urca un fisier (imagine) prin multipart si intoarce adresa publica. */
+export async function urcaImagine(fisier: File): Promise<string> {
+  const t = await token()
+  const form = new FormData()
+  form.append('fisier', fisier)
+  const r = await fetch('/api/cabinet/imagine', { method: 'POST', headers: { Authorization: `Bearer ${t}` }, body: form })
+  const d = (await r.json().catch(() => ({}))) as { ok?: boolean; url?: string; eroare?: string }
+  if (!r.ok || !d.ok || !d.url) throw new EroareApi(r.status, d.eroare || 'Imaginea nu a putut fi urcată')
+  return d.url
+}

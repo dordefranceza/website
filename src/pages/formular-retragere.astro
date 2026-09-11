@@ -1,0 +1,19 @@
+---
+import Legal from '../layouts/Legal.astro'
+import { firma } from '../config/firma'
+---
+<Legal title="Formular de retragere" description="Modelul de formular pentru exercitarea dreptului de retragere în 14 zile, conform OUG 34/2014." actualizat="12 septembrie 2026">
+  <p>Completează textul de mai jos și trimite-l pe email la <a href={`mailto:${firma.email}`}>{firma.email}</a>. Nu ești obligat să folosești acest model, e suficient un mesaj clar din care reiese că te retragi din contract.</p>
+
+  <div class="rounded-[1.5rem] bg-crem p-6 sm:p-8">
+    <p>Către: {firma.denumire}, {firma.sediu}, {firma.email}</p>
+    <p class="mt-4">Vă informez prin prezenta cu privire la retragerea mea din contractul referitor la prestarea următorului serviciu: lecții de franceză online, programate pentru data de ______________.</p>
+    <p class="mt-4">Comandat la data de: ______________</p>
+    <p>Numele consumatorului: ______________</p>
+    <p>Adresa de email folosită la programare: ______________</p>
+    <p>Contul pentru rambursare (dacă s-a plătit în avans): ______________</p>
+    <p class="mt-4">Data: ______________</p>
+  </div>
+
+  <p>Banii plătiți în avans pentru lecții neefectuate se returnează în cel mult 14 zile de la primirea cererii. Detalii în <a href="/anulare-si-rambursare/">politica de anulare și rambursare</a>.</p>
+</Legal>

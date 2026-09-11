@@ -25,7 +25,7 @@ export const POST: APIRoute = async ({ request }) => {
   if (!emailValid(d.email)) return eroare(400, 'Adresa de email nu pare corectă')
   if (d.telefon && !telefonValid(d.telefon)) return eroare(400, 'Numărul de telefon nu pare corect')
   if (d.mesaj.length < 5) return eroare(400, 'Scrie un mesaj')
-  if (!daNu(date.gdpr)) return eroare(400, 'Trebuie să fii de acord cu prelucrarea datelor')
+  if (!daNu(date.gdpr)) return eroare(400, 'Confirmă că ai citit politica de confidențialitate')
   if (preaMulte(ipDin(request))) return raspunde(429, { ok: false, eroare: 'Prea multe încercări. Reîncearcă peste câteva minute.' }, { 'Retry-After': '600' })
 
   try {

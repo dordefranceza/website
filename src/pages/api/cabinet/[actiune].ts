@@ -16,15 +16,20 @@
  *  GET    blocaje          / POST { de_la, pana_la, motiv } / DELETE ?id=
  *  GET    setari           / PATCH { ...campuri }
  *  GET    export           CSV cu programarile (se deschide in Excel)
+ *  GET    articole         toate articolele, publicate sau nu
+ *  POST   articol          { id?, titlu, slug, rezumat, continut, imagine, ... } creeaza sau salveaza
+ *  DELETE articol          ?id=
+ *  POST   imagine          multipart, campul "fisier"; intoarce { url }
  * =============================================================================
  */
 import type { APIRoute } from 'astro'
-import type { Blocaj, Disponibilitate, Programare, Setari, StareProgramare } from '../../../lib/tipuri'
+import type { ArticolSchimbari, Blocaj, Disponibilitate, Programare, Setari, StareProgramare } from '../../../lib/tipuri'
 import { TIPURI } from '../../../lib/tipuri'
 import { cheieLuna, dataOraRo, localDin, minuteDin } from '../../../lib/timp'
 import { adminDin } from '../../../server/autentificare'
 import { depozit, modDepozit, type SchimbariClient, type SchimbariProgramare } from '../../../server/depozit'
 import { emailLinkZoom, trimite } from '../../../server/email'
+import { slugDin, textSimplu } from '../../../server/markdown'
 import { corpJson, eroare, origineOk, raspunde, text, textLung } from '../../../server/http'
 
 export const prerender = false
@@ -230,10 +235,57 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
       })
     }
 
+    if (actiune === 'articole' && metoda === 'GET') return raspunde(200, { ok: true, articole: await d.articole(false) })
+
+    if (actiune === 'articol' && metoda === 'POST') {
+      const b = (await corpJson(request)) ?? {}
+      const id = text(b.id, 60) || null
+      const s: ArticolSchimbari = {}
+      if (typeof b.titlu === 'string') s.titlu = text(b.titlu, 160)
+      if (typeof b.slug === 'string') s.slug = slugDin(b.slug) || (s.titlu ? slugDin(s.titlu) : '')
+      else if (!id && s.titlu) s.slug = slugDin(s.titlu)
+      if (typeof b.rezumat === 'string') s.rezumat = textLung(b.rezumat, 400)
+      if (typeof b.continut === 'string') s.continut = textLung(b.continut, 60_000)
+      if (typeof b.imagine === 'string') s.imagine = text(b.imagine, 400)
+      if (typeof b.imagine_alt === 'string') s.imagine_alt = text(b.imagine_alt, 200)
+      if (typeof b.meta_titlu === 'string') s.meta_titlu = text(b.meta_titlu, 70)
+      if (typeof b.meta_descriere === 'string') s.meta_descriere = text(b.meta_descriere, 170)
+      if (typeof b.publicat === 'boolean') s.publicat = b.publicat
+      if (s.publicat) {
+        const titlu = s.titlu ?? (id ? (await d.articol(id))?.titlu : '')
+        const slug = s.slug ?? (id ? (await d.articol(id))?.slug : '')
+        if (!titlu) return eroare(400, 'Articolul are nevoie de un titlu ca să fie publicat')
+        if (!slug) return eroare(400, 'Articolul are nevoie de o adresă (slug) ca să fie publicat')
+      }
+      if (s.continut !== undefined && !s.rezumat && !(id && (await d.articol(id))?.rezumat)) s.rezumat = textSimplu(s.continut, 200)
+      return raspunde(200, { ok: true, articol: await d.salveazaArticol(id, s) })
+    }
+
+    if (actiune === 'articol' && metoda === 'DELETE') {
+      const id = url.searchParams.get('id') ?? ''
+      if (!id) return eroare(400, 'Lipsește id')
+      await d.stergeArticol(id)
+      return raspunde(200, { ok: true })
+    }
+
+    if (actiune === 'imagine' && metoda === 'POST') {
+      const form = await request.formData().catch(() => null)
+      const fisier = form?.get('fisier')
+      if (!(fisier instanceof File)) return eroare(400, 'Lipsește fișierul')
+      const TIPURI_OK: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/avif': 'avif', 'image/gif': 'gif' }
+      const ext = TIPURI_OK[fisier.type]
+      if (!ext) return eroare(400, 'Doar imagini JPG, PNG, WebP, AVIF sau GIF')
+      if (fisier.size > 6 * 1024 * 1024) return eroare(400, 'Imaginea are peste 6 MB. Micșoreaz-o înainte.')
+      const nume = `${localDin(new Date()).data}-${crypto.randomUUID().slice(0, 8)}.${ext}`
+      const urlImagine = await d.urcaImagine(nume, fisier.type, new Uint8Array(await fisier.arrayBuffer()))
+      return raspunde(200, { ok: true, url: urlImagine })
+    }
+
     return eroare(404, 'Acțiune necunoscută')
   } catch (e) {
     console.error('cabinet', actiune, e)
-    return eroare(500, e instanceof Error ? e.message : 'Eroare pe server')
+    const mesaj = e instanceof Error ? e.message : 'Eroare pe server'
+    return eroare(/^Există deja/.test(mesaj) ? 409 : 500, mesaj)
   }
 }
 

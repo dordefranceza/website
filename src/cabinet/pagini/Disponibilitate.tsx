@@ -106,7 +106,7 @@ export default function Disponibilitate() {
                         </button>
                       </div>
                     ))}
-                    <button type="button" onClick={() => setReguli((x) => [...(x ?? []), { zi, de_la: '17:00', pana_la: '21:00' }])} className="inline-flex items-center gap-1 text-sm font-medium text-albastru">
+                    <button type="button" onClick={() => setReguli((x) => [...(x ?? []), { zi, de_la: '17:00', pana_la: '21:00' }])} className="inline-flex items-center gap-1 text-sm font-medium text-albastru-text">
                       <IconPlus className="size-4" /> Adaugă interval
                     </button>
                   </div>

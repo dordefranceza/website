@@ -1,33 +1,48 @@
 ---
 import Legal from '../layouts/Legal.astro'
 import { site } from '../config/site'
+import { firma } from '../config/firma'
 ---
-<Legal title="Termeni și condiții" description="Regulile lecțiilor DorDeFranceza: programare, plată, reprogramare și anulare." actualizat="12 septembrie 2026">
-  <p>Acești termeni descriu cum funcționează lecțiile de franceză oferite de Dorina sub numele {site.nume}. Făcând o programare pe site, ești de acord cu ele.</p>
+<Legal title="Termeni și condiții" description="Regulile lecțiilor de franceză DorDeFranceza: cine prestează, ce primești, cât costă, cum plătești, cum anulezi și ce drepturi ai ca și consumator." actualizat="12 septembrie 2026">
+  <p>Acești termeni descriu contractul dintre tine și {firma.denumire} pentru lecțiile de franceză online oferite sub numele {site.nume}. Făcând o programare pe site sau prin WhatsApp, ești de acord cu ei. Dacă ceva nu e clar, întreabă înainte: <a href={`mailto:${firma.email}`}>{firma.email}</a>.</p>
 
-  <h2>Serviciul</h2>
-  <p>Lecții de franceză online, pe Zoom, de {site.durataLectie} de minute, individuale sau în grup mic. Discuția de cunoaștere de 20 de minute este gratuită și nu te obligă la nimic.</p>
+  <h2>1. Cine prestează serviciul</h2>
+  <p><strong>{firma.denumire}</strong>, CUI {firma.cui}, înregistrată sub nr. {firma.registru}, cu sediul în {firma.sediu}. Email: <a href={`mailto:${firma.email}`}>{firma.email}</a>. Telefon: {firma.telefon}. Lecțiile sunt ținute de Dorina.</p>
 
-  <h2>Programare și confirmare</h2>
-  <p>Programarea se face din calendarul de pe site sau prin WhatsApp. Primești confirmarea pe email, cu ziua, ora (ora României) și linkul de Zoom. Ora rămâne rezervată pentru tine.</p>
+  <h2>2. Serviciul</h2>
+  <p>Lecții de franceză online, pe Zoom, de {site.durataLectie} de minute, individuale sau în grup mic de {site.marimeGrup}. Discuția de cunoaștere de 20 de minute este gratuită și nu te obligă la nimic. Materialele de lucru sunt incluse și se trimit pe email sau pe WhatsApp.</p>
+  <p>Nu promitem un nivel sau un rezultat la examen într-un anumit termen: progresul depinde de nivelul de la care pornești, de obiectiv și de cât exersezi. La discuția de cunoaștere primești o estimare sinceră pentru situația ta.</p>
 
-  <h2>Prețuri și plată</h2>
-  <p>Prețurile afișate pe site sunt în euro, pe lecție: {site.preturi.individual} € lecția individuală și {site.preturi.grup} € lecția în grup mic. Plata se face prin transfer bancar sau Revolut, după fiecare lecție sau la finalul lunii, conform înțelegerii. [DE COMPLETAT: dacă se emit facturi și de către cine]</p>
+  <h2>3. Programarea și încheierea contractului</h2>
+  <p>Programarea se face din calendarul de pe site sau prin WhatsApp. Contractul se încheie când primești emailul de confirmare cu ziua, ora (ora României) și linkul de Zoom. Dacă ora aleasă devine indisponibilă înainte de confirmare, te anunțăm și alegem alta.</p>
 
-  <h2>Reprogramare și anulare</h2>
+  <h2>4. Prețuri și plată</h2>
+  <p>Prețurile sunt afișate pe pagina de <a href="/preturi/">prețuri</a>: {site.preturi.individual} € lecția individuală și {site.preturi.grup} € lecția în grup, pentru {site.durataLectie} de minute. {firma.platitorTva ? 'Prețurile includ TVA.' : 'Prestatorul nu este plătitor de TVA, prețurile sunt finale.'} Plata se face în lei, la cursul BNR din ziua plății, sau în euro, prin transfer bancar sau Revolut, după fiecare lecție sau la finalul lunii, conform înțelegerii. Primești document fiscal pentru fiecare plată.</p>
+
+  <h2>5. Reprogramare, anulare, rambursare</h2>
+  <p>Regulile complete sunt în <a href="/anulare-si-rambursare/">politica de anulare și rambursare</a>. Pe scurt: reprogramare gratuită cu cel puțin 24 de ore înainte; sub 24 de ore lecția se consideră efectuată și se plătește; dacă anulează Dorina, primești lecția înapoi sau banii.</p>
+
+  <h2>6. Dreptul de retragere</h2>
+  <p>Conform OUG 34/2014, ai dreptul să te retragi din contract în 14 zile de la programare, fără motiv, pentru sumele plătite în avans pentru lecții neefectuate. La programare confirmi că vrei ca lecția să înceapă înainte de expirarea celor 14 zile și înțelegi că, pentru lecțiile deja efectuate, pierzi dreptul de retragere pentru acestea. Cum te retragi și <a href="/formular-retragere/">formularul model</a>, pe pagina dedicată.</p>
+
+  <h2>7. Obligațiile tale</h2>
   <ul>
-    <li>Poți reprograma sau anula gratuit cu cel puțin 24 de ore înainte de lecție.</li>
-    <li>Sub 24 de ore, lecția se consideră efectuată și se plătește, pentru că timpul a fost rezervat pentru tine.</li>
-    <li>Dacă Dorina trebuie să anuleze, primești o lecție în loc, la o dată aleasă împreună, fără niciun cost.</li>
-    <li>Dacă întârzii, lecția se termină la ora stabilită. Dacă nu apari în 15 minute fără să anunți, lecția se consideră efectuată.</li>
+    <li>Să dai date de contact corecte și să intri la lecție la ora stabilită, de pe un dispozitiv cu cameră și microfon funcționale.</li>
+    <li>Să nu înregistrezi lecțiile și să nu distribui materialele primite fără acordul Dorinei. Materialele sunt pentru uzul tău personal.</li>
+    <li>Să te porți respectuos. Dorina poate încheia colaborarea, cu rambursarea lecțiilor plătite și neefectuate, în caz de comportament abuziv.</li>
   </ul>
 
-  <h2>Grupuri</h2>
-  <p>Grupurile au 3 sau 4 persoane de același nivel și un orar fix. Lecțiile de grup nu se reprogramează individual; dacă lipsești, primești materialele și rezumatul lecției.</p>
+  <h2>8. Răspundere</h2>
+  <p>Răspundem pentru prestarea lecțiilor conform acestor termeni. Nu răspundem pentru întreruperi cauzate de conexiunea ta la internet, de Zoom sau de alte servicii terțe; în asemenea cazuri lecția se reprogramează. Răspunderea noastră este limitată la contravaloarea lecțiilor plătite și neefectuate.</p>
 
-  <h2>Materiale</h2>
-  <p>Materialele primite sunt pentru uzul tău personal. Nu le distribui și nu le publica fără acordul Dorinei.</p>
+  <h2>9. Date personale</h2>
+  <p>Cum prelucrăm datele tale este descris în <a href="/confidentialitate/">politica de confidențialitate</a>. Site-ul nu folosește cookie-uri de urmărire: <a href="/cookies/">politica de cookie-uri</a>.</p>
 
-  <h2>Contact</h2>
-  <p>Pentru orice întrebare legată de acești termeni: <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+  <h2>10. Legea aplicabilă și litigii</h2>
+  <p>Acești termeni sunt guvernați de legea română. Orice neînțelegere o rezolvăm întâi direct. Dacă nu reușim, te poți adresa <a href={firma.anpc} target="_blank" rel="noopener">Autorității Naționale pentru Protecția Consumatorilor</a>, entităților de <a href={firma.anpcSal} target="_blank" rel="noopener">soluționare alternativă a litigiilor (SAL)</a> sau platformei europene <a href={firma.sol} target="_blank" rel="noopener">SOL</a>, ori instanțelor competente din România.</p>
+
+  <h2>11. Modificări</h2>
+  <p>Putem actualiza termenii. Versiunea în vigoare este cea de pe site, cu data de mai sus. Pentru programările deja confirmate se aplică termenii de la data confirmării.</p>
+
+  <p>Fonturile, iconițele și tehnologiile folosite pe site sunt listate la <a href="/credite/">credite</a>.</p>
 </Legal>

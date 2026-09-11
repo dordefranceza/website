@@ -73,7 +73,7 @@ export default function Autentificare({ cereCod, email, laIntrare }: Props) {
         </form>
 
         {legat && mod !== 'cod' && (
-          <button type="button" onClick={() => setMod(mod === 'intrare' ? 'recuperare' : 'intrare')} className="mt-5 text-sm font-medium text-albastru">
+          <button type="button" onClick={() => setMod(mod === 'intrare' ? 'recuperare' : 'intrare')} className="mt-5 text-sm font-medium text-albastru-text">
             {mod === 'intrare' ? 'Am uitat parola' : 'Înapoi la intrare'}
           </button>
         )}
