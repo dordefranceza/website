@@ -22,6 +22,8 @@ export function markdownLaHtml(md: string): string {
       },
       img: (tag, attribs) => ({ tagName: tag, attribs: { ...attribs, loading: 'lazy', decoding: 'async' } }),
     },
+    // O imagine fara adresa reala (http(s) sau un fisier de pe site) nu are ce cauta in articol.
+    exclusiveFilter: (cadru) => cadru.tag === 'img' && !/^(https?:\/\/|\/)/.test(cadru.attribs.src ?? ''),
   })
 }
 
