@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro'
 import Despre from '../components/acasa/Despre.astro'
 import Metoda from '../components/acasa/Metoda.astro'
 import Apel from '../components/acasa/Apel.astro'
+import { Icon } from 'astro-icon/components'
+import { nuEstePentru } from '../config/continut'
 ---
 
 <Base title="Despre Dorina · DorDeFranceza" description="Cine e Dorina, cum predă franceza online și de ce cursanții ei ajung să vorbească, nu doar să înțeleagă.">
@@ -28,6 +30,27 @@ import Apel from '../components/acasa/Apel.astro'
         </ol>
       </div>
     </section>
+    <section class="bg-alb py-20 sm:py-28">
+      <div class="container-site max-w-3xl">
+        <p class="eticheta">Ca să nu pierdem timpul niciunul</p>
+        <h2 class="mt-3 text-4xl sm:text-5xl">Când nu sunt profesoara potrivită</h2>
+        <p class="mt-5 text-lg text-gri">Prefer să spun asta de la început decât după trei lecții.</p>
+        <ul class="mt-8 space-y-3">
+          {
+            nuEstePentru.map((r) => (
+              <li class="flex gap-4 rounded-[1.25rem] bg-crem px-6 py-5">
+                <Icon name="solar:minus-circle-bold" class="mt-0.5 size-5 shrink-0 text-gri" />
+                <span class="leading-relaxed text-cerneala/85">{r}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-8 text-lg leading-relaxed text-gri">
+          Dacă niciuna nu te descrie, hai să vorbim 20 de minute și îți spun sincer dacă te pot ajuta.
+        </p>
+      </div>
+    </section>
+
     <div class="bg-crem"><Apel /></div>
   </main>
 </Base>

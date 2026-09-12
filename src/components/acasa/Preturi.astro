@@ -1,7 +1,18 @@
 ---
+/**
+ * Preturile. Trei decizii care tin de vanzare stau aici:
+ *  1. leul e pretul principal, euro e sub el (si asa cere HG 947/2000);
+ *  2. pachetele stau langa lectia individuala, ca ancora sa lucreze;
+ *  3. garantia e imediat sub preturi, acolo unde apare ezitarea.
+ */
 import { Icon } from 'astro-icon/components'
 import { planuri } from '../../config/continut'
-interface Props { titlu?: string; compact?: boolean }
+import { inLei, pachete, site } from '../../config/site'
+
+interface Props {
+  titlu?: string
+  compact?: boolean
+}
 const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.props
 ---
 
@@ -10,27 +21,77 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
     <div class="dezvaluie mx-auto max-w-2xl text-center">
       <p class="eticheta">Prețuri</p>
       <h2 id="titlu-preturi" class="mt-3 text-4xl sm:text-5xl">{titlu}</h2>
-      <p class="mt-5 text-lg text-gri">Plătești lecțiile pe care le faci. Reprogramezi gratuit cu 24 de ore înainte.</p>
+      <p class="mt-5 text-lg text-gri">Plătești lecțiile pe care le faci. Fără taxă de înscriere, fără abonament, fără manuale de cumpărat.</p>
     </div>
 
     <div class="dezvaluie-rand mt-12 grid gap-5 lg:grid-cols-3">
-      {planuri.map((p) => (
-        <div class:list={['relative flex flex-col rounded-[1.5rem] p-8', p.evidentiat ? 'bg-navy text-alb lg:-translate-y-3' : 'bg-alb']}>
-          {p.evidentiat && <span class="absolute right-6 top-6 rounded-full bg-roz px-3 py-1 text-xs font-bold uppercase tracking-wider text-cerneala">Recomandat</span>}
-          <h3 class="font-sans text-lg font-medium">{p.nume}</h3>
-          <p class="mt-4 font-display text-5xl">{p.pret}</p>
-          <p class:list={['mt-1 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>{p.detaliu}</p>
-          <ul class="mt-7 space-y-3 text-[0.98rem]">
-            {p.beneficii.map((b) => (
-              <li class="flex gap-3">
-                <Icon name="solar:check-circle-bold" class:list={['mt-0.5 size-5 shrink-0', p.evidentiat ? 'text-roz' : 'text-verde']} />
-                <span class:list={p.evidentiat ? 'text-alb/90' : 'text-cerneala/85'}>{b}</span>
-              </li>
-            ))}
-          </ul>
-          <a href={`/programare/?tip=${p.tip}`} class:list={['pastila mt-8 w-full', p.evidentiat ? 'pastila-alba' : 'pastila-albastra']}>{p.buton}</a>
-        </div>
-      ))}
+      {
+        planuri.map((p) => (
+          <div class:list={['relative flex flex-col rounded-[1.5rem] p-8', p.evidentiat ? 'bg-navy text-alb lg:-translate-y-3' : 'bg-alb']}>
+            {p.evidentiat && (
+              <span class="absolute right-6 top-6 rounded-full bg-roz px-3 py-1 text-xs font-bold uppercase tracking-wider text-cerneala">Recomandat</span>
+            )}
+            <h3 class="font-sans text-lg font-medium">{p.nume}</h3>
+            <p class="mt-4 font-display text-5xl">{p.pret}</p>
+            {p.pretSecundar && <p class:list={['mt-1 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>echivalentul a {p.pretSecundar}</p>}
+            <p class:list={['mt-1 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>{p.detaliu}</p>
+            <ul class="mt-7 space-y-3 text-[0.98rem]">
+              {p.beneficii.map((b) => (
+                <li class="flex gap-3">
+                  <Icon name="solar:check-circle-bold" class:list={['mt-0.5 size-5 shrink-0', p.evidentiat ? 'text-roz' : 'text-verde']} />
+                  <span class:list={p.evidentiat ? 'text-alb/90' : 'text-cerneala/85'}>{b}</span>
+                </li>
+              ))}
+            </ul>
+            <a href={`/programare/?tip=${p.tip}`} class:list={['pastila mt-8 w-full', p.evidentiat ? 'pastila-alba' : 'pastila-albastra']}>
+              {p.buton}
+            </a>
+          </div>
+        ))
+      }
     </div>
+
+    {/* Pachetele: aceeasi lectie individuala, mai ieftina daca iei mai multe. */}
+    <div class="dezvaluie mt-6 rounded-[1.5rem] bg-alb p-8 sm:p-10">
+      <div class="max-w-2xl">
+        <h3 class="font-sans text-xl font-medium">Dacă știi că mergi până la capăt</h3>
+        <p class="mt-2 text-gri">Lecțiile individuale luate în pachet costă mai puțin. Aceeași lecție, același profesor, doar plătită înainte.</p>
+      </div>
+      <div class="mt-7 grid gap-4 sm:grid-cols-3">
+        {
+          pachete.map((pachet) => (
+            <div class:list={['rounded-[1.25rem] p-6', pachet.reducere ? 'bg-crem' : 'bg-gri-deschis']}>
+              <div class="flex items-baseline justify-between gap-3">
+                <p class="font-medium">{pachet.nume}</p>
+                {pachet.reducere > 0 && <span class="rounded-full bg-verde-5 px-2.5 py-1 text-xs font-bold text-verde">-{pachet.reducere}%</span>}
+              </div>
+              <p class="mt-4 font-display text-3xl">{inLei(pachet.pretLectie)} lei</p>
+              <p class="text-sm text-gri">{pachet.lectii > 1 ? `pe lecție, adică ${inLei(pachet.pretLectie) * pachet.lectii} lei în total` : 'pe lecție'}</p>
+              <p class="mt-3 text-sm leading-relaxed text-gri">{pachet.nota}</p>
+            </div>
+          ))
+        }
+      </div>
+      <p class="mt-6 text-sm text-gri">
+        Lecțiile dintr-un pachet neefectuate se returnează integral, oricând, la cerere. Detalii în{' '}
+        <a href="/anulare-si-rambursare/" class="text-albastru-text underline">politica de anulare</a>.
+      </p>
+    </div>
+
+    {site.garantie.activa && (
+      <div class="dezvaluie mt-6 flex flex-col items-start gap-5 rounded-[1.5rem] bg-verde-5 p-8 sm:flex-row sm:items-center sm:p-10">
+        <span class="flex size-14 shrink-0 items-center justify-center rounded-full bg-alb">
+          <Icon name="solar:shield-check-bold" class="size-7 text-verde" />
+        </span>
+        <div>
+          <h3 class="font-sans text-xl font-medium">Nu rămâi cu banii dați degeaba</h3>
+          <p class="mt-2 leading-relaxed text-cerneala/85">{site.garantie.text}</p>
+        </div>
+      </div>
+    )}
+
+    <p class="dezvaluie mt-6 text-center text-sm text-gri">
+      Prețurile sunt în lei, la cursul BNR din ziua plății. Suma în euro e trecută ca reper, pentru cine plătește din străinătate. Plata se face prin transfer bancar sau Revolut.
+    </p>
   </div>
 </section>

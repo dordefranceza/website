@@ -2,6 +2,7 @@
 import Legal from '../layouts/Legal.astro'
 import { site } from '../config/site'
 import { firma } from '../config/firma'
+import { inLei } from '../config/site'
 ---
 <Legal title="Termeni și condiții" description="Regulile lecțiilor de franceză DorDeFranceza: cine prestează, ce primești, cât costă, cum plătești, cum anulezi și ce drepturi ai ca și consumator." actualizat="12 septembrie 2026">
   <p>Acești termeni descriu contractul dintre tine și {firma.denumire} pentru lecțiile de franceză online oferite sub numele {site.nume}. Făcând o programare pe site sau prin WhatsApp, ești de acord cu ei. Dacă ceva nu e clar, întreabă înainte: <a href={`mailto:${firma.email}`}>{firma.email}</a>.</p>
@@ -17,7 +18,16 @@ import { firma } from '../config/firma'
   <p>Programarea se face din calendarul de pe site sau prin WhatsApp. Contractul se încheie când primești emailul de confirmare cu ziua, ora (ora României) și linkul de Zoom. Dacă ora aleasă devine indisponibilă înainte de confirmare, te anunțăm și alegem alta.</p>
 
   <h2>4. Prețuri și plată</h2>
-  <p>Prețurile sunt afișate pe pagina de <a href="/preturi/">prețuri</a>: {site.preturi.individual} € lecția individuală și {site.preturi.grup} € lecția în grup, pentru {site.durataLectie} de minute. {firma.platitorTva ? 'Prețurile includ TVA.' : 'Prestatorul nu este plătitor de TVA, prețurile sunt finale.'} Plata se face în lei, la cursul BNR din ziua plății, sau în euro, prin transfer bancar sau Revolut, după fiecare lecție sau la finalul lunii, conform înțelegerii. Primești document fiscal pentru fiecare plată.</p>
+  <p>Prețurile sunt afișate pe pagina de <a href="/preturi/">prețuri</a>: {inLei(site.preturi.individual)} lei lecția individuală și {inLei(site.preturi.grup)} lei lecția în grup, pentru {site.durataLectie} de minute. Sumele în euro afișate alături ({site.preturi.individual} €, respectiv {site.preturi.grup} €) sunt un reper pentru cine plătește din străinătate; prețul datorat este cel în lei, la cursul BNR din ziua plății. {firma.platitorTva ? 'Prețurile includ TVA.' : 'Prestatorul nu este plătitor de TVA, prețurile sunt finale.'} Plata se face prin transfer bancar sau Revolut, după fiecare lecție sau la finalul lunii, conform înțelegerii. Primești document fiscal pentru fiecare plată.</p>
+
+  <p>Lecțiile individuale se pot plăti și în pachete de 5 sau 10, la prețul redus afișat pe pagina de prețuri. Un pachet nu este un abonament: nu se reînnoiește singur, iar lecțiile neefectuate din el se returnează integral la cerere, oricând, conform <a href="/anulare-si-rambursare/">politicii de anulare și rambursare</a>.</p>
+
+  {site.garantie.activa && (
+    <>
+      <h2>4 bis. Garanția pe prima lecție plătită</h2>
+      <p>{site.garantie.text} Garanția se aplică o singură dată, primei lecții plătite de un cursant nou, și se cere prin mesaj la <a href={`mailto:${firma.email}`}>{firma.email}</a> în cel mult 7 zile de la acea lecție. Banii se returnează în cel mult 14 zile, prin aceeași metodă de plată. Garanția se adaugă la drepturile tale legale, nu le înlocuiește.</p>
+    </>
+  )}
 
   <h2>5. Reprogramare, anulare, rambursare</h2>
   <p>Regulile complete sunt în <a href="/anulare-si-rambursare/">politica de anulare și rambursare</a>. Pe scurt: reprogramare gratuită cu cel puțin 24 de ore înainte; sub 24 de ore lecția se consideră efectuată și se plătește; dacă anulează Dorina, primești lecția înapoi sau banii.</p>

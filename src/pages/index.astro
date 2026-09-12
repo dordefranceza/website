@@ -3,13 +3,16 @@ import Base from '../layouts/Base.astro'
 import Antet from '../components/acasa/Antet.astro'
 import Nevoi from '../components/acasa/Nevoi.astro'
 import CumDecurge from '../components/acasa/CumDecurge.astro'
+import Lectie from '../components/acasa/Lectie.astro'
 import Metoda from '../components/acasa/Metoda.astro'
+import Dovezi from '../components/acasa/Dovezi.astro'
 import Preturi from '../components/acasa/Preturi.astro'
+import Comparatie from '../components/acasa/Comparatie.astro'
 import Despre from '../components/acasa/Despre.astro'
 import Intrebari from '../components/acasa/Intrebari.astro'
 import Apel from '../components/acasa/Apel.astro'
 import { intrebari } from '../config/continut'
-import { site } from '../config/site'
+import { inLei, site } from '../config/site'
 
 const schema = {
   '@context': 'https://schema.org',
@@ -25,8 +28,9 @@ const schema = {
       priceRange: '€€',
       areaServed: 'RO',
       makesOffer: [
-        { '@type': 'Offer', name: 'Lecție individuală de franceză online', price: site.preturi.individual, priceCurrency: 'EUR' },
-        { '@type': 'Offer', name: 'Lecție de franceză în grup mic online', price: site.preturi.grup, priceCurrency: 'EUR' },
+        { '@type': 'Offer', name: 'Lecție individuală de franceză online', price: inLei(site.preturi.individual), priceCurrency: 'RON' },
+        { '@type': 'Offer', name: 'Lecție de franceză în grup mic online', price: inLei(site.preturi.grup), priceCurrency: 'RON' },
+        { '@type': 'Offer', name: 'Discuție de cunoaștere', price: 0, priceCurrency: 'RON' },
       ],
     },
     {
@@ -40,11 +44,17 @@ const schema = {
 <Base title="DorDeFranceza · Lecții online de franceză pentru adulți, cu Dorina" description={site.descriere} schemaFaq>
   <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} />
   <main id="continut">
+    {/* Ordinea urmareste drumul unei decizii: ma recunosc, inteleg cum merge,
+        vad ce se intampla in lectie, de ce merge, cine a mai facut-o, cat
+        costa, de ce nu mai ieftin, cine e ea, ce ma mai retine, hai. */}
     <Antet />
     <Nevoi />
     <CumDecurge />
+    <Lectie />
     <Metoda />
+    <Dovezi />
     <Preturi />
+    <Comparatie />
     <Despre />
     <Intrebari />
     <Apel />

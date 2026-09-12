@@ -3,11 +3,11 @@ interface Props { class?: string; culoare?: string }
 const { class: clasa = '', culoare = 'currentColor' } = Astro.props
 ---
 <span class:list={['inline-flex items-center gap-2', clasa]}>
-  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true" class="size-7 shrink-0 sm:size-[30px]">
     <circle cx="15" cy="15" r="14" fill="#4865ff" />
     <circle cx="10.5" cy="12" r="4.2" fill="#f098d7" />
     <circle cx="19.5" cy="12" r="4.2" fill="#ff6d39" />
     <circle cx="15" cy="19.5" r="4.2" fill="#f8f3eb" />
   </svg>
-  <span class="font-display text-[1.45rem] leading-none tracking-tight" style={`color:${culoare}`}>Dor<span class="italic">de</span>Franceza</span>
+  <span class="whitespace-nowrap font-display text-[1.2rem] leading-none tracking-tight sm:text-[1.45rem]" style={`color:${culoare}`}>Dor<span class="italic">de</span>Franceza</span>
 </span>
