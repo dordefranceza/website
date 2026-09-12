@@ -29,11 +29,15 @@ interface Props {
 /*
  * Titlul spunea „Prețuri simple, fără abonament". Tehnic e adevărat, un pachet
  * nu e abonament: nu se reînnoiește singur și nu ia bani lunar. Dar Artiom s-a
- * împiedicat de el de două ori, si daca se impiedica el se impiedica si
- * cititorul: sub titlu urmeaza patru carduri, dintre care trei sunt pachete.
- * Cuvantul care trebuie explicat nu isi merita locul in titlu.
+ * împiedicat de el de două ori, iar daca se impiedica el se impiedica si
+ * cititorul: sub titlu stau patru carduri, din care trei sunt pachete. Un
+ * cuvant care are nevoie de explicatie nu isi merita locul intr-un titlu.
+ *
+ * Titlul de acum e ales de Artiom. Se tine: nu exista taxa de inscriere, nu se
+ * cumpara manuale, si nu apare nimic pe drum. Randul de dedesubt spune si
+ * pachetele, si ca lectiile nefacute se intorc.
  */
-const { titlu = 'Prețuri simple, scrise pe față', compact = false } = Astro.props
+const { titlu = 'Prețuri cinstite, fără alte taxe', compact = false } = Astro.props
 ---
 
 <section id="preturi" class:list={['bg-crem', compact ? 'py-16' : 'py-20 sm:py-28']} aria-labelledby="titlu-preturi">
