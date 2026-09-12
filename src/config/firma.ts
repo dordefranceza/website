@@ -10,8 +10,8 @@ export const firma = {
   cui: '[CUI]',
   registru: '[F../..../....]',
   sediu: '[Strada, nr., localitate, județ]',
-  email: 'contact@dordefranceza.ro',
-  telefon: '+40 700 000 000',
+  email: 'dordefranceza@gmail.com',
+  telefon: '+33 6 62 35 20 71',
   /** true dupa ce firma devine platitoare de TVA. Schimba textul de la preturi. */
   platitorTva: false,
   /** Autoritatea de supraveghere a datelor si organismele pentru consumatori. */

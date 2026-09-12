@@ -39,8 +39,8 @@ const an = new Date().getFullYear()
       <ul class="space-y-2.5 text-[0.98rem]">
         <li><a class="text-alb/80 hover:text-alb" href={`mailto:${site.email}`}>{site.email}</a></li>
         <li><a class="text-alb/80 hover:text-alb" href={`tel:${site.telefon.replace(/\s/g, '')}`}>{site.telefon}</a></li>
-        <li><a class="text-alb/80 hover:text-alb" href={site.instagram} target="_blank" rel="noopener">Instagram</a></li>
-        <li><a class="text-alb/80 hover:text-alb" href={site.tiktok} target="_blank" rel="noopener">TikTok</a></li>
+        {site.instagram && <li><a class="text-alb/80 hover:text-alb" href={site.instagram} target="_blank" rel="noopener">Instagram</a></li>}
+        {site.tiktok && <li><a class="text-alb/80 hover:text-alb" href={site.tiktok} target="_blank" rel="noopener">TikTok</a></li>}
       </ul>
       <p class="mb-3 mt-8 text-sm font-bold uppercase tracking-wider text-alb/60">Date de identificare</p>
       <p class="text-sm leading-relaxed text-alb/70">

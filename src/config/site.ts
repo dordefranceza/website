@@ -33,11 +33,19 @@ export const site = {
   locale: 'ro_RO',
   fusOrar: 'Europe/Bucharest',
 
-  /* DE CONFIRMAT: contactele reale */
-  email: 'contact@dordefranceza.ro',
-  telefon: '+40 700 000 000',
-  whatsapp: '40700000000',
-  instagram: 'https://www.instagram.com/dordefranceza',
+  /* Contactele reale ale Dorinei. Numarul e francez, acelasi cu WHATSAPP_DORINA
+     de pe Vercel. Emailul e cutia ei adevarata, aceeasi cu EMAIL_DORINA si cu
+     randul din admin_email: o adresa pe domeniu ar arata mai bine, dar cutia
+     nu exista, iar send.dordefranceza.com doar trimite, nu primeste. */
+  email: 'dordefranceza@gmail.com',
+  telefon: '+33 6 62 35 20 71',
+  whatsapp: '33662352071',
+  /**
+   * Retelele. Un sir gol inseamna «contul nu exista inca» si scoate legatura
+   * din subsol, fara alte modificari. Instagram se pune la loc scriind aici
+   * adresa, in ziua in care contul e facut.
+   */
+  instagram: '',
   tiktok: 'https://www.tiktok.com/@dordefranceza',
 
   durataLectie: 50,
