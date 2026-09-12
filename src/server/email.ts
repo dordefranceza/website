@@ -87,8 +87,8 @@ function randuri(lista: { eticheta: string; valoare: string }[]): string {
     .filter((r) => r.valoare)
     .map(
       (r) => `<tr>
-        <td style="padding:9px 18px 9px 0;vertical-align:top;font-size:13px;color:${GRI};white-space:nowrap">${scapa(r.eticheta)}</td>
-        <td style="padding:9px 0;vertical-align:top;font-size:15px;color:${CERNEALA};line-height:1.55">${scapa(r.valoare).replace(/\n/g, '<br>')}</td>
+        <td style="padding:10px 20px 10px 0;vertical-align:top;font-size:12px;letter-spacing:0.02em;color:${GRI};white-space:nowrap">${scapa(r.eticheta)}</td>
+        <td style="padding:10px 0;vertical-align:top;font-size:15px;color:${CERNEALA};line-height:1.6">${scapa(r.valoare).replace(/\n/g, '<br>')}</td>
       </tr>`,
     )
     .join('')
@@ -97,20 +97,20 @@ function randuri(lista: { eticheta: string; valoare: string }[]): string {
 function sablon(o: { eticheta: string; titlu: string; intro: string; corp: string; butoane: string; subsol: string }): string {
   return `<!doctype html>
 <html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><title>${scapa(o.titlu)}</title></head>
-<body style="margin:0;padding:24px 16px;background:${CREM};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased">
+<body style="margin:0;padding:32px 16px;background:${CREM};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased">
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;margin:0 auto;border-collapse:separate">
-    <tr><td style="background:${NAVY};border-radius:20px 20px 0 0;padding:28px 28px 24px">
-      <img src="${adresaSite()}/images/semne/marca-alba.png" alt="" width="26" height="33" style="display:block;margin:0 0 14px;border:0">
-      <p style="margin:0 0 8px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#aab4ff;font-weight:700">${scapa(o.eticheta)}</p>
-      <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:27px;font-weight:400;color:#ffffff;line-height:1.2">${scapa(o.titlu)}</h1>
+    <tr><td style="background:${NAVY};border-radius:24px 24px 0 0;padding:34px 32px 30px">
+      <img src="${adresaSite()}/images/semne/nume-alb.png" alt="DorDeFranceza" width="168" height="20" style="display:block;margin:0 0 26px;border:0;width:168px;height:auto">
+      <p style="margin:0 0 10px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#aab4ff;font-weight:700">${scapa(o.eticheta)}</p>
+      <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:400;color:#ffffff;line-height:1.25">${scapa(o.titlu)}</h1>
     </td></tr>
-    <tr><td style="background:#ffffff;padding:24px 28px 8px">
-      <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:${CERNEALA}">${o.intro}</p>
+    <tr><td style="background:#ffffff;padding:28px 32px 10px">
+      <p style="margin:0 0 18px;font-size:16px;line-height:1.65;color:${CERNEALA}">${o.intro}</p>
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse">${o.corp}</table>
     </td></tr>
-    <tr><td style="background:#ffffff;border-radius:0 0 20px 20px;padding:16px 28px 28px">${o.butoane}</td></tr>
+    <tr><td style="background:#ffffff;border-radius:0 0 24px 24px;padding:18px 32px 32px">${o.butoane}</td></tr>
   </table>
-  <p style="max-width:600px;margin:18px auto 0;font-size:12px;line-height:1.6;color:${GRI};text-align:center">${o.subsol}</p>
+  <p style="max-width:600px;margin:20px auto 0;font-size:12px;line-height:1.7;color:${GRI};text-align:center">${o.subsol}</p>
 </body></html>`
 }
 
