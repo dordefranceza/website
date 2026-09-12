@@ -4,7 +4,7 @@ Se copiază fiecare în căsuța lui, la Blog, articol nou.
 
 - **Titlu:** Cât durează să înveți franceza? Răspunsul în ore, nu în luni
 - **Adresă (slug):** `cat-dureaza-sa-inveti-franceza`
-- **Rezumat:** Nimeni nu poate să îți spună în câte luni vorbești. În ore, da: 350 până la 400 până la B1. Iată tabelul pe niveluri, de ce româna îți dă un avans real și ce anume îți fură orele.
+- **Rezumat:** Nimeni nu poate să îți spună în câte luni vorbești. În ore, da: 350 până la 400 până la B1. Tabelul pe niveluri, de ce româna îți dă un avans real, și de ce unul ajunge în trei luni unde altul ajunge într-un an.
 - **Titlu pentru Google (meta):** Cât durează să înveți franceza? Ore reale pe fiecare nivel
 - **Descriere pentru Google (meta):** Nu în luni, ci în ore: 350 până la 400 pentru B1. Tabelul pe niveluri, de ce româna îți dă un avans real și ce îți fură orele.
 - **Imagine:** `/images/blog/cat-dureaza-franceza.webp`
@@ -61,6 +61,36 @@ Ia B1 și cele 375 de ore ale lui, la mijlocul intervalului:
 Aceeași limbă, același om, patru răspunsuri diferite. De asta, când cineva îți
 promite o lună anume fără să te întrebe câte ore poți da pe săptămână, îți vinde
 o senzație, nu un plan.
+
+## Doi oameni, aceleași ore, alt rezultat
+
+Aici e partea pe care tabelele nu o arată. Puteți da amândoi câte două ore pe
+săptămână și să ajungeți în locuri complet diferite. Nu e vorba de talent, și
+aproape niciodată de vârstă. Diferența o fac patru lucruri, iar toate patru se
+aleg, nu se moștenesc.
+
+**Constanța bate intensitatea.** Douăzeci de minute în fiecare zi valorează mai
+mult decât trei ore sâmbăta. Limba se așază între repetări, nu în timpul lor, și
+are nevoie de repetări dese și scurte, nu de rare și lungi. Cine face puțin dar
+zilnic o ia înaintea celui care se apucă din trei în trei săptămâni cu foc.
+
+**Un motiv concret duce mai departe decât dorința.** „Aș vrea să știu franceză"
+se stinge prin februarie. „În mai mă mut la Lyon" nu se stinge, fiindcă data nu
+se mișcă. Cine are un termen adevărat învață altfel: alege ce îi trebuie, sare
+peste ce nu, și nu se oprește la prima săptămână grea.
+
+**Curajul de a vorbi prost.** Ăsta e cel mai scump, fiindcă doare. Cine acceptă
+să sune caraghios din prima lună ajunge în șase luni unde ajunge în doi ani cel
+care așteaptă să fie pregătit. Nu vine niciun moment în care ești pregătit. Vine
+doar prima propoziție spusă cu greșeli, și după ea toate celelalte.
+
+**Cât trăiești în limbă între lecții.** Nu ore de studiu, minute furate: un
+podcast în timp ce speli vasele, telefonul trecut pe franceză, un serial cu
+subtitrare în franceză și nu în română. Niciuna nu e lecție. Toate sunt ore.
+
+De asta unul ajunge în trei luni unde altul ajunge într-un an, cu același
+profesor și cu același număr de lecții plătite. Orele din tabel spun **cât drum
+este**. Cât de repede îl faci, ține de tine.
 
 ## Româna îți dă un avans real, și nu e puțin
 
@@ -134,9 +164,13 @@ adică ritmul care se potrivește unui om cu serviciu, ajungi cam așa:
 - trăiești singur acolo, la B1, în **aproximativ un an și opt luni**
 - lucrezi în franceză, la B2, în **aproximativ doi ani și jumătate**
 
+Sunt cifre pentru un om obișnuit, cu un ritm obișnuit. Cineva foarte hotărât,
+care fură minute în fiecare zi și vorbește fără să-i pese cum sună, le taie
+aproape la jumătate. Cineva care vine la lecție și atât, fără nimic între ele,
+le dublează. Aceleași lecții, același profesor, alt rezultat.
+
 Nu sunt cifre care vând. Sunt cifrele adevărate, iar dacă cineva îți promite
-jumătate din ele, întreabă-l câte ore pe săptămână are în vedere. De obicei
-acolo se rupe socoteala.
+jumătate din ele fără să te întrebe nimic despre tine, îți vinde o senzație.
 
 Vestea bună rămâne aceeași: primele rezultate nu apar la sfârșit. La 30 până la
 40 de ore de lucru vorbit deja spui lucruri simple și ești înțeles. Momentul ăla
