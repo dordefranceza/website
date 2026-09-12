@@ -8,7 +8,7 @@ Se copiază fiecare în căsuța lui, la Blog, articol nou.
 - **Titlu pentru Google (meta):** Cât durează să înveți franceza? Ore reale pe fiecare nivel
 - **Descriere pentru Google (meta):** Nu în luni, ci în ore: 350 până la 400 pentru B1. Tabelul pe niveluri, de ce româna îți dă un avans real și ce îți fură orele.
 - **Imagine:** `/images/blog/cat-dureaza-franceza.webp`
-- **Text alternativ imagine:** Personajul DorDeFranceza stă lângă un ceas mare și un teanc de cărți, numărând orele de învățat
+- **Text alternativ imagine:** Personajul DorDeFranceza stă pe un teanc de cărți, lângă un ceas mare, numărând orele de învățat
 
 ---
 
