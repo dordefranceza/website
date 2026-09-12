@@ -57,7 +57,13 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
 
     {/* Comutatorul. Cu tastatura merge cu sageti, ca orice set de file. */}
     <div class="dezvaluie mt-10 flex justify-center">
-      <div class="inline-flex rounded-full bg-crem-inchis p-1.5" role="tablist" aria-label="Fel de lecții" data-file>
+      <div class="comutator inline-flex rounded-full bg-crem-inchis p-1.5" role="tablist" aria-label="Fel de lecții" data-file>
+        {/* Bulina alba care aluneca de la o fila la alta. Sta sub butoane, nu
+            in ele: altfel „selectat" ar fi doua fundaluri care se sting si se
+            aprind, adica exact saritura pe care a reclamat-o Artiom.
+            Fara javascript nu apare deloc, iar fundalul ramane pe fila aleasa,
+            ca inainte. */}
+        <span class="bulina" aria-hidden="true"></span>
         <button
           type="button"
           role="tab"
@@ -84,6 +90,10 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
       </div>
     </div>
 
+    {/* Invelisul exista ca sa se poata anima inaltimea intre cele doua panouri:
+        individual are 632 de pixeli, grupul 1038. Fara el, jumatate de pagina
+        sare dintr-o data. */}
+    <div class="panouri" data-panouri>
     {/* ---------------------------------------------------------------- individual */}
     <div id="panou-individual" role="tabpanel" aria-labelledby="fila-individual" tabindex="0">
       <div class="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -154,13 +164,21 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
         </div>
         <div class="rounded-[1.25rem] bg-crem p-6">
           <p class="font-sans font-medium">Cât costă o oră de lecție</p>
+          {/*
+            Aici se impiedica si Artiom: cardul spune 20 € pe lectie, iar
+            dedesubt scria 15 € pe ora, fara sa se vada de unde vine. Amandoua
+            sunt adevarate, doar ca masoara altceva: una o lectie de 80 de
+            minute, cealalta 60 de minute. Acum pasul e scris pe fata, ca nimeni
+            sa nu-l mai faca in cap.
+
+            Era si un spatiu inainte de virgula, de la `</strong>` pus pe randul
+            lui: `{' '}` inaintea etichetei, nu dupa.
+          */}
           <p class="echilibrat mt-2 text-sm leading-relaxed text-gri">
             Lecția de grup ține {site.durataGrup} de minute, nu {site.durataLectie}, fiindcă trebuie să apuce toată lumea
-            să vorbească. La cursul întreg iese{' '}
-            <strong class="font-medium text-cerneala">
-              {Math.round((cursGrup.pretLectie * 60) / site.durataGrup)} {site.moneda} pe oră
-            </strong>
-            , adică exact cât costă o oră pe platformele cu profesori mulți.
+            să vorbească. Așa că {cursGrup.pretLectie} {site.moneda} pentru {site.durataGrup} de minute înseamnă{' '}
+            <strong class="font-medium text-cerneala">{Math.round((cursGrup.pretLectie * 60) / site.durataGrup)} {site.moneda} pe oră</strong>, adică
+            exact cât costă o oră pe platformele cu profesori mulți.
           </p>
           <p class="echilibrat mt-4 text-sm leading-relaxed text-gri">
             Grupa pornește când se strâng {site.marimeGrup}. Până atunci nu plătești nimic: îți spun eu când e gata și
@@ -168,6 +186,14 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
           </p>
         </div>
       </div>
+    </div>
+    {/* Aici se inchidea panoul de grup. Nu se inchidea: lipsea `</div>`-ul, iar
+        parserul il inchidea singur abia la capatul sectiunii. Efectul era ca
+        banda de garantie si nota cu euro si lei cadeau INAUNTRUL panoului de
+        grup, care porneste ascuns. Adica pe fila „Individual", cea implicita,
+        nu se vedea nici garantia, nici pretul in lei. Se vedeau doar daca omul
+        apasa pe „In grup". */}
+    </div>
 
     {/*
       Banda si figura sunt LIPITE, nu despartite: figura sta peste capatul din
@@ -197,7 +223,25 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
 </section>
 
 <style>
+  /* Comutatorul.
+   *
+   * Inainte, „selectat" insemna fundal alb pe buton. Cand treceai de la unul la
+   * altul, un fundal se stingea si celalalt se aprindea, amandoua in acelasi
+   * timp. Ochiul nu vede o miscare, vede o clipire. Artiom: „nu asa brusc care
+   * taie ochii".
+   *
+   * Acum fundalul alb e un singur element, bulina, care aluneca dedesubt.
+   * Latimea si pozitia le da javascriptul din butonul ales, fiindca cele doua
+   * butoane au latimi diferite: „Individual" are 116 pixeli, „In grup" 99.
+   *
+   * Fara javascript, nimic nu se strica: bulina sta ascunsa si fundalul ramane
+   * pe butonul ales, exact ca inainte.
+   */
+  .comutator { position: relative; }
+
   .fila {
+    position: relative;
+    z-index: 1;
     color: var(--color-gri);
     transition:
       background-color 260ms var(--ease-afara),
@@ -208,8 +252,44 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
     color: var(--color-cerneala);
     box-shadow: var(--shadow-cald-sm);
   }
+  /* Cu javascript, bulina preia fundalul si butonul ramane doar cu textul. */
+  .comutator.cu-bulina .fila[aria-selected='true'] {
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  .bulina {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+    width: var(--bulina-l, 0px);
+    height: var(--bulina-h, 0px);
+    transform: translate(var(--bulina-x, 0px), var(--bulina-y, 0px));
+    border-radius: 9999px;
+    background-color: var(--color-alb);
+    box-shadow: var(--shadow-cald-sm);
+    pointer-events: none;
+    transition:
+      transform 420ms var(--ease-afara),
+      width 420ms var(--ease-afara);
+  }
+  .comutator.cu-bulina .bulina { display: block; }
+  /* La prima asezare si la redimensionarea ferestrei bulina se muta pe loc:
+     altfel ar aluneca din coltul din stanga sus la incarcarea paginii. */
+  .comutator.fara-tranzitie .bulina { transition: none; }
+
+  /* Panoul care intra nu apare dintr-o data, ci se ridica putin si se limpezeste. */
+  @keyframes panou-intra {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+  .panou-intra { animation: panou-intra 380ms var(--ease-afara) both; }
+
   @media (prefers-reduced-motion: reduce) {
-    .fila { transition: none; }
+    .fila,
+    .bulina { transition: none; }
+    .panou-intra { animation: none; }
   }
 </style>
 
@@ -217,18 +297,91 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
   // Comutatorul dintre lectii individuale si grup. Se poarta ca un set de file
   // adevarat: sagetile stanga si dreapta trec de la una la alta, iar fila care
   // nu e aleasa iese din drumul tastaturii.
+  //
+  // Pe langa asta, misca bulina alba si trece inaltimea invelisului de la un
+  // panou la altul. Panoul individual are 632 de pixeli, grupul 1038: fara
+  // animatie, jumatate de pagina sare dintr-o data.
   document.querySelectorAll<HTMLElement>('[data-file]').forEach((grup) => {
     const file = [...grup.querySelectorAll<HTMLButtonElement>('[data-fila]')]
     const panouri = file
       .map((f) => document.getElementById(f.getAttribute('aria-controls') ?? ''))
       .filter((p): p is HTMLElement => p !== null)
+    if (file.length === 0 || panouri.length !== file.length) return
+
+    const invelis = grup.closest('section')?.querySelector<HTMLElement>('[data-panouri]') ?? null
+    let curent = Math.max(0, file.findIndex((f) => f.getAttribute('aria-selected') === 'true'))
+
+    /** Muta bulina peste butonul ales, luand marimile chiar de la el. */
+    const asaza = (i: number) => {
+      const f = file[i]
+      grup.style.setProperty('--bulina-x', `${f.offsetLeft}px`)
+      grup.style.setProperty('--bulina-y', `${f.offsetTop}px`)
+      grup.style.setProperty('--bulina-l', `${f.offsetWidth}px`)
+      grup.style.setProperty('--bulina-h', `${f.offsetHeight}px`)
+    }
+
+    /** Asezare fara alunecare: la pornire si cand se schimba latimea ferestrei. */
+    const asazaPeLoc = () => {
+      grup.classList.add('fara-tranzitie')
+      asaza(curent)
+      requestAnimationFrame(() => requestAnimationFrame(() => grup.classList.remove('fara-tranzitie')))
+    }
+
+    grup.classList.add('cu-bulina')
+    asazaPeLoc()
+    window.addEventListener('resize', asazaPeLoc)
+    // Fonturile schimba latimea butoanelor cand ajung, deci bulina se reaseaza.
+    document.fonts?.ready.then(asazaPeLoc)
+
+    const linistit = window.matchMedia('(prefers-reduced-motion: reduce)')
 
     const alege = (i: number, mutaFocus = false) => {
+      if (i === curent) {
+        if (mutaFocus) file[i].focus()
+        return
+      }
+      const vechi = panouri[curent]
+      const nou = panouri[i]
       file.forEach((f, k) => {
         f.setAttribute('aria-selected', String(k === i))
         f.tabIndex = k === i ? 0 : -1
       })
-      panouri.forEach((p, k) => (p.hidden = k !== i))
+      curent = i
+      asaza(i)
+
+      if (!invelis || linistit.matches) {
+        vechi.hidden = true
+        nou.hidden = false
+        if (mutaFocus) file[i].focus()
+        return
+      }
+
+      // Inaltimea de la care plecam, masurata inainte de schimb.
+      const dela = invelis.getBoundingClientRect().height
+      vechi.hidden = true
+      nou.hidden = false
+      nou.classList.remove('panou-intra')
+      void nou.offsetWidth
+      nou.classList.add('panou-intra')
+      const la = invelis.getBoundingClientRect().height
+
+      invelis.style.overflow = 'hidden'
+      invelis.style.height = `${dela}px`
+      void invelis.offsetHeight
+      invelis.style.transition = 'height 420ms var(--ease-afara)'
+      invelis.style.height = `${la}px`
+
+      const gata = (e?: TransitionEvent) => {
+        if (e && e.propertyName !== 'height') return
+        invelis.style.height = ''
+        invelis.style.overflow = ''
+        invelis.style.transition = ''
+        invelis.removeEventListener('transitionend', gata)
+      }
+      invelis.addEventListener('transitionend', gata)
+      // Plasa de siguranta, daca transitionend nu ajunge sa fie emis.
+      window.setTimeout(gata, 700)
+
       if (mutaFocus) file[i].focus()
     }
 

@@ -69,7 +69,18 @@ export const site = {
    */
   garantie: {
     activa: true,
-    text: 'Dacă după prima lecție plătită simți că nu e pentru tine, îți returnez banii pe acea lecție. Fără explicații și fără discuții.',
+    /*
+     * Acoperea doar lectia platita. Artiom: „daca clientul a luat un pachet si
+     * vrea banii dupa prima lectie?" Acum acopera toata suma, pachetul intreg
+     * inclusiv. In termeni scria deja ca lectiile neefectuate dintr-un pachet
+     * se returneaza oricand; ce lipsea era chiar lectia facuta. Acum omul
+     * primeste inapoi tot, si lectia, si restul.
+     *
+     * De stiut cat costa promisiunea: cea mai mare suma expusa e cursul
+     * intensiv de 24 de lectii, 744 €. Se aplica o singura data, primei lectii
+     * platite de un cursant nou.
+     */
+    text: 'Dacă după prima lecție plătită simți că nu e pentru tine, îți returnez tot ce ai plătit, fie că ai luat o singură lecție, fie un pachet întreg. Fără explicații și fără discuții.',
   },
 } as const
 
