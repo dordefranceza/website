@@ -100,13 +100,18 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
                   deci numele are nevoie de loc ca sa nu treaca pe sub ea */}
               <p class:list={['font-sans text-lg font-medium', p.evidentiat && 'pr-36']}>{p.nume}</p>
 
+              {/* Trei trepte, in ordinea in care se citesc: cat dai cu totul,
+                  cat vine o lectie, si detaliile. Pretul pe lectie e scris mare
+                  dinadins: citit de-a lungul randului face 40, 36, 33, 31, iar
+                  scaderea aia e chiar argumentul pachetelor. */}
               <p class="mt-5 font-display text-5xl leading-none">
                 {total(p.lectii, p.pretLectie)} {site.moneda}
               </p>
-              <p class:list={['mt-2 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>
-                {p.lectii === 1
-                  ? `pentru o lecție de ${site.durataLectie} de minute`
-                  : `${p.lectii} lecții de ${site.durataLectie} de minute, ${p.pretLectie} ${site.moneda} una`}
+              <p class:list={['mt-2 font-display text-2xl leading-none', p.evidentiat ? 'text-roz' : 'text-albastru']}>
+                {p.pretLectie} {site.moneda} <span class="font-sans text-base">pe lecție</span>
+              </p>
+              <p class:list={['mt-2.5 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>
+                {p.lectii === 1 ? 'o lecție' : `${p.lectii} lecții`} de {site.durataLectie} de minute
               </p>
               <p class:list={['text-sm', p.evidentiat ? 'text-alb/60' : 'text-gri']}>
                 {inLei(total(p.lectii, p.pretLectie))} lei la cursul de azi
@@ -160,9 +165,10 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
         <div class="relative flex flex-col justify-center rounded-[1.5rem] bg-navy p-8 text-alb sm:p-10">
           <p class="font-sans text-lg font-medium">{cursGrup.nume}</p>
           <p class="mt-5 font-display text-6xl leading-none">{total(cursGrup.lectii, cursGrup.pretLectie)} {site.moneda}</p>
-          <p class="mt-2 text-alb/70">
-            {cursGrup.lectii} lecții de {cursGrup.durata} de minute, {cursGrup.pretLectie} {site.moneda} una
+          <p class="mt-2 font-display text-3xl leading-none text-roz">
+            {cursGrup.pretLectie} {site.moneda} <span class="font-sans text-base">pe lecție</span>
           </p>
+          <p class="mt-2.5 text-alb/70">{cursGrup.lectii} lecții de {cursGrup.durata} de minute</p>
           <p class="text-sm text-alb/60">{inLei(total(cursGrup.lectii, cursGrup.pretLectie))} lei la cursul de azi</p>
           <p class="mt-4 inline-flex w-fit rounded-full bg-alb/15 px-3 py-1 text-xs font-bold">
             {Math.round((cursGrup.pretLectie * 60) / cursGrup.durata)} {site.moneda} pe oră de lecție
