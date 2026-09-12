@@ -58,64 +58,92 @@ contul.
 
 ---
 
-## Ce a rămas de făcut, în ordine
+## Ce s-a făcut pe 12 septembrie, după-amiaza
 
-### 1. Reparat variabilele de mediu pe Vercel
-
-**Capcana, citește înainte să atingi ceva.** La import, Vercel a citit
-`.env.example` și a creat 8 variabile **goale, de tip Secret**. O variabilă
-Secret nu mai poate fi schimbată în Config, iar Vercel **refuză** să salveze o
-variabilă care începe cu `PUBLIC_` dacă e Secret („Remove the public framework
-prefix to keep this value private").
-
-Deci: **șterge toate cele 8** din
-<https://vercel.com/dordefranceza/dordefranceza/settings/environment-variables>
-(meniul „..." de pe fiecare rând → Delete) și adaugă-le din nou cu tipul corect:
+**Variabilele de pe Vercel.** Cele 8 goale, de tip Secret, au fost șterse și
+puse la loc cu tipul corect, pe Production și Preview:
 
 | Variabilă | Tip | Valoare |
 |---|---|---|
-| `PUBLIC_SITE_URL` | Config | `https://dordefranceza.vercel.app` sau domeniul real |
+| `PUBLIC_SITE_URL` | Config | `https://dordefranceza.vercel.app` |
 | `PUBLIC_SUPABASE_URL` | Config | `https://tlssfcovuhonydonuevb.supabase.co` |
-| `PUBLIC_SUPABASE_ANON_KEY` | Config | cheia *publishable* din Supabase |
-| `SUPABASE_SERVICE_ROLE_KEY` | Secret | cheia *secret* din Supabase |
-| `RESEND_API_KEY` | Secret | din resend.com |
-| `EMAIL_DE` | Config | expeditorul, pe domeniu verificat în Resend |
-| `EMAIL_DORINA` | Config | unde ajung notificările |
-| `WHATSAPP_DORINA` | Config | numărul ei, doar cifre cu prefix |
+| `PUBLIC_SUPABASE_ANON_KEY` | Config | cheia publishable |
+| `EMAIL_DE` | Config | `DorDeFranceza <onboarding@resend.dev>`, temporar |
+| `EMAIL_DORINA` | Config | `dordefranceza@gmail.com` |
+| `WHATSAPP_DORINA` | Config | `33662352071` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Secret | cheia secret |
+| `RESEND_API_KEY` | Secret | cheie nouă, doar Sending access |
 
-Cheile Supabase sunt la
-<https://supabase.com/dashboard/project/tlssfcovuhonydonuevb/settings/api-keys>,
-tabul „Publishable and secret API keys". Fiecare are buton de copiere; cea
-secretă trebuie întâi dezvăluită cu ochiul. Treci-le prin clipboard, nu prin
-chat.
+Cheile au trecut prin clipboard, nu prin chat. Secretele apar ca două rânduri
+în listă, unul pe Production și unul pe Preview: așa le desparte Vercel, nu e
+o greșeală.
 
-După ce sunt puse, **Redeploy** din Deployments, altfel nu se aplică.
+**Supabase: tabelele erau nevăzute de API.** Asta ținea site-ul mort. La
+creare s-a debifat expunerea automată și nimeni nu a expus tabelele manual
+după aceea, deci nici cheia de serviciu nu ajungea la ele: `0 of 8 tables
+exposed`. Orice slot, orice programare, orice articol dădea 500. Sunt expuse
+acum toate 8, din Integrations → Data API → Settings → Exposed tables.
+Verificat imediat după: RLS e pornit pe toate 8, cu zero politici, iar cheia
+publică întoarce listă goală chiar și pe `admin_email`, care are un rând.
+Deci expunerea nu a deschis nimic spre browser.
 
-### 2. Resend
+**`/blog/` dădea 500 doar în producție.** `sanitize-html` e CommonJS și cere
+`htmlparser2`, care a trecut la ESM; lăsate pe dinafara pachetului, Node de pe
+Vercel crapă cu `ERR_REQUIRE_ESM`. Reparat în `astro.config.mjs` cu
+`ssr.noExternal`, commit `836d06a`, urcat pe `main`. Capcana: Vite în
+dezvoltare le leagă singur, deci local nu se vede niciodată.
 
-Contul e făcut (<https://resend.com/onboarding>). De acolo:
-- Domains → adaugă un subdomeniu, de exemplu `send.dordefranceza.ro`, și pune
-  înregistrările DNS cerute
-- API Keys → cheie nouă, doar „Sending access"
-- `EMAIL_DE` trebuie să fie pe domeniul verificat, altfel Resend refuză
+**Autentificare.** Site URL era încă `http://localhost:3000`, deci orice link
+din email ar fi dus în gol. Acum e `https://dordefranceza.vercel.app`, cu
+`https://dordefranceza.vercel.app/**` și `http://localhost:4360/**` în
+Redirect URLs. Invitația a plecat spre `dordefranceza@gmail.com`; userul
+există, cu UID `95cfc3cb-e59a-43c2-9350-a3b8023fc89e`, și își pune parola
+singur din linkul primit.
 
-**Blocant real:** fără domeniu cumpărat nu se poate verifica niciun expeditor.
-Până atunci, emailurile de confirmare către cursanți nu pleacă. Site-ul merge,
-programarea se salvează, doar confirmarea automată stă. Artiom trebuie să
-decidă dacă ia domeniul acum.
+**Verificat pe adresa live, fiecare pagină, nu un eșantion:** `/`,
+`/programare/`, `/preturi/`, `/despre/`, `/blog/`, `/contact/`,
+`/confidentialitate/`, `/termeni/`, `/cookies/`, `/anulare-si-rambursare/`,
+`/formular-retragere/`, `/credite/`, `/cabinet/`, `/sitemap-index.xml`,
+`/robots.txt`, toate 200, plus o adresă inexistentă care dă 404 cu pagina
+proprie. `/api/sloturi` răspunde 200 pe ambele tipuri.
 
-### 3. Contul Dorinei în cabinet
+---
 
-Supabase → Authentication → Users → Add user, cu `dordefranceza@gmail.com`
-(deja trecut în `admin_email`) sau cu adresa ei reală. Dacă folosești altă
-adresă, adaug-o și în tabel:
+## Ce a rămas de făcut, în ordine
 
-```sql
-insert into public.admin_email (email) values ('adresa@exemplu.ro')
-on conflict (email) do nothing;
-```
+### 1. Domeniul
 
-Parola o pune ea, nu Claude.
+Artiom a ales `dordefranceza.com`, luat de la <https://domains.cloudflare.com>.
+Verificat pe 12 septembrie: e liber. Cloudflare vinde la preț de cost, vreo
+10,4 $ pe an, aceeași sumă la reînnoire.
+
+După cumpărare:
+- domeniul adăugat în Vercel, iar în Cloudflare înregistrările lăsate pe
+  **DNS only**, norișor gri. Cu norișor portocaliu și SSL „Flexible" intri în
+  buclă de redirectare
+- `PUBLIC_SITE_URL` schimbat pe domeniul real, apoi redeploy
+- Site URL din Supabase → Authentication → URL Configuration, schimbat la fel,
+  și adăugat `https://dordefranceza.com/**` în Redirect URLs
+
+### 2. Resend, expeditorul adevărat
+
+Cheia există și e pusă. Lipsește doar domeniul verificat:
+- Domains → adaugă `send.dordefranceza.com` și pune înregistrările DNS în
+  Cloudflare, tot DNS only
+- după verificare, `EMAIL_DE` mutat de pe `onboarding@resend.dev` pe adresa
+  reală, de exemplu `DorDeFranceza <dorina@send.dordefranceza.com>`
+
+Cât timp expeditorul e `onboarding@resend.dev`, Resend livrează **doar** către
+adresa contului, `dordefranceza@gmail.com`. Notificarea către Dorina pleacă,
+confirmarea către cursant nu.
+
+Numele afișat nu are voie să conțină virgulă: strică antetul `From`.
+
+### 3. Orarul Dorinei
+
+Tabelul `disponibilitate` e gol, deci `/api/sloturi` întoarce zile goale și
+formularul de programare nu arată nicio oră liberă. Dorina își pune orarul din
+cabinet, la Disponibilitate. Până atunci nimeni nu poate rezerva.
 
 ### 4. Datele reale, în cod
 
@@ -126,13 +154,11 @@ Parola o pune ea, nu Claude.
   substituenți.
 - `src/config/continut.ts`: bucățile marcate DE CONFIRMAT despre Dorina.
 
-### 5. Verificarea finală
+### 5. O programare de probă
 
-După primul deploy reușit, deschide fiecare pagină pe adresa live, nu un
-eșantion: `/`, `/programare/`, `/preturi/`, `/despre/`, `/blog/`, `/contact/`,
-`/confidentialitate/`, `/termeni/`, `/cookies/`, `/anulare-si-rambursare/`,
-`/formular-retragere/`, `/credite/`, `/cabinet/`, plus o adresă inexistentă
-pentru 404. Apoi o programare de probă, ca să vezi că emailul pleacă.
+De făcut după ce domeniul e verificat în Resend, ca să se vadă că emailul
+pleacă și către cursant, nu doar către Dorina. Emailurile de test nu se trimit
+fără acordul lui Artiom.
 
 ---
 
