@@ -22,8 +22,9 @@ lucru cu limba. De acolo încolo, în cât timp le aduni depinde numai de tine.
 
 ## Tabelul, fără înflorituri
 
-Cifrele de mai jos sunt estimările folosite de Alliance Française și de centrele
-care pregătesc pentru examenele DELF. Sunt ore cumulate, adică de la zero până
+Cifrele de mai jos sunt estimările folosite de
+[Alliance Française](https://www.afscv.org/blog/how-long-does-it-take-to-learn-french/)
+și de centrele care pregătesc pentru examenele DELF. Sunt ore cumulate, adică de la zero până
 la nivelul acela, nu de la unul la altul.
 
 | Nivel | Ore cumulate | Ce poți face concret |
@@ -34,8 +35,9 @@ la nivelul acela, nu de la unul la altul.
 | B2 | 500 până la 600 | Lucrezi în franceză. Susții o ședință, scrii un email de serviciu, te cerți argumentat |
 | C1 | 700 până la 800 | Studiezi sau ții un post de răspundere. Înțelegi ironia, aluziile, jargonul |
 
-Institutul american care pregătește diplomații, Foreign Service Institute, pune
-franceza în categoria cea mai ușoară și socotește **600 până la 750 de ore de
+Institutul american care pregătește diplomații,
+[Foreign Service Institute](https://2017-2021.state.gov/foreign-language-training/),
+pune franceza în categoria cea mai ușoară și socotește **600 până la 750 de ore de
 curs** până la un nivel de lucru profesionist, adică B2 spre C1. Cifrele lor se
 potrivesc cu cele de sus, ceea ce e liniștitor: două instituții care nu au
 niciun interes comun ajung la același număr.
