@@ -74,14 +74,25 @@ import PersonajCerc from '../components/PersonajCerc.astro'
           Largit la `max-w-4xl`, incape intr-un rand si sectiunea se aliniaza
           cu cea de deasupra. */}
       <div class="container-site max-w-4xl">
-        <p class="eticheta">Ca să nu pierdem timpul niciunul</p>
-        {/* Titlul se rupea „Când nu sunt" / „profesoara potrivită". Acum se
-            rupe unde trebuie, iar al doilea rand sta in mijlocul primului.
-            Pe telefon ramane un text obisnuit, care se aseaza singur. */}
-        <h2 class="mt-3 text-4xl sm:text-5xl">
-          <span class="titlu-centrat-jos">Când nu sunt profesoara <span>potrivită</span></span>
-        </h2>
-        <p class="echilibrat mt-5 text-lg text-gri">Prefer să spun asta de la început decât după trei lecții.</p>
+        {/*
+          Randul al doilea al titlului trebuia sa stea in mijlocul primului.
+          Prima incercare l-a centrat doar pe el, intr-un bloc altfel aliniat la
+          stanga: un singur rand centrat intre randuri la stanga arata a
+          greseala, si asa i-a si parut lui Artiom.
+
+          Acum se centreaza capul sectiunii intreg, eticheta si titlul si randul
+          de sub el, cum e si la preturi. Ruptura ramane fortata dupa
+          „profesoara", ca „potrivita" sa cada singura dedesubt, in mijloc.
+          Cardurile de dedesubt raman la stanga: se citesc ca o lista, nu ca un
+          afis.
+        */}
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="eticheta">Ca să nu pierdem timpul niciunul</p>
+          <h2 class="mt-3 text-4xl sm:text-5xl">
+            Când nu sunt profesoara<span class="hidden sm:block">potrivită</span><span class="sm:hidden"> potrivită</span>
+          </h2>
+          <p class="echilibrat mt-5 text-lg text-gri">Prefer să spun asta de la început decât după trei lecții.</p>
+        </div>
         <ul class="mt-8 space-y-3">
           {
             nuEstePentru.map((r) => (
@@ -95,7 +106,7 @@ import PersonajCerc from '../components/PersonajCerc.astro'
         {/* `echilibrat` ramane ca plasa: pe un ecran mai ingust randul tot se
             rupe, iar atunci se rupe in doua randuri egale, nu cu doua cuvinte
             singure jos. */}
-        <p class="echilibrat mt-8 text-lg leading-relaxed text-gri">
+        <p class="echilibrat mt-8 text-center text-lg leading-relaxed text-gri">
           Dacă niciuna nu te descrie, hai să vorbim 20 de minute și îți spun sincer dacă te pot ajuta.
         </p>
       </div>
