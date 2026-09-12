@@ -17,9 +17,10 @@
  * usor diferite intre ele, ca la apa adevarata. A doua armonica are exact perioada
  * pe jumatate, deci intregul se repeta la fel de curat si bucla se inchide.
  *
- * Miscarea: alunecare foarte lenta intr-o parte, plus o ridicare si coborare si
- * mai lenta, ca un flux. Amandoua sunt transformari peste aceeasi curba, deci
- * forma ramane neteda tot timpul.
+ * Miscarea: alunecare intr-o parte, plus o ridicare si coborare mai lenta, ca un
+ * flux. Amandoua sunt transformari peste aceeasi curba, deci forma ramane neteda
+ * tot timpul. Vitezele sunt cele cerute de Artiom: prima incercare, 46 de
+ * secunde pentru un val intreg, i s-a parut prea lenta.
  */
 interface Props {
   /** inaltimea benzii, clasele Tailwind */
@@ -86,7 +87,7 @@ const D = curba()
   /* Alunecarea: exact o perioada intreaga, deci la capat desenul e identic cu
      cel de la inceput si nu se vede nicio saritura. */
   .val-curge {
-    animation: val-curge 46s linear infinite;
+    animation: val-curge 24s linear infinite;
     will-change: transform;
   }
   @keyframes val-curge {
@@ -96,7 +97,7 @@ const D = curba()
 
   /* Fluxul: toata banda urca si coboara foarte putin, si mult mai incet. */
   .val-plutire {
-    animation: val-plutire 19s ease-in-out infinite;
+    animation: val-plutire 11s ease-in-out infinite;
   }
   @keyframes val-plutire {
     0%, 100% { transform: translateY(0); }
