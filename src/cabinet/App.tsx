@@ -97,6 +97,19 @@ export default function App() {
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[250px_1fr]">
+      {/*
+        Pe telefon, meniul statea sus, ca o fasie de sapte pastile care se trage
+        cu degetul. Artiom: „nu e comod deloc, e greu de tot de schimbat". Avea
+        dreptate: pastilele erau mici, jumatate din ele ieseau din ecran, si
+        trebuia sa tragi cu o mana ca sa ajungi la ele.
+
+        Acum sus ramane doar sigla si iesirea, iar meniul trece JOS, intr-o bara
+        fixa, unde ajunge degetul mare fara sa muti mana. Toate sapte incap:
+        390 impartit la 7 face 55 de pixeli de fiecare, cat o iconita si o
+        eticheta mica. Nimic nu se ascunde dupa „mai mult".
+
+        De la 1024px in sus nu se schimba nimic, ramane coloana din stanga.
+      */}
       <aside className="bg-cerneala text-alb lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
         <div className="flex items-center justify-between px-5 py-4 lg:block lg:px-6 lg:py-7">
           <a href="/" className="inline-flex items-center">
@@ -108,13 +121,14 @@ export default function App() {
           </button>
         </div>
 
-        <nav className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-col lg:px-3" aria-label="Cabinet">
+        {/* Meniul de pe ecran mare. Pe telefon e cel de jos. */}
+        <nav className="hidden gap-1 px-3 pb-3 lg:flex lg:flex-col" aria-label="Cabinet">
           {RUTE.map(({ cale: c, nume, Icon }) => (
             <a
               key={c}
               href={`#${c}`}
               className={cn(
-                'flex shrink-0 items-center gap-2.5 rounded-full px-3.5 py-2.5 text-sm font-medium transition lg:rounded-2xl lg:px-4 lg:py-3',
+                'flex shrink-0 items-center gap-2.5 rounded-2xl px-4 py-3 text-sm font-medium transition',
                 c === activa.cale ? 'bg-alb text-cerneala' : 'text-alb/75 hover:bg-alb/10 hover:text-alb',
               )}
             >
@@ -133,7 +147,38 @@ export default function App() {
         </div>
       </aside>
 
-      <div className="min-w-0 px-4 py-6 sm:px-8 sm:py-8 lg:px-10">
+      {/* Bara de jos, doar pe telefon si pe tableta. `pb-[env(safe-area-inset-bottom)]`
+          o tine deasupra barei de gesturi de pe iPhone. */}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-40 border-0 bg-cerneala pb-[env(safe-area-inset-bottom)] lg:hidden"
+        aria-label="Cabinet"
+      >
+        <div className="flex">
+          {RUTE.map(({ cale: c, nume, Icon }) => (
+            <a
+              key={c}
+              href={`#${c}`}
+              aria-current={c === activa.cale ? 'page' : undefined}
+              className={cn(
+                'flex flex-1 flex-col items-center gap-1 px-0.5 pb-2 pt-2.5 text-[10px] font-medium leading-tight transition',
+                c === activa.cale ? 'text-alb' : 'text-alb/55',
+              )}
+            >
+              <span
+                className={cn(
+                  'flex h-7 w-11 items-center justify-center rounded-full transition',
+                  c === activa.cale ? 'bg-albastru text-alb' : 'text-alb/70',
+                )}
+              >
+                <Icon className="size-[18px]" />
+              </span>
+              <span className="w-full truncate text-center">{nume}</span>
+            </a>
+          ))}
+        </div>
+      </nav>
+
+      <div className="min-w-0 px-4 pb-28 pt-6 sm:px-8 sm:pt-8 lg:px-10 lg:pb-10">
         <Pagina />
       </div>
     </div>
