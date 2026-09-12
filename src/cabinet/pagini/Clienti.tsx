@@ -57,7 +57,14 @@ export default function Clienti() {
 
   const incarca = () => {
     setEroare('')
-    apel<{ clienti: ClientCuCifre[] }>('clienti').then((r) => setLista(r.clienti)).catch((e: Error) => setEroare(e.message))
+    /* Fisa deschisa se improspateaza si ea, ca sa nu fie nevoie sa o inchizi si
+       sa o deschizi dupa fiecare pachet adaugat. */
+    apel<{ clienti: ClientCuCifre[] }>('clienti')
+      .then((r) => {
+        setLista(r.clienti)
+        setDeschis((d) => (d ? (r.clienti.find((c) => c.id === d.id) ?? d) : d))
+      })
+      .catch((e: Error) => setEroare(e.message))
   }
   useEffect(incarca, [])
 
@@ -211,7 +218,6 @@ function DialogClient({ client, inchide, laSalvare, laPropunere, laReincarcare }
     try {
       await apel('pachet', { metoda: 'POST', corp: { client_id: client.id, nume, lectii, pret, platit: true } })
       laReincarcare()
-      inchide()
     } catch (e) {
       setEroare(e instanceof Error ? e.message : 'Pachetul nu s-a salvat')
     } finally {
@@ -224,7 +230,6 @@ function DialogClient({ client, inchide, laSalvare, laPropunere, laReincarcare }
     try {
       await apel('pachet', { metoda: 'DELETE', query: { id: idP } })
       laReincarcare()
-      inchide()
     } catch (e) {
       setEroare(e instanceof Error ? e.message : 'Pachetul nu s-a șters')
     } finally {

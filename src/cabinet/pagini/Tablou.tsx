@@ -19,10 +19,17 @@ type Sumar = {
 export default function Tablou() {
   const [s, setS] = useState<Sumar | null>(null)
   const [eroare, setEroare] = useState('')
+  /* Fara linkul salii, fiecare cursant primeste „linkul vine mai tarziu pe
+     email", iar in calendarul lui nu scrie unde sa intre. E singurul lucru
+     care trebuie completat o data si nu se vede nicaieri ca lipseste. */
+  const [faraSala, setFaraSala] = useState(false)
 
   const incarca = () => {
     setEroare('')
     apel<Sumar>('sumar').then(setS).catch((e: Error) => setEroare(e.message))
+    apel<{ setari: { link_zoom: string } }>('setari')
+      .then((r) => setFaraSala(!r.setari.link_zoom?.trim()))
+      .catch(() => setFaraSala(false))
   }
   useEffect(incarca, [])
 
@@ -44,6 +51,14 @@ export default function Tablou() {
       >
         Bună, Dorina
       </Titlu>
+
+      {faraSala && (
+        <a href="#/setari" className="mb-6 block rounded-2xl bg-portocaliu-5 px-5 py-3.5 text-sm leading-relaxed text-cerneala">
+          <strong className="font-medium">Nu ai pus încă linkul sălii.</strong> Până îl pui, fiecare cursant primește
+          „linkul vine pe email înainte de lecție", iar în calendarul lui nu scrie unde să intre. Apasă aici, e un
+          singur câmp la Setări: linkul tău de Zoom sau de Google Meet.
+        </a>
+      )}
 
       {s.mod === 'local' && (
         <p className="mb-6 rounded-2xl bg-portocaliu-5 px-5 py-3 text-sm text-[#b8431a]">

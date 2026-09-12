@@ -247,7 +247,7 @@ export function emailNotificare(p: Programare, c: Client, setari: Setari): Email
       intro: `Programarea a intrat în calendar ca <strong>nouă</strong>. Confirm-o din cabinet sau scrie-i direct.`,
       corp: randuri(lista),
       butoane,
-      subsol: 'Lecția e atașată ca fișier de calendar: pe telefon se deschide singură în Calendar, cu amintire cu o oră și cu zece minute înainte. Răspunzând la acest email scrii direct cursantului.',
+      subsol: 'Lecția e atașată ca fișier de calendar: pe telefon se deschide singură în Calendar, cu amintire cu 30 de minute înainte. Răspunzând la acest email scrii direct cursantului.',
     }),
   }
 }
