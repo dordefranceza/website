@@ -10,13 +10,24 @@ import PersonajCerc from '../components/PersonajCerc.astro'
   <main id="continut" class="bg-crem pt-32 pb-20 sm:pt-40 sm:pb-28">
     <div class="container-site grid gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
       <div>
+        {/*
+          Pe telefon, figura de sub carduri nu se vede deloc (e `lg:block`), iar
+          sus sta un paragraf de trei randuri care spune ce spun si cardurile
+          de dedesubt: scrie-mi pe WhatsApp, pe email, sau alege-ti o ora.
+          Artiom: „scoate textul cela si pune sus poza cu fata".
+
+          Asa ca pe telefon paragraful iese si in locul lui vine figura cu
+          telefonul in mana, in cerc verde ca sa se lege cu WhatsApp-ul din
+          primul card. De la 1024px in sus ramane exact cum era.
+        */}
+        <PersonajCerc nume="telefon" inel="verde" disc="alb" marime={150} class="mb-7 lg:hidden" />
         <p class="eticheta">Contact</p>
         {/* Titlul se rupea in doua, cu „WhatsApp" singur pe randul al doilea.
             Masurat: la 48px cere 548 de pixeli, iar coloana avea 487. Nu
             titlul a fost micsorat, ci coloana largita: formularul din dreapta
             incape si asa. */}
         <h1 class="mt-3 text-4xl sm:text-5xl lg:text-[2.6rem] xl:text-5xl">Cel mai rapid: WhatsApp</h1>
-        <p class="echilibrat mt-5 text-lg text-gri">De obicei răspund în aceeași zi. Dacă preferi, îmi scrii pe email sau îți alegi direct o zi din calendar.</p>
+        <p class="echilibrat mt-5 hidden text-lg text-gri lg:block">De obicei răspund în aceeași zi. Dacă preferi, îmi scrii pe email sau îți alegi direct o zi din calendar.</p>
         <div class="mt-8 space-y-3">
           <a href={linkWhatsApp} target="_blank" rel="noopener" class="flex items-center gap-4 rounded-[1.25rem] bg-alb p-5 transition hover:-translate-y-0.5">
             <span class="flex size-11 items-center justify-center rounded-full bg-verde-5"><Icon name="whatsapp" class="size-6 text-verde" /></span>
