@@ -172,6 +172,45 @@ După ce ajunge pe live, Google își reîmprospătează iconița din rezultate 
 ritmul lui, de la zile la săptămâni. Merită cerută reindexarea paginii de start
 din Search Console.
 
+## Grila de prețuri, 12 septembrie seara
+
+Refăcută după o discuție de strategie. Prețurile stau **numai** în
+`src/config/site.ts`, nicăieri altundeva.
+
+| Individual | Pe lecție | Total |
+|---|---|---|
+| O lecție, 50 min | 40 € | 40 € |
+| Pachet 5 | 36 € | 180 € |
+| Pachet 10 | 33 € | 330 € |
+| Intensiv, 2 luni, 24 lecții | 31 € | 744 € |
+
+| În grup, lecții de 80 min | Pe lecție | Total |
+|---|---|---|
+| Lecție de probă | 25 € | 25 € |
+| Pachet 5 | 24 € | 120 € |
+| Pachet 10 | 22 € | 220 € |
+| Curs de 2 luni, 15 lecții | 20 € | 300 € |
+
+**De ce grupul are lecții de 80 de minute:** sunt mai mulți oameni și fiecare
+trebuie să apuce să vorbească. Durata intră direct în calculul orelor libere;
+`sloturi.ts` o folosește și la lungimea slotului, și la verificarea
+suprapunerilor, deci nu a fost nevoie de nimic în plus.
+
+**Cifra care vinde:** 20 € pentru 80 de minute înseamnă 15 € pe oră, exact media
+platformelor ieftine cu care ne comparăm în secțiunea de alături.
+
+**Piața, cercetată pe 12 septembrie:** platformele de meditații din România au
+media 80 lei pe oră; Institutul Francez cere 37 lei pe oră la grup; Ibsen,
+școală premium din București, 160 lei pe oră individual. Dorina la 40 € pentru
+50 de minute înseamnă 253 lei pe oră, adică 1,6 ori peste cel mai scump
+concurent comparabil.
+
+**Ce NU există:** evidența pachetelor. Nu e niciun tabel și niciun câmp pe
+programare. Site-ul arată prețuri, iar numărătoarea lecțiilor rămâne între
+Dorina și cursant, ca și plata, care se face manual prin transfer. Pachetul ales
+pe pagina de prețuri intră scris în mesajul care ajunge la ea, atât. Artiom a
+decis conștient să lăsăm așa până după lansare.
+
 ## Ce a rămas de făcut, în ordine
 
 ### 1. Domeniul: GATA
