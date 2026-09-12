@@ -14,8 +14,19 @@ import type { Client, Programare, Setari } from '../lib/tipuri'
 import { TIPURI } from '../lib/tipuri'
 import { dataOraRo, dataRo, oraRo } from '../lib/timp'
 import { adresaSite, inDezvoltare, variabila } from './mediu'
+import { atasamentIcs, linkGoogleCalendar } from './calendar'
 
-export type Email = { catre: string[]; subiect: string; text: string; html: string; raspundeLa?: string }
+export type Atasament = { nume: string; continut: string }
+
+export type Email = {
+  catre: string[]
+  subiect: string
+  text: string
+  html: string
+  raspundeLa?: string
+  /** Fisiere trimise odata cu mesajul; `continut` e base64. */
+  atasamente?: Atasament[]
+}
 
 const NAVY = '#1b1463'
 const CERNEALA = '#080331'
@@ -61,6 +72,7 @@ export async function trimite(e: Email): Promise<{ ok: boolean; motiv?: string }
         subject: e.subiect,
         text: e.text,
         html: e.html,
+        ...(e.atasamente?.length ? { attachments: e.atasamente.map((a) => ({ filename: a.nume, content: a.continut })) } : {}),
       }),
     })
     if (!r.ok) {
@@ -185,6 +197,9 @@ export function emailNotificare(p: Programare, c: Client, setari: Setari): Email
   ]
 
   const butoane = [
+    /* Intai calendarul: e singurul buton care face ca telefonul sa sune la
+       timp. Cabinetul ramane, dar el nu da notificari. */
+    buton(linkGoogleCalendar(p, c, setari, true), 'Pune în Google Calendar', '#0b8043'),
     buton(`${adresaSite()}/admin/#/programari`, 'Deschide în cabinet'),
     cifre ? buton(`https://wa.me/${cifre}?text=${encodeURIComponent(`Bună, ${c.nume.split(' ')[0]}! Sunt Dorina, de la DorDeFranceza. Am primit programarea ta pentru ${cand}.`)}`, 'WhatsApp', '#25d366') : '',
     buton(`mailto:${c.email}`, 'Răspunde pe email', '#ffffff', CERNEALA),
@@ -194,6 +209,7 @@ export function emailNotificare(p: Programare, c: Client, setari: Setari): Email
     catre,
     raspundeLa: c.email,
     subiect: `Programare nouă: ${c.nume}, ${cand}`,
+    atasamente: [atasamentIcs(p, c, setari, true)],
     text: [`Programare nouă pe DorDeFranceza`, '', ...lista.filter((r) => r.valoare).map((r) => `${r.eticheta}: ${r.valoare}`)].join('\n'),
     html: sablon({
       figura: 'incurajeaza',
@@ -202,7 +218,7 @@ export function emailNotificare(p: Programare, c: Client, setari: Setari): Email
       intro: `Programarea a intrat în calendar ca <strong>nouă</strong>. Confirm-o din cabinet sau scrie-i direct.`,
       corp: randuri(lista),
       butoane,
-      subsol: 'Trimis automat de site-ul DorDeFranceza. Răspunzând la acest email scrii direct cursantului.',
+      subsol: 'Lecția e atașată ca fișier de calendar: pe telefon se deschide singură în Calendar, cu amintire cu o oră și cu zece minute înainte. Răspunzând la acest email scrii direct cursantului.',
     }),
   }
 }
@@ -230,12 +246,14 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
 
   const butoane = [
     link ? buton(link, 'Intră pe Zoom') : '',
+    buton(linkGoogleCalendar(p, c, setari), 'Pune în calendar', '#0b8043'),
     buton(`https://wa.me/${variabila('WHATSAPP_DORINA') || ''}`.replace(/\/$/, ''), 'Scrie-i Dorinei pe WhatsApp', '#25d366'),
   ].join('')
 
   return {
     catre: [c.email],
     subiect: `Confirmare: ${tip.nume.toLowerCase()}, ${zi}, ${ora}`,
+    atasamente: [atasamentIcs(p, c, setari)],
     text: [
       `Bună, ${prenume}!`,
       '',

@@ -9,7 +9,52 @@ export class EroareApi extends Error {
 
 type Optiuni = { metoda?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'; corp?: unknown; query?: Record<string, string> }
 
+/*
+ * Memorie scurta pentru citiri.
+ *
+ * Artiom, de doua ori: „schimb paginile in cabinetul asta personal, cam greu se
+ * incarca tot". Nu era codul paginii, era drumul: fiecare pagina isi cerea
+ * datele de la capat la fiecare intrare, si pana venea raspunsul de la Supabase
+ * ecranul statea gol. Dus-intors intre doua pagini insemna de fiecare data
+ * aceeasi asteptare pentru aceleasi date.
+ *
+ * Acum citirile se tin minte cateva zeci de secunde, deci a doua intrare pe
+ * aceeasi pagina e instantanee. Orice scriere sterge tot, ca sa nu ramana pe
+ * ecran o cifra veche dupa o salvare.
+ */
+type Intrare = { cand: number; date: unknown }
+
+const memorie = new Map<string, Intrare>()
+const VIATA = 30_000
+
+/** Uita tot ce s-a citit. Se cheama dupa fiecare scriere si la iesirea din cont. */
+export function uitaCitirile(): void {
+  memorie.clear()
+}
+
+/**
+ * Cere din vreme datele paginilor pe care nu esti inca, cat timp te uiti la
+ * prima. Cand ajungi la ele, sunt deja acolo.
+ */
+export function incalzeste(actiuni: string[] = ['setari', 'clienti', 'blocaje', 'disponibilitate']): void {
+  const porneste = () => {
+    for (const a of actiuni) void apel(a).catch(() => {})
+  }
+  /* `in window` ingusteaza tipul pana la `never` pe ramura cealalta, deci
+     luam functia direct si o intrebam daca exista. */
+  const candELiniste = (window as Window & { requestIdleCallback?: (f: () => void, o?: { timeout: number }) => void }).requestIdleCallback
+  if (candELiniste) candELiniste(porneste, { timeout: 2000 })
+  else window.setTimeout(porneste, 600)
+}
+
 export async function apel<T = Record<string, unknown>>(actiune: string, o: Optiuni = {}): Promise<T> {
+  const metoda = o.metoda ?? 'GET'
+  const cheie = `${actiune}?${new URLSearchParams(o.query ?? {})}`
+  if (metoda === 'GET') {
+    const tinuta = memorie.get(cheie)
+    if (tinuta && Date.now() - tinuta.cand < VIATA) return tinuta.date as T
+  }
+
   const t = await token()
   const q = o.query ? `?${new URLSearchParams(o.query)}` : ''
   const r = await fetch(`/api/cabinet/${actiune}${q}`, {
@@ -18,11 +63,15 @@ export async function apel<T = Record<string, unknown>>(actiune: string, o: Opti
     body: o.corp !== undefined ? JSON.stringify(o.corp) : undefined,
   })
   if (r.status === 401) {
+    uitaCitirile()
     window.dispatchEvent(new CustomEvent('ddf-iesire'))
     throw new EroareApi(401, 'Sesiunea a expirat. Intră din nou.')
   }
   const d = (await r.json().catch(() => ({}))) as { ok?: boolean; eroare?: string }
   if (!r.ok || d.ok === false) throw new EroareApi(r.status, d.eroare || 'Eroare pe server')
+
+  if (metoda === 'GET') memorie.set(cheie, { cand: Date.now(), date: d })
+  else uitaCitirile()
   return d as T
 }
 

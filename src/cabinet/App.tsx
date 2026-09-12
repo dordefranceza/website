@@ -6,6 +6,7 @@ import { PersonajCerc } from './PersonajCerc'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { iesi, legat, sesiune, type Sesiune } from './auth'
+import { incalzeste, uitaCitirile } from './api'
 import Autentificare from './pagini/Autentificare'
 import Tablou from './pagini/Tablou'
 import Programari from './pagini/Programari'
@@ -59,9 +60,16 @@ export default function App() {
     setStare(!s ? 'afara' : s.cereCod ? 'cod' : 'inauntru')
   }, [])
 
+  /* Odata intrat, cerem in fundal datele paginilor pe care nu esti inca. Cand
+     ajungi la ele, sunt deja aduse si nu mai astepti cu ecranul gol. */
+  useEffect(() => {
+    if (stare === 'inauntru') incalzeste()
+  }, [stare])
+
   useEffect(() => {
     void verifica()
     const laIesire = () => {
+      uitaCitirile()
       setSesiune(null)
       setStare('afara')
     }
