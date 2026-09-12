@@ -23,8 +23,21 @@ const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
     role="dialog"
     aria-modal="false"
     aria-labelledby="ddf-cookie-titlu"
-    class="fixed inset-x-3 bottom-24 z-[95] mx-auto max-w-lg rounded-[1.5rem] bg-alb p-5 shadow-[0_10px_40px_rgba(8,3,49,0.18)] sm:inset-x-auto sm:right-4 sm:p-6 lg:bottom-4"
+    class="fixed inset-x-3 bottom-24 z-[95] mx-auto max-w-lg overflow-hidden rounded-[1.5rem] bg-alb p-5 pl-[5.5rem] shadow-[0_10px_40px_rgba(8,3,49,0.18)] sm:inset-x-auto sm:right-4 sm:p-6 sm:pl-28 lg:bottom-4"
   >
+    {/*
+      Fata sta in spatele cardului si e taiata de marginea lui de jos, ca si
+      cum s-ar uita peste el la vizitator. De aia cardul are `overflow-hidden`
+      si o margine stanga mai lata, ca textul sa nu intre peste ea.
+    */}
+    <img
+      src="/images/personaj/cu-biscuite.webp"
+      alt=""
+      width="203"
+      height="520"
+      aria-hidden="true"
+      class="pointer-events-none absolute -bottom-16 left-1 h-[190px] w-auto select-none sm:left-2 sm:-bottom-[70px] sm:h-[220px]"
+    />
     <p id="ddf-cookie-titlu" class="font-sans text-[1.05rem] font-medium">Cookie-uri pe acest site</p>
     <p class="mt-2 text-sm leading-relaxed text-gri">
       Folosim cookie-uri de analiză, prin Google Analytics, numai dacă ești de acord. Fără acordul tău nu se salvează nimic în browser, iar site-ul merge la fel. Alegerea o schimbi oricând din
