@@ -139,6 +139,39 @@ pixel cu pixel. Respectă `prefers-reduced-motion`.
 `dorina-800.webp`. Cu totul 216 KB. Nu s-au șters, așteaptă cuvântul lui Artiom.
 `dorina-portret.webp` rămâne folosită, la Despre.
 
+## Iconițele site-ului, 12 septembrie seara
+
+Marca din iconiță e litera **D** cu accentul din siglă și Turnul Eiffel în golul
+literei. Litera și accentul nu sunt redesenate: se decupează din `nume.webp`,
+deci sunt exact literele siglei.
+
+Se refac toate dintr-o comandă:
+
+```bash
+node scripts/fa-iconitele.mjs
+```
+
+Scrie `favicon.ico` (16, 32, 48), `favicon.png` (96), `apple-touch-icon.png`
+(180) și `icoana-512.png`.
+
+**Două capcane, ambele verificate pe live pe 12 septembrie.**
+
+1. `/favicon.ico` întorcea **pagina proprie de 404, în HTML, 84 KB**, cu tip
+   `text/html`. Crawlerele cer întâi adresa aia. Un fișier real pe disc rezolvă:
+   fișierele statice câștigă în fața rutelor.
+2. Google nu ia neapărat iconița din `rel="icon"`. Citește și `apple-touch-icon`
+   și o preferă adesea pe cea mai mare pe care o găsește, deci se schimbă TOATE
+   fișierele, nu unul.
+
+**Ce i s-a spus lui Artiom și a decis altfel.** La 16 pixeli, turnul mănâncă
+golul din D, iar golul ăla e ce face un D să se citească drept D. I-am arătat
+varianta simplă, fără turn, și una cu turn mic. A ales turnul mare, știind.
+Dacă se răzgândește, se schimbă un singur număr în script.
+
+După ce ajunge pe live, Google își reîmprospătează iconița din rezultate în
+ritmul lui, de la zile la săptămâni. Merită cerută reindexarea paginii de start
+din Search Console.
+
 ## Ce a rămas de făcut, în ordine
 
 ### 1. Domeniul: GATA

@@ -15,7 +15,7 @@
  */
 interface Props {
   /** numele fisierului din public/images/personaj/, fara extensie */
-  nume: 'saluta' | 'cauta' | 'scrie' | 'telefon' | 'cu-biscuite' | 'arata' | 'prezinta' | 'incurajeaza' | 'inima' | 'se-uita-jos-a' | 'se-uita-jos-b'
+  nume: 'saluta' | 'cauta' | 'scrie' | 'telefon' | 'cu-biscuite' | 'arata' | 'prezinta' | 'incurajeaza' | 'inima' | 'se-uita-jos-a' | 'se-uita-jos-b' | 'asezata' | 'ganditoare'
   /** inelul colorat din jur */
   inel?: keyof typeof INEL
   /** discul deschis din spatele figurii */
@@ -69,6 +69,8 @@ const RAPORT = {
   inima: 310 / 640,
   'se-uita-jos-a': 343 / 640,
   'se-uita-jos-b': 256 / 640,
+  asezata: 493 / 900,
+  ganditoare: 327 / 900,
 } as const
 
 const {

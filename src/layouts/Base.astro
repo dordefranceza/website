@@ -44,8 +44,17 @@ const ogImage = new URL(image, Astro.site).href
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {/*
+      Toate iconitele, nu doar una. Google nu ia neaparat ce scrie in
+      rel="icon": citeste si apple-touch-icon si o prefera adesea pe cea mai
+      mare, deci daca ramane una veche undeva, aia ajunge in rezultate.
+      favicon.ico exista fiindca crawlerele cer intai adresa aia; fara fisier pe
+      disc, site-ul le raspundea cu propria pagina de 404, in HTML.
+      Se refac toate cu `node scripts/fa-iconitele.mjs`.
+    */}
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <meta name="theme-color" content="#f8f3eb" />
     <slot name="head" />
     <script is:inline>document.documentElement.classList.add('js')</script>
