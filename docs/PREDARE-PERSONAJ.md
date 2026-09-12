@@ -96,6 +96,18 @@ iese toată silueta, cu picioarele tăiate de marginea de jos.
 Pe fundal crem discul e `alb`, pe fundal închis e `crem`. Pe albastru nu se pune
 niciodată direct, conturul cobalt dispare.
 
+**Centrarea se face pe CAP, nu pe cutia figurii.** Artiom a spus despre un cerc
+că „fetei nu-i în mijloc", deși matematic figura era centrată. Avea dreptate:
+la pozițiile cu un braț întins, cutia se lungește într-o parte, deci mijlocul
+cutiei nu mai e mijlocul omului, iar ochiul caută capul. În componentă e un
+tabel `DEPLASARE` cu cât se mută fiecare poziție, ca fracțiune din lățimea
+fișierului. Cel mai mult se mută `prezinta`, cu 19,6%, și `bienvenue-lateral`.
+La `bienvenue-sus` deplasarea e zero dinadins: acolo sus e placarda, nu capul,
+iar placarda e chiar ce trebuie să stea în mijloc.
+
+Numerele se recalculează așa: centrul părții de sus a figurii, primele 14% din
+înălțime, minus centrul cutiei, împărțit la lățime.
+
 **Două capcane, ambele plătite deja:**
 
 1. Învelișul are nevoie de `width: fit-content`. Fără el e un bloc cât toată

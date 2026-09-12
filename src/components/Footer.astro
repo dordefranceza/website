@@ -3,11 +3,26 @@ import Logo from './Logo.astro'
 import { Icon } from 'astro-icon/components'
 import { site, linkWhatsApp } from '../config/site'
 import { firma } from '../config/firma'
+import PersonajCerc from './PersonajCerc.astro'
 const an = new Date().getFullYear()
 ---
 
-<footer class="bg-cerneala text-alb">
-  <div class="container-site grid gap-10 py-16 md:grid-cols-[1.4fr_1fr_1fr] md:py-20">
+<footer class="relative overflow-hidden bg-cerneala text-alb">
+  {/*
+    Personajul in subsol. Fundalul e inchis, deci figura are nevoie de un disc
+    deschis sub ea: conturul cobalt si pantalonii bleumarin dispar pe negru.
+    Coloanele se string putin de la 1280px in sus, ca sa-i faca loc.
+  */}
+  <PersonajCerc
+    nume="asezata"
+    inel="crem-inchis"
+    disc="crem"
+    marime={190}
+    marimeMare={220}
+    class="pointer-events-none absolute right-10 top-16 hidden xl:block 2xl:right-20"
+  />
+
+  <div class="container-site grid gap-10 py-16 md:grid-cols-[1.4fr_1fr_1fr] md:py-20 xl:grid-cols-[1.25fr_0.9fr_0.9fr_0.7fr]">
     <div>
       <Logo pe="inchis" inaltime={26} />
       <p class="mt-5 max-w-sm text-[0.98rem] leading-relaxed text-alb/70">

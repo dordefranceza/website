@@ -15,6 +15,8 @@ interface Props {
     /* familia frantuzeasca, generata pe 12 septembrie 2026 */
     | 'eiffel' | 'bagheta' | 'cafea' | 'felinar'
     | 'bicicleta' | 'acordeon' | 'croasant' | 'carte'
+    /* semnele de garantie; `garantie` e singurul verde, fiindca sta in blocul verde */
+    | 'moneda-inapoi' | 'palma-moneda' | 'sigiliu' | 'panglica' | 'garantie'
   /** înălțimea afișată, în pixeli */
   inaltime?: number
   /** gol pentru decor, altfel descrierea pentru cititoarele de ecran */
@@ -52,6 +54,11 @@ const RAPORT: Record<Props['nume'], number> = {
   'acordeon': 1.4154,
   'croasant': 1.3308,
   'carte': 1.15,
+  'moneda-inapoi': 1.0731,
+  'palma-moneda': 1.4577,
+  'sigiliu': 0.8346,
+  'panglica': 0.8385,
+  'garantie': 0.8346,
 }
 
 const { nume, inaltime = 56, alt = '', class: clasa = '', imediat = false } = Astro.props

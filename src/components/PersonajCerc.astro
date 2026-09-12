@@ -56,6 +56,39 @@ const DISC = {
   'portocaliu-5': 'bg-portocaliu-5',
 } as const
 
+/**
+ * Cat de mult trebuie mutata figura pe orizontala ca sa iasa CAPUL in mijlocul
+ * cercului, nu cutia ei.
+ *
+ * Artiom a spus despre un cerc ca „fetei nu-i in mijloc". Avea dreptate, desi
+ * matematic figura era centrata: la pozitiile cu un brat intins, cutia se
+ * lungeste intr-o parte, deci mijlocul cutiei nu mai e mijlocul omului. Ochiul
+ * cauta capul, nu dreptunghiul.
+ *
+ * Numerele sunt fractiuni din latimea fisierului, masurate asa: centrul capului
+ * (partea de sus, 14% din inaltime) minus centrul cutiei. Pozitiv inseamna ca
+ * trebuie impinsa spre dreapta.
+ */
+const DEPLASARE: Record<string, number> = {
+  arata: 0.042,
+  asezata: 0.104,
+  cauta: 0.107,
+  'cu-biscuite': 0.005,
+  ganditoare: -0.127,
+  incurajeaza: -0.032,
+  inima: 0.005,
+  prezinta: -0.196,
+  saluta: 0.121,
+  scrie: 0.048,
+  'se-uita-jos-a': 0.133,
+  'se-uita-jos-b': -0.035,
+  telefon: -0.052,
+  /* la astea doua, partea de sus e placarda, nu capul, si placarda e chiar
+     lucrul care trebuie sa stea in mijloc */
+  'bienvenue-sus': 0,
+  'bienvenue-lateral': 0,
+}
+
 /** Raportul latime/inaltime al fiecarui fisier, ca sa rezervam locul corect. */
 const RAPORT = {
   saluta: 257 / 640,
@@ -94,11 +127,14 @@ const mare = marimeMare ?? marime
  */
 const inaltimeImg = Math.round(mare * 1.11)
 const latimeImg = Math.round(inaltimeImg * RAPORT[nume])
+/* cat se muta figura, ca proportie din diametrul cercului: latimea ei e
+   1,11 x diametru x raport, iar deplasarea e o fractiune din latimea aia */
+const deplasare = Math.round(1.11 * RAPORT[nume] * (DEPLASARE[nume] ?? 0) * 10000) / 10000
 ---
 
 <div
   class:list={['personaj-cerc shrink-0 rounded-full', INEL[inel], clasa]}
-  style={`--d:${marime}px;--d-sm:${mare}px;--g:${grosime}px`}
+  style={`--d:${marime}px;--d-sm:${mare}px;--g:${grosime}px;--dep:${deplasare}`}
   aria-hidden="true"
 >
   <div class:list={['pc-disc relative overflow-hidden rounded-full', DISC[disc]]}>
@@ -129,10 +165,10 @@ const latimeImg = Math.round(inaltimeImg * RAPORT[nume])
   .pc-figura {
     height: calc(var(--dd) * 1.11);
     top: calc(var(--dd) * 0.038);
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateX(calc(var(--dd) * var(--dep, 0)));
   }
   .pc-figura.scale-x-\[-1\] {
-    transform: translateX(-50%) scaleX(-1);
+    transform: translateX(-50%) translateX(calc(var(--dd) * var(--dep, 0) * -1)) scaleX(-1);
   }
   @media (min-width: 640px) {
     .personaj-cerc {

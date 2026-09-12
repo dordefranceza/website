@@ -6,6 +6,7 @@
  *  3. garantia e imediat sub preturi, acolo unde apare ezitarea.
  */
 import { Icon } from 'astro-icon/components'
+import Semn from '../Semn.astro'
 import { planuri } from '../../config/continut'
 import { inLei, pachete, site } from '../../config/site'
 import PersonajCerc from '../PersonajCerc.astro'
@@ -90,9 +91,11 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
       care iese, si `pr` mare pe text, ca sa nu treaca pe sub ea.
     */}
     {site.garantie.activa && (
-      <div class="dezvaluie relative mt-14 flex flex-col items-start gap-5 rounded-[1.5rem] bg-verde-5 px-8 py-7 sm:flex-row sm:items-center sm:px-10 lg:pr-64 2xl:pr-72">
-        <span class="flex size-14 shrink-0 items-center justify-center rounded-full bg-alb">
-          <Icon name="solar:shield-check-bold" class="size-7 text-verde" />
+      <div class="dezvaluie relative mt-6 flex flex-col items-start gap-5 rounded-[1.5rem] bg-verde-5 px-8 py-7 sm:flex-row sm:items-center sm:px-10 lg:mt-24 lg:pr-64 2xl:pr-72">
+        {/* Sigiliul marcii, nu scutul din setul Solar pe care il are toata lumea.
+            E singurul semn desenat in verde, fiindca sta in blocul verde. */}
+        <span class="flex size-16 shrink-0 items-center justify-center rounded-full bg-alb">
+          <Semn nume="garantie" inaltime={38} />
         </span>
         <div>
           <h3 class="font-sans text-xl font-medium">Nu rămâi cu banii dați degeaba</h3>
@@ -103,16 +106,18 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
           Figura iese din banda DOAR in sus, cu talpa la nivelul marginii de jos:
           asa pare ca sta pe banda, si mai ales nu mai intra peste randul de
           dedesubt. Inainte iesea si in jos cu 36 de pixeli si acoperea textul.
-          Marginea din dreapta e aceeasi cu cea din stanga blocului, ca sa nu
-          atarne compozitia intr-o parte.
+          Iese si peste marginea din dreapta, ca sa nu mai ramana o fasie de
+          verde dupa ea: Artiom a hasurat exact fasia aia.
+          Blocul are `lg:mt-24` fiindca figura iese in sus cu vreo 60 de pixeli
+          si, cu marginea de dinainte, se lipea de cardul de deasupra.
           Inelul e verdele deschis, nu cel inchis: pe fundal verde pal, unul
           inchis taia ca o rama. Asa trece dintr-o nuanta in alta.
         */}
-        <PersonajCerc nume="inima" inel="verde-10" disc="alb" marime={176} marimeMare={196} class="absolute bottom-0 right-8 hidden lg:block sm:right-10" />
+        <PersonajCerc nume="inima" inel="verde-10" disc="alb" marime={160} marimeMare={176} class="absolute -right-5 bottom-0 hidden lg:block" />
       </div>
     )}
 
-    <p class="dezvaluie mt-6 text-center text-sm text-gri">
+    <p class="dezvaluie mt-6 text-center text-sm text-gri lg:mt-10">
       Prețurile sunt în euro. Suma în lei e trecută dedesubt, la cursul BNR, și se poate schimba puțin de la o zi la alta. Plata se face prin transfer bancar sau Revolut.
     </p>
   </div>
