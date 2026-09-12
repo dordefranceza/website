@@ -85,31 +85,31 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
     </div>
 
     {/*
-      Banda verde si figura sunt asezate una langa alta, nu figura peste banda.
-      Asa nu mai ramane verde nici sub ea, nici in dreapta ei: Artiom a hasurat
-      de doua ori exact fasiile alea. `items-end` le aliniaza pe marginea de jos,
-      deci figura pare ca sta pe acelasi rand cu banda, fara sa o atinga.
-      `lg:mt-24` fiindca figura e mai inalta decat banda si iese in sus.
+      Banda si figura sunt LIPITE, nu despartite: figura sta peste capatul din
+      dreapta al benzii. Dar asezata asa incat sa nu reapara verdele pe care
+      Artiom l-a hasurat de doua ori:
+        `right-0`  -> banda nu mai iese in dreapta cercului, se termina sub el;
+        `-bottom-4`-> cercul coboara sub linia de jos a benzii, deci nici pe sub
+                      arcul lui nu mai ramane verde la vedere.
+      Textul din banda are `lg:pr-56`, ca sa nu treaca pe sub figura.
     */}
     {site.garantie.activa && (
-      <div class="dezvaluie mt-6 lg:mt-24 lg:flex lg:items-end lg:gap-6">
-        <div class="flex flex-col items-start gap-5 rounded-[1.5rem] bg-verde-5 px-8 py-7 sm:flex-row sm:items-center sm:px-10 lg:flex-1">
-          {/* Sigiliul marcii, nu scutul din setul Solar pe care il are toata lumea.
-              E singurul semn desenat in verde, fiindca sta in blocul verde. */}
-          <span class="flex size-16 shrink-0 items-center justify-center rounded-full bg-alb">
-            <Semn nume="garantie" inaltime={38} />
-          </span>
-          <div>
-            <h3 class="font-sans text-xl font-medium">Nu rămâi cu banii dați degeaba</h3>
-            <p class="echilibrat mt-2 leading-relaxed text-cerneala/85">{site.garantie.text}</p>
-          </div>
+      <div class="dezvaluie relative mt-6 flex flex-col items-start gap-5 rounded-[1.5rem] bg-verde-5 px-8 py-7 sm:flex-row sm:items-center sm:px-10 lg:mt-24 lg:pr-56 2xl:pr-64">
+        {/* Sigiliul marcii, nu scutul din setul Solar pe care il are toata lumea.
+            E singurul semn desenat in verde, fiindca sta in blocul verde. */}
+        <span class="flex size-16 shrink-0 items-center justify-center rounded-full bg-alb">
+          <Semn nume="garantie" inaltime={38} />
+        </span>
+        <div>
+          <h3 class="font-sans text-xl font-medium">Nu rămâi cu banii dați degeaba</h3>
+          <p class="echilibrat mt-2 leading-relaxed text-cerneala/85">{site.garantie.text}</p>
         </div>
         {/* Promisiunea e personala, deci o tine cineva, nu doar o iconita. */}
-        <PersonajCerc nume="inima" inel="verde-10" disc="alb" marime={160} marimeMare={184} class="hidden shrink-0 lg:block" />
+        <PersonajCerc nume="inima" inel="verde-10" disc="alb" marime={160} marimeMare={184} class="absolute -bottom-4 right-0 hidden lg:block" />
       </div>
     )}
 
-    <p class="dezvaluie mt-6 text-center text-sm text-gri lg:mt-10">
+    <p class="dezvaluie mt-6 text-center text-sm text-gri lg:mt-14">
       Prețurile sunt în euro. Suma în lei e trecută dedesubt, la cursul BNR, și se poate schimba puțin de la o zi la alta. Plata se face prin transfer bancar sau Revolut.
     </p>
   </div>
