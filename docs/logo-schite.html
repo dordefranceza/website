@@ -1,0 +1,102 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family:'SS4'; src:url('file:///Users/artiom/LUCRU/Claude Code/dordefranceza/public/fonts/source-serif-4-latin-400-normal.woff2') format('woff2'); font-weight:400; font-style:normal; }
+  @font-face { font-family:'SS4'; src:url('file:///Users/artiom/LUCRU/Claude Code/dordefranceza/public/fonts/source-serif-4-latin-ext-400-normal.woff2') format('woff2'); font-weight:400; font-style:normal; }
+  @font-face { font-family:'SS4'; src:url('file:///Users/artiom/LUCRU/Claude Code/dordefranceza/public/fonts/source-serif-4-latin-400-italic.woff2') format('woff2'); font-weight:400; font-style:italic; }
+  @font-face { font-family:'Satoshi'; src:url('file:///Users/artiom/LUCRU/Claude Code/dordefranceza/public/fonts/satoshi-500.woff2') format('woff2'); font-weight:500; }
+  @font-face { font-family:'Satoshi'; src:url('file:///Users/artiom/LUCRU/Claude Code/dordefranceza/public/fonts/satoshi-400.woff2') format('woff2'); font-weight:400; }
+  body { margin:0; background:#f8f3eb; font-family:'Satoshi',system-ui,sans-serif; color:#080331; padding:52px 44px; }
+  h1 { font-family:'SS4',Georgia,serif; font-weight:400; font-size:38px; margin:0 0 6px; letter-spacing:-.015em; }
+  .sub { color:#5b5a75; font-size:15px; margin:0 0 40px; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .cell { background:#fff; border-radius:24px; padding:28px 24px 22px; box-shadow:0 8px 16px rgba(99,91,79,.08), 0 32px 32px -16px rgba(99,91,79,.06); }
+  .mark { height:124px; display:flex; align-items:center; justify-content:center; }
+  .nume { font-family:'SS4',Georgia,serif; font-size:19px; margin:16px 0 4px; }
+  .desc { font-size:13px; line-height:1.5; color:#5b5a75; margin:0; min-height:58px; }
+  .mini { display:flex; align-items:center; gap:11px; margin-top:12px; }
+  .dot { width:26px; height:26px; border-radius:50%; background:#4865ff; display:flex; align-items:center; justify-content:center; }
+  .lock { margin-top:44px; background:#fff; border-radius:24px; padding:40px; box-shadow:0 8px 16px rgba(99,91,79,.08); display:flex; flex-direction:column; gap:32px; align-items:center; }
+  /* Marca de cuvant: accentul e un element pozitionat exact peste "o". */
+  .word { font-family:'SS4',Georgia,serif; font-weight:400; letter-spacing:-.005em; white-space:nowrap; }
+  .word .it { font-style:italic; }
+  .o { position:relative; display:inline-block; }
+  .o i { position:absolute; left:52%; bottom:.74em; width:.12em; height:.3em; background:#ff6d39; border-radius:.07em; transform:translateX(-50%) rotate(20deg); transform-origin:bottom center; }
+  .row { display:flex; align-items:center; gap:15px; }
+  .tag { margin:9px 0 0; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:#5b5a75; }
+</style>
+<h1>Trei direcții, desenate curat</h1>
+<p class="sub">Nu sunt poze generate. Sunt vectori adevărați, la orice mărime, în paleta site-ului.</p>
+
+<div class="grid">
+  <div class="cell">
+    <div class="mark">
+      <svg width="112" height="112" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="61" r="25" stroke="#4865ff" stroke-width="9"/>
+        <path d="M45 28 L56 13" stroke="#ff6d39" stroke-width="8.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="nume">Dorul cu accent</p>
+    <p class="desc">Litera „o” din Dor purtând accentul francez. Cuvântul nostru, îmbrăcat la ei.</p>
+    <div class="mini">
+      <span class="dot"><svg width="14" height="14" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="61" r="25" stroke="#fff" stroke-width="11"/><path d="M45 28 L56 13" stroke="#fff" stroke-width="10" stroke-linecap="round"/></svg></span>
+      <svg width="17" height="17" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="61" r="25" stroke="#080331" stroke-width="11"/><path d="M45 28 L56 13" stroke="#080331" stroke-width="10" stroke-linecap="round"/></svg>
+      <span style="font-size:12px;color:#5b5a75">merge și la 16 px</span>
+    </div>
+  </div>
+
+  <div class="cell">
+    <div class="mark">
+      <svg width="112" height="112" viewBox="0 0 100 100" fill="none" stroke="#4865ff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 34 L16 50 L32 66"/>
+        <path d="M50 34 L34 50 L50 66"/>
+        <path d="M68 34 L84 50 L68 66"/>
+        <path d="M50 34 L66 50 L50 66" stroke="#ff6d39"/>
+      </svg>
+    </div>
+    <p class="nume">Ghilimelele</p>
+    <p class="desc">Semnele « » ale francezei, față în față. Înseamnă: aici cineva vorbește.</p>
+    <div class="mini">
+      <span class="dot"><svg width="15" height="15" viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M30 36 L16 50 L30 64"/><path d="M70 36 L84 50 L70 64"/></svg></span>
+      <svg width="17" height="17" viewBox="0 0 100 100" fill="none" stroke="#080331" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M30 36 L16 50 L30 64"/><path d="M70 36 L84 50 L70 64"/></svg>
+      <span style="font-size:12px;color:#5b5a75">merge și la 16 px</span>
+    </div>
+  </div>
+
+  <div class="cell">
+    <div class="mark">
+      <svg width="112" height="112" viewBox="0 0 100 100" fill="none">
+        <path d="M28 84 V16 h18 a34 34 0 0 1 0 68 Z" stroke="#4865ff" stroke-width="9" stroke-linejoin="round"/>
+        <path d="M46 84 V60 a9 9 0 0 1 18 0 V84" stroke="#ff6d39" stroke-width="8" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <p class="nume">Ușa</p>
+    <p class="desc">Litera D care e și o ușă cu arc. Franceza îți deschide o ușă: job, mutare, examen.</p>
+    <div class="mini">
+      <span class="dot"><svg width="14" height="14" viewBox="0 0 100 100" fill="none"><path d="M28 84 V16 h18 a34 34 0 0 1 0 68 Z" stroke="#fff" stroke-width="12" stroke-linejoin="round"/></svg></span>
+      <svg width="17" height="17" viewBox="0 0 100 100" fill="none"><path d="M28 84 V16 h18 a34 34 0 0 1 0 68 Z" stroke="#080331" stroke-width="12" stroke-linejoin="round"/></svg>
+      <span style="font-size:12px;color:#5b5a75">merge și la 16 px</span>
+    </div>
+  </div>
+</div>
+
+<div class="lock">
+  <div class="word" style="font-size:46px">D<span class="o">o<i></i></span>r<span class="it">de</span>Franceza</div>
+
+  <div class="row">
+    <svg width="42" height="42" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="61" r="25" stroke="#4865ff" stroke-width="9"/><path d="M45 28 L56 13" stroke="#ff6d39" stroke-width="8.5" stroke-linecap="round"/></svg>
+    <div class="word" style="font-size:34px">D<span class="o">o<i></i></span>r<span class="it">de</span>Franceza</div>
+  </div>
+
+  <div style="text-align:center">
+    <div class="word" style="font-size:30px">D<span class="o">o<i></i></span>r<span class="it">de</span>Franceza</div>
+    <p class="tag">Lecții de franceză, online</p>
+  </div>
+
+  <div class="row" style="gap:26px;margin-top:4px">
+    <span class="dot" style="width:44px;height:44px"><svg width="24" height="24" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="61" r="25" stroke="#fff" stroke-width="10"/><path d="M45 28 L56 13" stroke="#fff" stroke-width="9" stroke-linecap="round"/></svg></span>
+    <span class="dot" style="width:32px;height:32px;background:#080331"><svg width="17" height="17" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="61" r="25" stroke="#fff" stroke-width="11"/><path d="M45 28 L56 13" stroke="#fff" stroke-width="10" stroke-linecap="round"/></svg></span>
+    <span class="dot" style="width:22px;height:22px"><svg width="12" height="12" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="61" r="25" stroke="#fff" stroke-width="13"/><path d="M45 28 L56 13" stroke="#fff" stroke-width="12" stroke-linecap="round"/></svg></span>
+    <span style="font-size:12.5px;color:#5b5a75">iconița din tab, la trei mărimi</span>
+  </div>
+</div>
