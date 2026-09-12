@@ -76,6 +76,13 @@ export default function Disponibilitate() {
   const [ciorna, setCiorna] = useState<Interval[]>([])
   const [ciornaPentru, setCiornaPentru] = useState('')
 
+  /* Cele doua cereri vin separat, iar ciorna nu are voie sa porneasca pana nu
+     sunt amandoua pe masa. Fara steagurile astea exista o cursa urata: daca
+     regulile ajungeau inaintea zilelor, panoul se deschidea GOL pentru o zi
+     care avea ore, arata „nesalvat", si o apasare pe Salveaza inchidea ziua. */
+  const [gataReguli, setGataReguli] = useState(false)
+  const [gataLuna, setGataLuna] = useState(false)
+
   const [eroare, setEroare] = useState('')
   const [toast, setToast] = useState('')
   const [asteapta, setAsteapta] = useState(false)
@@ -98,6 +105,7 @@ export default function Disponibilitate() {
         setReguli(r.reguli.map(({ zi, de_la, pana_la }) => ({ zi, de_la, pana_la })))
         setBlocaje(b.blocaje)
         setSetari(s.setari)
+        setGataReguli(true)
       })
       .catch((e: Error) => setEroare(e.message))
   }
@@ -106,6 +114,7 @@ export default function Disponibilitate() {
   /* Zilele proprii si lectiile se cer pe luna aratata, cu o zi in plus de
      fiecare parte, ca sa nu lipseasca nimic la marginea lunii. */
   const incarcaLuna = () => {
+    setGataLuna(false)
     const { an, l, nrZile } = formaLunii(luna)
     const deLa = ziUrmatoare(cheieZi(an, l, 1), -1)
     const panaLa = ziUrmatoare(cheieZi(an, l, nrZile), 1)
@@ -116,6 +125,7 @@ export default function Disponibilitate() {
       .then(([z, p]) => {
         setZileProprii(z.zile)
         setProgramari(p.programari)
+        setGataLuna(true)
       })
       .catch((e: Error) => setEroare(e.message))
   }
@@ -133,11 +143,16 @@ export default function Disponibilitate() {
      date noi de pe server. Fara `ciornaPentru`, o salvare ar rescrie ziua cu
      ce era pe ecran inainte de raspuns. */
   useEffect(() => {
-    if (reguli === null) return
+    setCiorna([])
+    setCiornaPentru('')
+  }, [aleasa])
+
+  useEffect(() => {
+    if (!gataReguli || !gataLuna) return
     if (ciornaPentru === aleasa) return
     setCiorna(oreleZilei(aleasa).intervale.map((i) => ({ ...i })))
     setCiornaPentru(aleasa)
-  }, [aleasa, reguli, zileProprii])
+  }, [aleasa, gataReguli, gataLuna, reguli, zileProprii, ciornaPentru])
 
   const alesProprie = zileProprii.some((z) => z.data === aleasa)
   const nesalvat = ciornaPentru === aleasa && JSON.stringify(ciorna) !== JSON.stringify(oreleZilei(aleasa).intervale)
@@ -162,6 +177,7 @@ export default function Disponibilitate() {
   }, [programari])
 
   async function salveazaZiua(intervale: Interval[] | null, mesaj: string) {
+    if (intervale !== null && ciornaPentru !== aleasa) return
     setAsteapta(true)
     try {
       const r = await apel<{ zile: OrarZi[] }>('orar-zi', { metoda: 'PUT', corp: { data: aleasa, intervale } })
@@ -187,6 +203,22 @@ export default function Disponibilitate() {
       setZileProprii((toate) => toate.filter((z) => z.data !== aleasa))
       setCiornaPentru('')
       anunta(`Orele astea se repetă acum în fiecare ${numeZi(zs)}.`)
+    } catch (e) {
+      anunta(e instanceof Error ? e.message : 'Nu s-a salvat')
+    } finally {
+      setAsteapta(false)
+    }
+  }
+
+  /** Scoate din orarul saptamanal toate orele unei zile. Zilele deja apasate in
+      calendar nu se ating: ele au orarul lor si nu asculta de saptamana. */
+  async function nuMaiRepeta(zi: number) {
+    setAsteapta(true)
+    try {
+      const r = await apel<{ reguli: Regula[] }>('disponibilitate', { metoda: 'PUT', corp: { reguli: (reguli ?? []).filter((x) => x.zi !== zi) } })
+      setReguli(r.reguli.map(({ zi: z, de_la, pana_la }) => ({ zi: z, de_la, pana_la })))
+      setCiornaPentru('')
+      anunta(`Nu se mai repetă în fiecare ${numeZi(zi)}.`)
     } catch (e) {
       anunta(e instanceof Error ? e.message : 'Nu s-a salvat')
     } finally {
@@ -221,6 +253,7 @@ export default function Disponibilitate() {
   const { an, l, nrZile, offset } = formaLunii(luna)
   const acum = new Date().toISOString()
   const aleasaParti = desfaZi(aleasa)
+  const areReguli = (reguli ?? []).length > 0
 
   /* Cate zile din luna aratata sunt deschise. Raspunde dintr-o privire la „de
      ce nu poate nimeni sa programeze", fara sa fie numarate cu ochiul. */
@@ -319,10 +352,14 @@ export default function Disponibilitate() {
           <h2 className="font-sans text-lg font-medium first-letter:uppercase">
             {aleasaParti ? `${numeZi(ziSaptamanii(aleasa))}, ${aleasaParti.zi} ${numeLuna(aleasaParti.luna)}` : ''}
           </h2>
+          {/* Trei situatii, si fiecare cere alt raspuns. Un singur text pentru
+              toate lasa omul sa creada ca mai are ceva de facut altundeva. */}
           <p className="mt-1 text-sm leading-relaxed text-gri">
             {alesProprie
-              ? 'Zi cu orarul ei, pus de tine.'
-              : 'Ziua ține orele din orarul obișnuit. Dacă le schimbi aici, se schimbă numai în ziua asta.'}
+              ? 'Orele astea sunt puse de tine, numai pe ziua asta. Nu depind de nimic altceva.'
+              : oreleZilei(aleasa).intervale.length
+                ? `Ziua ia orele care se repetă în fiecare ${numeZi(ziSaptamanii(aleasa))}. Dacă le schimbi aici, se schimbă numai în ziua asta.`
+                : 'Ziua e închisă, nimeni nu poate programa în ea. Pune-i orele și salveaz-o.'}
           </p>
 
           {aleasa < azi && <p className="mt-3 rounded-xl bg-crem px-4 py-2.5 text-sm text-gri">Ziua a trecut. Poți privi, dar nu mai are cine să programeze în ea.</p>}
@@ -392,12 +429,12 @@ export default function Disponibilitate() {
           <div className="mt-4 space-y-2">
             {ciorna.length > 0 && (
               <button type="button" disabled={asteapta} onClick={() => void repetaSaptamanal()} className="block text-sm font-medium text-albastru-text disabled:opacity-60">
-                Pune la fel în fiecare {numeZi(ziSaptamanii(aleasa))}
+                Repetă în fiecare {numeZi(ziSaptamanii(aleasa))}, la nesfârșit
               </button>
             )}
             {alesProprie && (
-              <button type="button" disabled={asteapta} onClick={() => void salveazaZiua(null, 'Ziua a revenit la orarul obișnuit.')} className="block text-sm font-medium text-gri underline underline-offset-4 disabled:opacity-60">
-                Revino la orarul obișnuit
+              <button type="button" disabled={asteapta} onClick={() => void salveazaZiua(null, 'Orele puse pe ziua asta au fost scoase.')} className="block text-sm font-medium text-gri underline underline-offset-4 disabled:opacity-60">
+                Scoate orele puse pe ziua asta
               </button>
             )}
           </div>
@@ -423,31 +460,47 @@ export default function Disponibilitate() {
         </Card>
       </div>
 
-      {/* Temelia: orarul care se repeta. Sta jos, fiindca acum treaba se face in
-          calendar; asta e doar sablonul zilelor neatinse. */}
-      <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <Card>
-          <h2 className="font-sans text-lg font-medium">Orarul obișnuit, în fiecare săptămână</h2>
-          <p className="mt-1 text-sm leading-relaxed text-gri">
-            Șablonul de pornire pentru zilele pe care nu le-ai atins în calendar. Se schimbă apăsând o zi mai sus și
-            alegând „Pune la fel în fiecare". Ora României, lecțiile se așază din oră în oră.
-          </p>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {[1, 2, 3, 4, 5, 6, 7].map((zi) => {
-              const ale = (reguli ?? []).filter((r) => r.zi === zi)
-              return (
-                <div key={zi} className="flex items-baseline gap-3 rounded-xl bg-crem px-4 py-2.5 text-sm">
-                  <span className="w-20 shrink-0 font-medium capitalize">{numeZi(zi)}</span>
-                  <span className={ale.length ? 'text-cerneala' : 'text-gri'}>
-                    {ale.length ? ale.map((r) => `${r.de_la} la ${r.pana_la}`).join(', ') : 'închis'}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-        </Card>
+      {/*
+        Cardul cu orele care se repeta apare DOAR daca exista asa ceva.
+        Cand era mereu pe ecran, cu sapte randuri „inchis", punea la indoiala
+        munca de sus: Artiom pusese ore in calendar si dedesubt scria ca luni e
+        inchis. „Ce-i asta? Ce mai trebuie mie jos?" Nimic. Daca nu repeti
+        nimic, cardul nu mai are ce sa spuna, deci nu mai apare.
+      */}
+      <div className={`mt-6 grid gap-6 ${areReguli ? 'xl:grid-cols-[minmax(0,1fr)_22rem]' : ''}`}>
+        {areReguli && (
+          <Card>
+            <h2 className="font-sans text-lg font-medium">Ore care se repetă singure</h2>
+            <p className="mt-1 text-sm leading-relaxed text-gri">
+              Zilele de mai jos primesc orele astea în fiecare săptămână, la nesfârșit, fără să le mai pui tu. Orice zi
+              pe care o schimbi în calendar trece peste ele, numai în ziua aia.
+            </p>
+            <div className="mt-4 space-y-2">
+              {[1, 2, 3, 4, 5, 6, 7].map((zi) => {
+                const ale = (reguli ?? []).filter((r) => r.zi === zi)
+                if (!ale.length) return null
+                return (
+                  <div key={zi} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-xl bg-crem px-4 py-2.5 text-sm">
+                    <span>
+                      <span className="font-medium capitalize">în fiecare {numeZi(zi)}</span>
+                      <span className="ml-2.5 text-cerneala/80">{ale.map((r) => `${r.de_la} la ${r.pana_la}`).join(', ')}</span>
+                    </span>
+                    <button
+                      type="button"
+                      disabled={asteapta}
+                      onClick={() => void nuMaiRepeta(zi)}
+                      className="rounded-full bg-alb px-3 py-1.5 text-xs font-medium hover:text-rosu disabled:opacity-60"
+                    >
+                      Nu mai repeta
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+          </Card>
+        )}
 
-        <div className="space-y-6">
+        <div className={areReguli ? 'space-y-6' : 'grid gap-6 md:grid-cols-2 md:items-start'}>
           <Card>
             <h2 className="font-sans text-lg font-medium">Blochează o oră anume</h2>
             <p className="mt-1 text-sm leading-relaxed text-gri">
