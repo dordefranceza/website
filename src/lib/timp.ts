@@ -7,17 +7,34 @@ export const FUS = 'Europe/Bucharest'
 
 type Parti = { an: number; luna: number; zi: number; ora: number; minut: number; secunda: number }
 
+/*
+ * Formatoarele se tin minte pe fus. Construirea unui Intl.DateTimeFormat e
+ * partea scumpa, iar calculul sloturilor il cere de cateva sute de ori pentru
+ * o singura luna de orar; fara memorare, previzualizarea din cabinet se simte
+ * la fiecare tasta apasata.
+ */
+const formatoare = new Map<string, Intl.DateTimeFormat>()
+
+function formator(fus: string): Intl.DateTimeFormat {
+  let f = formatoare.get(fus)
+  if (!f) {
+    f = new Intl.DateTimeFormat('en-US', {
+      timeZone: fus,
+      hourCycle: 'h23',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })
+    formatoare.set(fus, f)
+  }
+  return f
+}
+
 function partiIn(instant: Date, fus: string): Parti {
-  const p = new Intl.DateTimeFormat('en-US', {
-    timeZone: fus,
-    hourCycle: 'h23',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  }).formatToParts(instant)
+  const p = formator(fus).formatToParts(instant)
   const ia = (tip: string) => Number(p.find((x) => x.type === tip)?.value ?? 0)
   return { an: ia('year'), luna: ia('month'), zi: ia('day'), ora: ia('hour') % 24, minut: ia('minute'), secunda: ia('second') }
 }
