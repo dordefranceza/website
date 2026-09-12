@@ -8,7 +8,10 @@
  */
 interface Props {
   /** numele fișierului din public/images/semne/, fără extensie */
-  nume: 'accent-o' | 'accent-linie' | 'randunica' | 'monograma-df' | 'usa' | 'samanta' | 'podul' | 'fereastra' | 'd-vorbire' | 'balcon'
+  nume:
+    | 'accent-o' | 'accent-linie' | 'randunica' | 'monograma-df' | 'usa' | 'samanta'
+    | 'podul' | 'fereastra' | 'd-vorbire' | 'balcon'
+    | 'servieta' | 'valiza' | 'diploma' | 'rasarit' | 'balon' | 'barcuta'
   /** înălțimea afișată, în pixeli */
   inaltime?: number
   /** gol pentru decor, altfel descrierea pentru cititoarele de ecran */
@@ -31,6 +34,12 @@ const RAPORT: Record<Props['nume'], number> = {
   'podul': 1.7889,
   'fereastra': 0.9778,
   'd-vorbire': 0.9611,
+  'servieta': 1.0735,
+  'valiza': 1.0221,
+  'diploma': 1.8456,
+  'rasarit': 1.3235,
+  'balon': 1.1397,
+  'barcuta': 1.4338,
   'balcon': 1.0056,
 }
 

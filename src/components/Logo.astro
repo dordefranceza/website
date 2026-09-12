@@ -1,32 +1,24 @@
 ---
 /**
- * Marca brandului: cercul „ó” plus numele „Dór de Franceza”.
+ * Sigla: numele „Dór de Franceza”, cu accentul albastru pe „o”.
  *
- * Sunt fișiere, nu desen în cod. Au fost generate, alese de Artiom și decupate
- * cu fundal transparent. Pe fundal închis, `brightness(0) invert(1)` le face
- * albe fără să ținem un al doilea fișier: ambele sunt o singură culoare închisă.
+ * E un fișier generat și decupat, nu desen în cod. Marca „ó” separată a fost
+ * scoasă din siglă la cererea lui Artiom: lângă nume nu își găsea locul.
+ * A rămas doar ca iconiță de tab, unde nu încape un nume întreg.
+ * Pe fundal închis, `brightness(0) invert(1)` face numele alb, fără al doilea fișier.
  */
 interface Props {
   /** 'deschis' = antet alb, 'inchis' = subsol întunecat */
   pe?: 'deschis' | 'inchis'
   class?: string
-  /** înălțimea numelui, în pixeli. Marca se scalează după el. */
+  /** înălțimea numelui, în pixeli */
   inaltime?: number
 }
 const { pe = 'deschis', class: clasa = '', inaltime = 21 } = Astro.props
 const alb = pe === 'inchis' ? 'filter:brightness(0) invert(1)' : ''
 ---
 
-<span class:list={['inline-flex items-center gap-2.5', clasa]}>
-  <img
-    src="/images/semne/marca.webp"
-    alt=""
-    aria-hidden="true"
-    style={`height:${Math.round(inaltime * 1.28)}px;width:auto;${alb}`}
-    height={Math.round(inaltime * 1.28)}
-    loading="eager"
-    decoding="async"
-  />
+<span class:list={['inline-flex items-center', clasa]}>
   <img
     src="/images/semne/nume.webp"
     alt="Dór de Franceza"

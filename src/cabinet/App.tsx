@@ -96,8 +96,7 @@ export default function App() {
     <div className="min-h-screen lg:grid lg:grid-cols-[250px_1fr]">
       <aside className="bg-cerneala text-alb lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
         <div className="flex items-center justify-between px-5 py-4 lg:block lg:px-6 lg:py-7">
-          <a href="/" className="inline-flex items-center gap-2.5">
-            <img src="/images/semne/marca.webp" alt="" aria-hidden="true" className="h-7 w-auto [filter:brightness(0)_invert(1)]" />
+          <a href="/" className="inline-flex items-center">
             <img src="/images/semne/nume.webp" alt="Dór de Franceza" className="h-[22px] w-auto [filter:brightness(0)_invert(1)]" />
           </a>
           <p className="hidden text-xs text-alb/50 lg:mt-2 lg:block">Cabinetul Dorinei</p>

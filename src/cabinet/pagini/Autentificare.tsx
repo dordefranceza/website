@@ -38,10 +38,7 @@ export default function Autentificare({ cereCod, email, laIntrare }: Props) {
   return (
     <div className="flex min-h-screen items-center justify-center p-5">
       <div className="w-full max-w-md rounded-[2rem] bg-alb p-8 sm:p-10">
-        <span className="flex items-center gap-3">
-          <img src="/images/semne/marca.webp" alt="" aria-hidden="true" className="h-10 w-auto" />
-          <img src="/images/semne/nume.webp" alt="Dór de Franceza" className="h-[26px] w-auto" />
-        </span>
+        <img src="/images/semne/nume.webp" alt="Dór de Franceza" className="h-[26px] w-auto" />
         <h1 className="mt-6 font-sans text-2xl font-medium">
           {mod === 'cod' ? 'Codul din aplicație' : mod === 'recuperare' ? 'Parolă uitată' : 'Cabinetul Dorinei'}
         </h1>

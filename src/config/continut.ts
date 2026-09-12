@@ -5,46 +5,46 @@ import { site, inLei } from './site'
  * sa umbli prin componente. Fara linii de despartire, fara cratime lungi.
  */
 
-export type Nevoie = { icon: string; culoare: 'albastru' | 'verde' | 'portocaliu' | 'roz'; titlu: string; text: string; scop: string }
+export type Nevoie = { semn: string; culoare: 'albastru' | 'verde' | 'portocaliu' | 'roz'; titlu: string; text: string; scop: string }
 
 export const nevoi: Nevoie[] = [
   {
-    icon: 'solar:case-round-bold',
+    semn: 'servieta',
     culoare: 'albastru',
     titlu: 'Vreau un job la o firmă franceză',
     text: 'Interviu, CV, emailuri, ședințe. Exersăm exact situațiile din jobul tău, până le stăpânești fără emoții.',
     scop: 'Job la o firmă franceză',
   },
   {
-    icon: 'solar:map-point-wave-bold',
+    semn: 'valiza',
     culoare: 'verde',
     titlu: 'Mă mut în Franța, Belgia sau Elveția',
     text: 'Acte, doctor, chirie, școala copiilor, vecini. Franceza de zi cu zi, ca să te descurci singur din prima săptămână.',
     scop: 'Mutare în Franța, Belgia sau Elveția',
   },
   {
-    icon: 'solar:diploma-verified-bold',
+    semn: 'diploma',
     culoare: 'portocaliu',
     titlu: 'Am BAC-ul, DELF sau DALF',
     text: 'Structura probei, subiecte din anii trecuți, corectare pe fiecare lucrare. Fără panică în ziua examenului.',
     scop: 'BAC, DELF sau DALF',
   },
   {
-    icon: 'solar:sun-2-bold',
+    semn: 'rasarit',
     culoare: 'roz',
     titlu: 'Încep de la zero',
     text: 'Nu ai nevoie de nicio bază. Pornim de la pronunție și de la primele fraze utile, în ritmul tău.',
     scop: 'Altceva',
   },
   {
-    icon: 'solar:chat-round-dots-bold',
+    semn: 'balon',
     culoare: 'albastru',
     titlu: 'Înțeleg, dar nu îndrăznesc să vorbesc',
     text: 'Conversație ghidată pe temele care te interesează: călătorii, filme, cultură, oameni. Vorbești din prima lecție.',
     scop: 'Conversație și călătorii',
   },
   {
-    icon: 'solar:smile-circle-bold',
+    semn: 'barcuta',
     culoare: 'verde',
     titlu: 'Pentru copilul meu',
     text: 'Lecții pentru copii și adolescenți, cu jocuri, povești și note bune la școală ca efect secundar.',
