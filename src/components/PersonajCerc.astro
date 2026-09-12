@@ -143,36 +143,9 @@ const deplasare = Math.round(1.11 * RAPORT[nume] * (DEPLASARE[nume] ?? 0) * 1000
       alt=""
       width={latimeImg}
       height={inaltimeImg}
-      class:list={['pc-figura absolute left-1/2 w-auto max-w-none', oglindit && 'scale-x-[-1]']}
+      class:list={['pc-figura absolute left-1/2 w-auto max-w-none', oglindit && 'oglindit']}
       loading="lazy"
       decoding="async"
     />
   </div>
 </div>
-
-<style>
-  .personaj-cerc {
-    --dd: var(--d);
-    /* fara asta, inelul e un bloc cat toata latimea si iese o pastila, nu un cerc */
-    width: fit-content;
-    padding: var(--g);
-    line-height: 0;
-  }
-  .pc-disc {
-    width: var(--dd);
-    height: var(--dd);
-  }
-  .pc-figura {
-    height: calc(var(--dd) * 1.11);
-    top: calc(var(--dd) * 0.038);
-    transform: translateX(-50%) translateX(calc(var(--dd) * var(--dep, 0)));
-  }
-  .pc-figura.scale-x-\[-1\] {
-    transform: translateX(-50%) translateX(calc(var(--dd) * var(--dep, 0) * -1)) scaleX(-1);
-  }
-  @media (min-width: 640px) {
-    .personaj-cerc {
-      --dd: var(--d-sm);
-    }
-  }
-</style>

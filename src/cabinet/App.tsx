@@ -1,3 +1,4 @@
+import { PersonajCerc } from './PersonajCerc'
 /**
  * Cabinetul Dorinei: o aplicatie mica in browser, cu rute in hash
  * (#/, #/programari, #/calendar, #/cursanti, #/disponibilitate, #/setari).
@@ -76,11 +77,13 @@ export default function App() {
 
   if (stare === 'incarca') {
     return (
-      <div className="flex min-h-screen items-center justify-center text-gri">
-        <span className="flex flex-col items-center gap-4">
-          <img src="/images/semne/marca.webp" alt="" aria-hidden="true" className="h-12 w-auto animate-pulse" />
-          <span>Se deschide cabinetul…</span>
-        </span>
+      /* Aici pulsa marca, adica semnul mic al brandului. Artiom: „apare o ușă,
+         o virgulă, nu îmi place". Avea dreptate, la 48 de pixeli semnul nu se
+         citeste, arata a eroare de incarcare. Acum e personajul care saluta,
+         acelasi de pe site, intr-un cerc. Pulseaza cercul intreg, lin. */
+      <div className="flex min-h-screen flex-col items-center justify-center gap-5 bg-crem text-gri">
+        <PersonajCerc nume="saluta" inel="albastru-10" disc="alb" marime={120} marimeMare={140} className="motion-safe:animate-pulse" />
+        <span>Se deschide cabinetul…</span>
       </div>
     )
   }

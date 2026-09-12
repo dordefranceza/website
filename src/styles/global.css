@@ -120,6 +120,34 @@
      echilibrare peste sase randuri. */
   .echilibrat { text-wrap: balance; }
 
+  /* ---------------------------------------------------------------------
+     Personajul in cerc. Stilurile stau aici, nu in componenta, fiindca le
+     foloseste si cabinetul, care e React: un `<style>` dintr-o componenta
+     Astro e cu domeniu inchis si nu ajunge la el.
+     --------------------------------------------------------------------- */
+  .personaj-cerc {
+    --dd: var(--d);
+    /* fara asta, inelul e un bloc cat toata latimea si iese o pastila, nu un cerc */
+    width: fit-content;
+    padding: var(--g);
+    line-height: 0;
+  }
+  .pc-disc {
+    width: var(--dd);
+    height: var(--dd);
+  }
+  .pc-figura {
+    height: calc(var(--dd) * 1.11);
+    top: calc(var(--dd) * 0.038);
+    transform: translateX(-50%) translateX(calc(var(--dd) * var(--dep, 0)));
+  }
+  .pc-figura.oglindit {
+    transform: translateX(-50%) translateX(calc(var(--dd) * var(--dep, 0) * -1)) scaleX(-1);
+  }
+  @media (min-width: 640px) {
+    .personaj-cerc { --dd: var(--d-sm); }
+  }
+
   /* Fâșie care se trage cu degetul, fără bara de derulare la vedere. Se scoate
      doar bara, nu si derularea: cu tastatura si cu degetul merge la fel. */
   .fara-bara { scrollbar-width: none; -ms-overflow-style: none; }

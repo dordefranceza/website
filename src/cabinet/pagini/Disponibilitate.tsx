@@ -6,6 +6,7 @@ import { Card, Eroare, Titlu, Toast, clasaInput } from '../comune'
 import { isoLaLocal, localLaIso, ziIntreaga } from '../timpLocal'
 import IconPlus from '~icons/solar/add-circle-bold'
 import IconMinus from '~icons/solar/close-circle-bold'
+import { PersonajCerc } from '../PersonajCerc'
 
 type RegulaLocala = { zi: number; de_la: string; pana_la: string }
 
@@ -81,6 +82,24 @@ export default function Disponibilitate() {
       <Titlu sub="Orele în care cursanții pot alege lecții, plus zilele în care nu ești disponibilă.">Orar</Titlu>
       {eroare && <Eroare mesaj={eroare} reincearca={incarca} />}
 
+      {/*
+        Cat timp orarul e gol, calendarul de pe site nu arata NICIO ora si
+        nimeni nu poate programa nimic. Fara randul asta, ecranul arata linistit
+        si nu spune nimanui ca site-ul e, practic, inchis.
+      */}
+      {reguli !== null && reguli.length === 0 && (
+        <div className="mb-6 flex flex-col gap-4 rounded-2xl bg-portocaliu-5 p-5 sm:flex-row sm:items-center">
+          <PersonajCerc nume="ganditoare" inel="portocaliu" disc="alb" marime={84} className="hidden sm:block" />
+          <div>
+            <p className="font-medium text-cerneala">Deocamdată nimeni nu poate programa o lecție</p>
+            <p className="mt-1.5 text-sm leading-relaxed text-cerneala/80">
+              Orarul e gol, deci pe site nu apare nicio oră liberă și butonul de programare nu are ce
+              să arate. Adaugă mai jos măcar un interval, într-o zi, și salvează.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="grid gap-6 xl:grid-cols-2">
         <Card>
           <div className="flex items-center justify-between gap-4">
@@ -95,7 +114,13 @@ export default function Disponibilitate() {
                 <div key={zi} className="grid gap-2 rounded-2xl bg-crem p-3 sm:grid-cols-[110px_1fr]">
                   <p className="pt-2 text-sm font-medium capitalize">{numeZi(zi)}</p>
                   <div className="space-y-2">
-                    {ale.length === 0 && <p className="pt-2 text-sm text-gri">liber toată ziua</p>}
+                    {/* Scria „liber toată ziua", care înseamnă exact pe dos.
+                        O zi fără niciun interval nu e liberă, e închisă: pe
+                        site nu apare nicio oră și nimeni nu poate programa
+                        nimic în ea. Dorina se putea uita la ecranul ăsta, să
+                        vadă șapte zile „libere" și să nu înțeleagă niciodată
+                        de ce nu vine nimeni. */}
+                    {ale.length === 0 && <p className="pt-2 text-sm text-gri">nicio oră liberă, nu se poate programa</p>}
                     {ale.map((r) => (
                       <div key={r.i} className="flex items-center gap-2">
                         <input type="time" step={900} value={r.de_la} onChange={(e) => schimba(r.i, 'de_la', e.target.value)} className={`${clasaInput} !h-10 !w-32 !bg-alb`} />
