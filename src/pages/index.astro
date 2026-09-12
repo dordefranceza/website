@@ -12,7 +12,7 @@ import Despre from '../components/acasa/Despre.astro'
 import Intrebari from '../components/acasa/Intrebari.astro'
 import Apel from '../components/acasa/Apel.astro'
 import { intrebari } from '../config/continut'
-import { inLei, site } from '../config/site'
+import { site } from '../config/site'
 
 const schema = {
   '@context': 'https://schema.org',
@@ -28,9 +28,9 @@ const schema = {
       priceRange: '€€',
       areaServed: 'RO',
       makesOffer: [
-        { '@type': 'Offer', name: 'Lecție individuală de franceză online', price: inLei(site.preturi.individual), priceCurrency: 'RON' },
-        { '@type': 'Offer', name: 'Lecție de franceză în grup mic online', price: inLei(site.preturi.grup), priceCurrency: 'RON' },
-        { '@type': 'Offer', name: 'Discuție de cunoaștere', price: 0, priceCurrency: 'RON' },
+        { '@type': 'Offer', name: 'Lecție individuală de franceză online', price: site.preturi.individual, priceCurrency: 'EUR' },
+        { '@type': 'Offer', name: 'Lecție de franceză în grup mic online', price: site.preturi.grup, priceCurrency: 'EUR' },
+        { '@type': 'Offer', name: 'Discuție de cunoaștere', price: 0, priceCurrency: 'EUR' },
       ],
     },
     {

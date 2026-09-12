@@ -35,7 +35,7 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
             )}
             <h3 class="font-sans text-lg font-medium">{p.nume}</h3>
             <p class="mt-4 font-display text-5xl">{p.pret}</p>
-            {p.pretSecundar && <p class:list={['mt-1 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>echivalentul a {p.pretSecundar}</p>}
+            {p.pretSecundar && <p class:list={['mt-1 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>adică {p.pretSecundar}</p>}
             <p class:list={['mt-1 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>{p.detaliu}</p>
             <ul class="mt-7 space-y-3 text-[0.98rem]">
               {p.beneficii.map((b) => (
@@ -67,8 +67,11 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
                 <p class="font-medium">{pachet.nume}</p>
                 {pachet.reducere > 0 && <span class="rounded-full bg-verde-5 px-2.5 py-1 text-xs font-bold text-verde">-{pachet.reducere}%</span>}
               </div>
-              <p class="mt-4 font-display text-3xl">{inLei(pachet.pretLectie)} lei</p>
-              <p class="text-sm text-gri">{pachet.lectii > 1 ? `pe lecție, adică ${inLei(pachet.pretLectie) * pachet.lectii} lei în total` : 'pe lecție'}</p>
+              <p class="mt-4 font-display text-3xl">{pachet.pretLectie} {site.moneda}</p>
+              <p class="text-sm text-gri">
+                {pachet.lectii > 1 ? `pe lecție, adică ${pachet.pretLectie * pachet.lectii} ${site.moneda} în total` : 'pe lecție'}
+              </p>
+              <p class="text-xs text-gri">{inLei(pachet.pretLectie)} lei la cursul de azi</p>
               <p class="mt-3 text-sm leading-relaxed text-gri">{pachet.nota}</p>
             </div>
           ))
@@ -93,7 +96,7 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
     )}
 
     <p class="dezvaluie mt-6 text-center text-sm text-gri">
-      Prețurile sunt în lei, la cursul BNR din ziua plății. Suma în euro e trecută ca reper, pentru cine plătește din străinătate. Plata se face prin transfer bancar sau Revolut.
+      Prețurile sunt în euro. Suma în lei e trecută dedesubt, la cursul BNR, și se poate schimba puțin de la o zi la alta. Plata se face prin transfer bancar sau Revolut.
     </p>
   </div>
 </section>

@@ -4,12 +4,12 @@ import Preturi from '../components/acasa/Preturi.astro'
 import Comparatie from '../components/acasa/Comparatie.astro'
 import Intrebari from '../components/acasa/Intrebari.astro'
 import Apel from '../components/acasa/Apel.astro'
-import { inLei, site } from '../config/site'
+import { site } from '../config/site'
 ---
 
 <Base
   title="Prețuri · DorDeFranceza"
-  description={`Lecție individuală de franceză ${inLei(site.preturi.individual)} lei pentru ${site.durataLectie} de minute, lecție în grup mic ${inLei(site.preturi.grup)} lei, pachete de 5 și 10 lecții cu reducere. Prima discuție de ${site.durataCunoastere} de minute e gratuită.`}
+  description={`Lecție individuală de franceză ${site.preturi.individual} € pentru ${site.durataLectie} de minute, lecție în grup mic ${site.preturi.grup} €, pachete de 5 și 10 lecții cu reducere. Prima discuție de ${site.durataCunoastere} de minute e gratuită.`}
 >
   <main id="continut" class="pt-24 sm:pt-28">
     <Preturi titlu="Știi de la început cât costă" />

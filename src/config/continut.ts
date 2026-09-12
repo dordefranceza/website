@@ -107,8 +107,8 @@ export const planuri = [
   {
     tip: 'individual',
     nume: 'Lecție individuală',
-    pret: `${inLei(site.preturi.individual)} lei`,
-    pretSecundar: `${site.preturi.individual} ${site.moneda}`,
+    pret: `${site.preturi.individual} ${site.moneda}`,
+    pretSecundar: `${inLei(site.preturi.individual)} lei`,
     detaliu: `pe lecție, ${site.durataLectie} de minute`,
     beneficii: [
       'Plan scris, cu obiective la 4, 8 și 12 lecții',
@@ -123,8 +123,8 @@ export const planuri = [
   {
     tip: 'grup',
     nume: 'Lecție în grup mic',
-    pret: `${inLei(site.preturi.grup)} lei`,
-    pretSecundar: `${site.preturi.grup} ${site.moneda}`,
+    pret: `${site.preturi.grup} ${site.moneda}`,
+    pretSecundar: `${inLei(site.preturi.grup)} lei`,
     detaliu: `pe lecție, ${site.durataLectie} de minute`,
     beneficii: [`${site.marimeGrup} de același nivel`, 'Orar fix, în fiecare săptămână', 'Conversație și exerciții în echipă', 'Materiale incluse'],
     buton: 'Alege grup',
