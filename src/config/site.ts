@@ -106,7 +106,7 @@ export const pachete = [
     nume: 'O lecție',
     lectii: 1,
     pretLectie: site.preturi.individual,
-    nota: 'Plătești după fiecare lecție. Te oprești când vrei.',
+    nota: 'Plătești lecția înainte. Te oprești când vrei.',
     evidentiat: false,
   },
   {

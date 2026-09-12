@@ -215,7 +215,7 @@ export const cumDecurge = {
       {
         intrebare: 'Când și cum plătesc?',
         raspuns:
-          'După fiecare lecție sau la finalul lunii, cum ne înțelegem, prin transfer bancar sau Revolut. Nu se cere plată în avans pentru luni întregi. Dacă alegi un pachet, lecțiile pe care nu le faci se returnează integral, oricând.',
+          'Înainte de lecție, prin transfer bancar sau Revolut. La pachete și la cursul de grup plata se face la început, de aceea scade prețul pe lecție. Nu se cere niciodată plata pe mai multe luni înainte, iar lecțiile pe care nu le faci se returnează integral, oricând.',
       },
       {
         intrebare: 'Dacă după prima lecție văd că nu e pentru mine?',

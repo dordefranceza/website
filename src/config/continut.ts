@@ -158,7 +158,7 @@ export const intrebari = [
   {
     intrebare: 'Cum plătesc?',
     raspuns:
-      'Prin transfer bancar sau Revolut, după fiecare lecție sau la finalul lunii, cum îți e mai comod. Nu există taxă de înscriere și nici abonament care se reînnoiește singur. Dacă iei un pachet de 5 sau 10 lecții, plătești înainte și primești prețul redus, iar lecțiile pe care nu le faci ți se returnează integral, oricând.',
+      'Prin transfer bancar sau Revolut, înainte de lecție. La pachete și la cursul de grup, plata se face la început, iar prețul pe lecție scade. Nu există taxă de înscriere și niciun abonament care se reînnoiește singur, iar lecțiile pe care nu le faci ți se returnează integral, oricând.',
   },
   {
     intrebare: 'Pot reprograma o lecție?',
