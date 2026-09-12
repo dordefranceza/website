@@ -100,7 +100,7 @@ function sablon(o: { eticheta: string; titlu: string; intro: string; corp: strin
 <body style="margin:0;padding:32px 16px;background:${CREM};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased">
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;margin:0 auto;border-collapse:separate">
     <tr><td style="background:${NAVY};border-radius:24px 24px 0 0;padding:34px 32px 30px">
-      <img src="${adresaSite()}/images/semne/nume-alb.png" alt="DorDeFranceza" width="168" height="20" style="display:block;margin:0 0 26px;border:0;width:168px;height:auto">
+      <img src="${adresaSite()}/images/semne/nume-alb.png" alt="DorDeFranceza" width="164" height="20" style="display:block;margin:0 0 26px;border:0;width:164px;height:auto">
       <p style="margin:0 0 10px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#aab4ff;font-weight:700">${scapa(o.eticheta)}</p>
       <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:400;color:#ffffff;line-height:1.25">${scapa(o.titlu)}</h1>
     </td></tr>
