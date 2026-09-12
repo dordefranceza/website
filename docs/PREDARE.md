@@ -111,33 +111,40 @@ proprie. `/api/sloturi` răspunde 200 pe ambele tipuri.
 
 ## Ce a rămas de făcut, în ordine
 
-### 1. Domeniul
+### 1. Domeniul: GATA
 
-Artiom a ales `dordefranceza.com`, luat de la <https://domains.cloudflare.com>.
-Verificat pe 12 septembrie: e liber. Cloudflare vinde la preț de cost, vreo
-10,4 $ pe an, aceeași sumă la reînnoire.
+`dordefranceza.com`, cumparat de Artiom de la Cloudflare pe 12 septembrie, in
+contul lui personal (`Ark4su@gmail.com`), nu in contul Dor De Franceza. Zona
+DNS e tot acolo.
 
-După cumpărare:
-- domeniul adăugat în Vercel, iar în Cloudflare înregistrările lăsate pe
-  **DNS only**, norișor gri. Cu norișor portocaliu și SSL „Flexible" intri în
-  buclă de redirectare
-- `PUBLIC_SITE_URL` schimbat pe domeniul real, apoi redeploy
-- Site URL din Supabase → Authentication → URL Configuration, schimbat la fel,
-  și adăugat `https://dordefranceza.com/**` în Redirect URLs
+Ce e legat deja:
+- in Vercel: `dordefranceza.com` pe Production, iar `www.dordefranceza.com`
+  face **308 permanent** spre el
+- in Cloudflare, ambele CNAME catre `f4c9b55950f13456.vercel-dns-017.com`,
+  amandoua pe **DNS only**, norisor gri. Nu le trece pe portocaliu: cu proxy
+  si SSL „Flexible" intri in bucla de redirectare
+- `PUBLIC_SITE_URL` = `https://dordefranceza.com`, urmat de redeploy
+- Supabase → Authentication → URL Configuration: Site URL mutat pe domeniul
+  nou, iar `https://dordefranceza.com/**` adaugat in Redirect URLs
 
-### 2. Resend, expeditorul adevărat
+`robots.txt` nu mai e fisier static: se genereaza din `src/pages/robots.txt.ts`
+pe baza lui `PUBLIC_SITE_URL`. Ca fisier static isi ducea cu el domeniul vechi
+si trimitea Google spre alt sitemap.
 
-Cheia există și e pusă. Lipsește doar domeniul verificat:
-- Domains → adaugă `send.dordefranceza.com` și pune înregistrările DNS în
-  Cloudflare, tot DNS only
-- după verificare, `EMAIL_DE` mutat de pe `onboarding@resend.dev` pe adresa
-  reală, de exemplu `DorDeFranceza <dorina@send.dordefranceza.com>`
+### 2. Resend: GATA, mai putin proba
 
-Cât timp expeditorul e `onboarding@resend.dev`, Resend livrează **doar** către
-adresa contului, `dordefranceza@gmail.com`. Notificarea către Dorina pleacă,
-confirmarea către cursant nu.
+`send.dordefranceza.com`, regiunea Ireland (eu-west-1), verificat pe 12
+septembrie. Inregistrarile DKIM, SPF, MX si DMARC sunt in Cloudflare, toate pe
+DNS only. Urmarirea clicurilor si a deschiderilor e **oprita**, ca sa nu
+rescrie linkurile din emailuri si ca sa nu contrazica politica de
+confidentialitate.
 
-Numele afișat nu are voie să conțină virgulă: strică antetul `From`.
+`EMAIL_DE` = `DorDeFranceza <dorina@send.dordefranceza.com>`.
+
+**Atentie:** adresa asta doar trimite, nu primeste. Daca un cursant da Reply,
+mesajul nu ajunge nicaieri. Cand se lamureste ce adresa reala foloseste Dorina,
+pune-o pe `reply_to` la emailurile catre cursanti, sau activeaza receiving in
+Resend cu inregistrarea MX `inbound-smtp.eu-west-1.amazonaws.com` pe `send`.
 
 ### 3. Orarul Dorinei
 
