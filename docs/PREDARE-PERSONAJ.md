@@ -181,12 +181,28 @@ numeri șapte, nu opt, exact din motivul ăsta.
 Semnele mici au rămas toate. Nu se bat cap în cap fiindcă personajul stă în
 cerc, la altă scară, și nu în locul semnului.
 
+**În antet intră acum, și fără cerc.** Tot pe 12 septembrie, seara, Artiom a
+spus că fotografiile generate din antet par false. Au ieșit toate trei, iar în
+locul lor stau două figuri mari, libere, nu în cercuri: cea care salută în
+stânga, oglindită ca mâna ridicată să cadă spre text, și cea care prezintă în
+dreapta. Sub ele, cuvântul „Bienvenue" la 6% opacitate, cu fontul serif al
+site-ului.
+
+A ales varianta asta dintre trei pe care le-a văzut construite: una cu Dorina
+într-o formă moale plus o figură, una hibridă cu Dorina și „Bienvenue", și asta,
+fără nicio fotografie. A luat-o pe ultima.
+
+Aceeași curățenie s-a făcut și pe `/programare/`, unde aceeași poză cu biroul
+stătea în cercul portocaliu din antet. Acolo e acum figura care prezintă, pe o
+rondea crem.
+
 **Unde tot nu intră:**
 
-- în antet, unde sunt deja patru cercuri cu fotografii;
 - la „Despre Dorina", unde e fotografia ei adevărată. Personajul nu e Dorina;
-- pe telefon. Toate cercurile noi sunt `hidden lg:block` sau `xl:block`: acolo
-  coloanele se așază una sub alta și nu mai există niciun gol de umplut.
+- pe telefon, în cercurile din secțiuni. Toate cercurile noi sunt
+  `hidden lg:block` sau `xl:block`: acolo coloanele se așază una sub alta și nu
+  mai există niciun gol de umplut. În antet, pe telefon, rămâne o singură
+  figură, cea care salută.
 
 ## Ce a rămas pentru mai departe
 

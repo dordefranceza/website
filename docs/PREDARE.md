@@ -109,6 +109,36 @@ proprie. `/api/sloturi` răspunde 200 pe ambele tipuri.
 
 ---
 
+## Design, runda a treia, 12 septembrie seara
+
+Patru lucruri cerute de Artiom după ce a văzut site-ul pe live.
+
+**Sigla.** Vârful de jos al accentului stătea pixel lângă pixel cu marginea lui
+D. Acum sunt șase pixeli între ele, în fișierul de 566x70. Accentul s-a mutat pe
+pixeli, nu s-a redesenat: masca lui se ia din `nume.webp`, unde e singurul lucru
+albastru, și aceeași mască mută și `nume-alb.png`, varianta din emailuri.
+Se reajustează cu `node scripts/muta-accent-sigla.mjs <pixeli>`.
+
+**Iconița de WhatsApp.** Era o bulină de chat generică din Solar. Acum e logoul
+adevărat, `src/icons/whatsapp.svg`, luat automat de astro-icon din `src/icons`.
+Fără pachet nou: Solar nu are sigle de marcă, iar un set întreg de logo-uri
+pentru un singur semn ar fi fost o dependință în plus. Are `currentColor`, deci
+își ia culoarea din clasa de lângă el.
+
+**Antetul, fără nicio fotografie.** Cele trei poze generate păreau false, fiindcă
+erau. Vezi `docs/PREDARE-PERSONAJ.md` pentru ce a luat locul lor și pentru
+variantele dintre care a ales.
+
+**Valul se mișcă.** `src/components/Val.astro`: trei valuri suprapuse, perioade
+care nu se împart una la alta, două spre stânga și unul spre dreapta. Bucla se
+închide exact, verificat punând animația la început și la sfârșit și comparând
+pixel cu pixel. Respectă `prefers-reduced-motion`.
+
+**Rămân nefolosite șase poze** în `public/images/`: `antet-paris.webp`,
+`antet-cafenea.webp`, `antet-birou.webp`, `dorina-320.webp`, `dorina-480.webp`,
+`dorina-800.webp`. Cu totul 216 KB. Nu s-au șters, așteaptă cuvântul lui Artiom.
+`dorina-portret.webp` rămâne folosită, la Despre.
+
 ## Ce a rămas de făcut, în ordine
 
 ### 1. Domeniul: GATA
