@@ -1,13 +1,25 @@
 ---
+/**
+ * Pagina de 404. Cifrele nu sunt scrise ca text simplu: cercul cu personajul
+ * care cauta TINE locul zeroului, intre cei doi patru. Ideea e a lui Artiom.
+ * De aia eticheta „404" de dinainte a iesit, ar fi spus acelasi lucru de doua ori.
+ */
 import Base from '../layouts/Base.astro'
 import PersonajCerc from '../components/PersonajCerc.astro'
 ---
 <Base title="Pagina nu există · DorDeFranceza" description="Pagina căutată nu există.">
   <main id="continut" class="flex min-h-[70vh] items-center bg-crem pt-24">
     <div class="container-site text-center">
-      <PersonajCerc nume="cauta" inel="portocaliu" disc="alb" marime={170} marimeMare={205} class="mx-auto mb-7" />
-      <p class="eticheta">404</p>
-      <h1 class="mt-3 text-4xl sm:text-5xl">Pagina asta s-a rătăcit</h1>
+      {/* Cifrele si cercul se aliniaza pe linia de jos a cifrelor, nu pe centru,
+          ca zeroul sa stea in rand cu ceilalti doi, nu sa pluteasca. */}
+      <div class="flex items-end justify-center gap-2 sm:gap-4" aria-hidden="true">
+        <span class="font-display text-[6.5rem] leading-[0.78] text-cerneala sm:text-[10rem]">4</span>
+        <PersonajCerc nume="cauta" inel="portocaliu" disc="alb" marime={112} marimeMare={168} grosime={10} />
+        <span class="font-display text-[6.5rem] leading-[0.78] text-cerneala sm:text-[10rem]">4</span>
+      </div>
+      <p class="sr-only">Eroare 404</p>
+
+      <h1 class="mt-8 text-4xl sm:text-5xl">Pagina asta s-a rătăcit</h1>
       <p class="mt-4 text-lg text-gri">Poate a fost mutată, poate nu a existat niciodată. Pagina de start e la un clic.</p>
       <a href="/" class="pastila pastila-albastra mt-8">Înapoi acasă</a>
     </div>

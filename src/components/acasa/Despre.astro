@@ -1,7 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components'
 import { despre } from '../../config/continut'
-import Semn from '../Semn.astro'
+
 ---
 
 <section class="bg-alb py-20 sm:py-28" aria-labelledby="titlu-despre">
@@ -12,10 +12,26 @@ import Semn from '../Semn.astro'
       <div class="relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-roz">
         <img src="/images/dorina-portret.webp" alt="Dorina, profesoară de franceză" class="absolute inset-0 size-full object-cover" width="480" height="600" loading="lazy" decoding="async" />
       </div>
+
+      {/*
+        Figura desenata sta langa fotografia adevarata, mare si fara cerc, cu
+        privirea spre cititor. Aici e momentul in care vizitatorul leaga desenul
+        de om: pana acum a vazut-o prezentand site-ul, aici afla cine e.
+        Fara cerc dinadins: un cerculet mic aici arata a iconita lipita, iar
+        Artiom l-a respins pe loc.
+      */}
+      <img
+        src="/images/personaj/inima.webp"
+        alt=""
+        aria-hidden="true"
+        width="310" height="640"
+        class="pointer-events-none absolute -bottom-10 -left-20 hidden h-[300px] w-auto lg:block 2xl:-left-28 2xl:h-[340px]"
+        loading="lazy"
+        decoding="async"
+      />
     </div>
 
     <div class="dezvaluie">
-      <Semn nume="balcon" inaltime={62} class="mb-5" />
       <p class="eticheta">Despre Dorina</p>
       <h2 id="titlu-despre" class="mt-3 text-4xl sm:text-5xl">{despre.titlu}</h2>
       <div class="mt-6 space-y-4 text-lg leading-relaxed text-gri">

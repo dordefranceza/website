@@ -14,7 +14,6 @@ import PersonajCerc from '../PersonajCerc.astro'
 <section id="cum-arata" class="bg-crem py-20 sm:py-28" aria-labelledby="titlu-lectie">
   <div class="container-site grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-20">
     <div class="dezvaluie lg:sticky lg:top-32 lg:self-start">
-      <Semn nume="fereastra" inaltime={66} class="mb-5" />
       <p class="eticheta">Cum arată o lecție</p>
       <h2 id="titlu-lectie" class="mt-3 text-4xl sm:text-5xl">{site.durataLectie} de minute în care vorbești tu</h2>
       <p class="mt-5 text-lg text-gri">
@@ -37,7 +36,7 @@ import PersonajCerc from '../PersonajCerc.astro'
       {/* Coloana asta se termina devreme, lista din dreapta tine mult mai mult:
           golul ramas il umple figura care scrie rezumatul. Doar de la 1024px,
           fiindca pe telefon coloanele se aseaza una sub alta si nu e niciun gol. */}
-      <PersonajCerc nume="scrie" inel="albastru" disc="alb" marime={190} marimeMare={190} class="mt-10 hidden lg:block" />
+      <PersonajCerc nume="scrie" inel="albastru" disc="alb" marime={190} marimeMare={190} class="mt-4 hidden lg:block" />
     </div>
 
     <ol class="dezvaluie-rand space-y-3">

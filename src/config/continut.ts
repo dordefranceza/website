@@ -239,7 +239,7 @@ export const dovezi: Dovada[] = []
  *  platformele: ele chiar sunt potrivite pentru alt tip de om.
  * ======================================================================== */
 export const comparatie = {
-  titlu: 'Se găsesc lecții și la 80 de lei. De ce ai plăti mai mult?',
+  titlu: 'Se găsesc lecții și la 15 €. De ce ai plăti mai mult?',
   intro:
     'Pentru că nu plătești o oră de conversație, ci drumul până la rezultatul tău. Uite diferența, pe față.',
   coloane: ['Pe o platformă cu profesori mulți', 'Cu Dorina'],

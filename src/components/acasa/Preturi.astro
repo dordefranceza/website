@@ -83,8 +83,14 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
       </p>
     </div>
 
+    {/*
+      Banda verde e stramta dinadins si figura iese din ea, in sus si in dreapta.
+      Asa blocul nu mai e un dreptunghi verde mare si plat: cercul care sare
+      peste margine ii da miscare. De aia are si `mt-14`, ca sa incapa partea
+      care iese, si `pr` mare pe text, ca sa nu treaca pe sub ea.
+    */}
     {site.garantie.activa && (
-      <div class="dezvaluie mt-6 flex flex-col items-start gap-5 rounded-[1.5rem] bg-verde-5 p-8 sm:flex-row sm:items-center sm:p-10">
+      <div class="dezvaluie relative mt-14 flex flex-col items-start gap-5 rounded-[1.5rem] bg-verde-5 px-8 py-7 sm:flex-row sm:items-center sm:px-10 lg:pr-64 2xl:pr-72">
         <span class="flex size-14 shrink-0 items-center justify-center rounded-full bg-alb">
           <Icon name="solar:shield-check-bold" class="size-7 text-verde" />
         </span>
@@ -93,7 +99,7 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
           <p class="mt-2 leading-relaxed text-cerneala/85">{site.garantie.text}</p>
         </div>
         {/* Promisiunea e personala, deci o tine cineva, nu doar o iconita. */}
-        <PersonajCerc nume="inima" inel="verde" disc="alb" marime={138} class="ml-auto hidden lg:block" />
+        <PersonajCerc nume="inima" inel="verde" disc="alb" marime={176} marimeMare={196} class="absolute -top-10 right-6 hidden lg:block 2xl:right-10" />
       </div>
     )}
 
