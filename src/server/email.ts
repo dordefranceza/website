@@ -94,15 +94,55 @@ function randuri(lista: { eticheta: string; valoare: string }[]): string {
     .join('')
 }
 
-function sablon(o: { eticheta: string; titlu: string; intro: string; corp: string; butoane: string; subsol: string }): string {
+/**
+ * Antetul si corpul fiecarui email.
+ *
+ * `figura` e una din pozele din public/images/email/: personajul intr-un cerc
+ * crem, desenat deja pe fundal bleumarin. Cercul si fundalul sunt in poza,
+ * dinadins: in emailuri nu te poti bizui nici pe `border-radius` (Outlook pe
+ * Windows il ignora si ar iesi un patrat crem), nici pe transparenta peste o
+ * culoare. Asa, oriunde s-ar deschide, arata la fel.
+ *
+ * Tot din acelasi motiv, antetul e un tabel in tabel si nu flex: clientii de
+ * email nu stiu flexbox. Celula figurii are latime fixa, iar Outlook primeste
+ * si atributele `width` pe `img`, nu doar stilul.
+ */
+function sablon(o: {
+  eticheta: string
+  titlu: string
+  intro: string
+  corp: string
+  butoane: string
+  subsol: string
+  figura?: 'saluta' | 'telefon' | 'incurajeaza' | 'scrie'
+}): string {
+  const figura = o.figura
+    ? `<td width="112" style="width:112px;vertical-align:top;padding-left:18px" class="fara-figura">
+          <img src="${adresaSite()}/images/email/${o.figura}.png" alt="" width="112" height="112" style="display:block;width:112px;height:112px;border:0;border-radius:999px">
+        </td>`
+    : ''
+
   return `<!doctype html>
-<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><title>${scapa(o.titlu)}</title></head>
+<html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><title>${scapa(o.titlu)}</title>
+<style>
+  /* Pe ecrane inguste figura iese: titlul are nevoie de toata latimea. */
+  @media (max-width:520px) {
+    .fara-figura { display:none !important; }
+    .titlu-email { font-size:24px !important; }
+  }
+</style>
+</head>
 <body style="margin:0;padding:32px 16px;background:${CREM};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased">
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;margin:0 auto;border-collapse:separate">
     <tr><td style="background:${NAVY};border-radius:24px 24px 0 0;padding:34px 32px 30px">
-      <img src="${adresaSite()}/images/semne/nume-alb.png" alt="DorDeFranceza" width="164" height="20" style="display:block;margin:0 0 26px;border:0;width:164px;height:auto">
-      <p style="margin:0 0 10px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#aab4ff;font-weight:700">${scapa(o.eticheta)}</p>
-      <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:400;color:#ffffff;line-height:1.25">${scapa(o.titlu)}</h1>
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse"><tr>
+        <td style="vertical-align:top">
+          <img src="${adresaSite()}/images/semne/nume-alb.png" alt="DorDeFranceza" width="164" height="20" style="display:block;margin:0 0 26px;border:0;width:164px;height:auto">
+          <p style="margin:0 0 10px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#aab4ff;font-weight:700">${scapa(o.eticheta)}</p>
+          <h1 class="titlu-email" style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:400;color:#ffffff;line-height:1.25">${scapa(o.titlu)}</h1>
+        </td>
+        ${figura}
+      </tr></table>
     </td></tr>
     <tr><td style="background:#ffffff;padding:28px 32px 10px">
       <p style="margin:0 0 18px;font-size:16px;line-height:1.65;color:${CERNEALA}">${o.intro}</p>
@@ -156,6 +196,7 @@ export function emailNotificare(p: Programare, c: Client, setari: Setari): Email
     subiect: `Programare nouă: ${c.nume}, ${cand}`,
     text: [`Programare nouă pe DorDeFranceza`, '', ...lista.filter((r) => r.valoare).map((r) => `${r.eticheta}: ${r.valoare}`)].join('\n'),
     html: sablon({
+      figura: 'incurajeaza',
       eticheta: 'Programare nouă',
       titlu: `${c.nume} vrea ${tip.nume.toLowerCase()}`,
       intro: `Programarea a intrat în calendar ca <strong>nouă</strong>. Confirm-o din cabinet sau scrie-i direct.`,
@@ -208,6 +249,7 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
       'Dorina, DorDeFranceza',
     ].join('\n'),
     html: sablon({
+      figura: 'saluta',
       eticheta: 'Programare confirmată',
       titlu: `${zi}, ora ${ora}`,
       intro,
@@ -265,6 +307,7 @@ export function emailPropunere(p: Programare, c: Client, setari: Setari, mesajDo
       'Dorina, DorDeFranceza',
     ].filter(Boolean).join('\n'),
     html: sablon({
+      figura: 'scrie',
       eticheta: 'Propunere de lecție',
       titlu: `${zi}, ora ${ora}`,
       intro: `Bună, ${scapa(prenume)}! Îți propun ora asta. Apasă butonul și îmi spui acolo dacă îți convine sau nu, dintr-un singur clic.`,
@@ -291,6 +334,7 @@ export function emailContact(d: { nume: string; email: string; telefon: string; 
     subiect: `Mesaj de pe site: ${d.nume}`,
     text: lista.filter((r) => r.valoare).map((r) => `${r.eticheta}: ${r.valoare}`).join('\n'),
     html: sablon({
+      figura: 'telefon',
       eticheta: 'Mesaj nou',
       titlu: `${d.nume} ți-a scris`,
       intro: 'Un mesaj din formularul de contact de pe site.',
@@ -311,6 +355,7 @@ export function emailLinkZoom(p: Programare, c: Client, link: string): Email {
     subiect: `Linkul de Zoom pentru ${zi}, ${ora}`,
     text: `Bună, ${prenume}!\n\nLinkul pentru lecția de ${zi}, ora ${ora}: ${link}\n\nPe curând,\nDorina`,
     html: sablon({
+      figura: 'saluta',
       eticheta: 'Linkul lecției',
       titlu: `${zi}, ora ${ora}`,
       intro: `Bună, ${scapa(prenume)}! Aici ai linkul pentru lecția noastră. Intră cu 2 minute înainte, ca să avem toate cele 50 de minute.`,
