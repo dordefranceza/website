@@ -13,6 +13,11 @@ create table if not exists public.orar_zi (
 );
 
 alter table public.orar_zi enable row level security;
-revoke all on public.orar_zi from anon, authenticated;
+
+-- Aceleasi drepturi ca restul tabelelor. Fara ele, Data API-ul nu vede
+-- tabelul si pana si cheia de serviciu ia 500. RLS e pornit si nu are nicio
+-- politica, deci anon si authenticated primesc lista goala; doar service_role,
+-- care ocoleste RLS, ajunge la date. In panou se bifeaza la
+-- Integrations, Data API, Settings, Exposed tables.
 
 select 'orar_zi gata' as rezultat;
