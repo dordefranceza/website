@@ -109,7 +109,7 @@ const titluri: Record<Stare, string> = {
 
       {stare === 'intreaba' && (
         <>
-          <p class="mt-2 text-gri">Bună, {prenume}! Dorina îți propune ora de mai jos. Dacă îți convine, apasă butonul albastru.</p>
+          <p class="echilibrat mt-2 text-gri">Bună, {prenume}! Dorina îți propune ora de mai jos. Dacă îți convine, apasă butonul albastru.</p>
           <dl class="mt-7 space-y-3">
             <div><dt class="text-xs text-gri">Ce</dt><dd class="text-[1.05rem]">{ceva}</dd></div>
             <div><dt class="text-xs text-gri">Când</dt><dd class="text-[1.05rem]">{cand} <span class="text-gri">(ora României)</span></dd></div>
@@ -126,7 +126,7 @@ const titluri: Record<Stare, string> = {
 
       {stare === 'confirmat' && (
         <>
-          <p class="mt-2 text-gri">{ceva}, {cand}. Ți-am trimis pe email confirmarea, cu tot ce trebuie.</p>
+          <p class="echilibrat mt-2 text-gri">{ceva}, {cand}. Ți-am trimis pe email confirmarea, cu tot ce trebuie.</p>
           <PersonajCerc nume="saluta" inel="verde-10" disc="crem" marime={150} marimeMare={165} class="mt-7" />
           <a href="/" class="pastila pastila-albastra mt-8 inline-block !py-3">Înapoi la site</a>
         </>
@@ -134,21 +134,21 @@ const titluri: Record<Stare, string> = {
 
       {stare === 'refuzat' && (
         <>
-          <p class="mt-2 text-gri">Nicio problemă. Dorina vede răspunsul tău și îți propune altă oră. Sau alegi tu una acum.</p>
+          <p class="echilibrat mt-2 text-gri">Nicio problemă. Dorina vede răspunsul tău și îți propune altă oră. Sau alegi tu una acum.</p>
           <a href="/programare/" class="pastila pastila-albastra mt-8 inline-block !py-3">Aleg eu ora</a>
         </>
       )}
 
       {stare === 'ocupat' && (
         <>
-          <p class="mt-2 text-gri">Ne pare rău, între timp ora asta a fost luată. Alege alta, sunt libere destule.</p>
+          <p class="echilibrat mt-2 text-gri">Ne pare rău, între timp ora asta a fost luată. Alege alta, sunt libere destule.</p>
           <a href="/programare/" class="pastila pastila-albastra mt-8 inline-block !py-3">Aleg altă oră</a>
         </>
       )}
 
       {(stare === 'expirat' || stare === 'raspuns-dat' || stare === 'lipsa') && (
         <>
-          <p class="mt-2 text-gri">
+          <p class="echilibrat mt-2 text-gri">
             {stare === 'expirat'
               ? 'Propunerea a stat prea mult fără răspuns și ora s-a eliberat.'
               : stare === 'raspuns-dat'
@@ -161,7 +161,7 @@ const titluri: Record<Stare, string> = {
 
       {stare === 'eroare' && (
         <>
-          <p class="mt-2 text-gri">Nu am putut duce la capăt confirmarea. Încearcă din nou peste un minut sau scrie-i Dorinei.</p>
+          <p class="echilibrat mt-2 text-gri">Nu am putut duce la capăt confirmarea. Încearcă din nou peste un minut sau scrie-i Dorinei.</p>
           <a href="/contact/" class="pastila pastila-albastra mt-8 inline-block !py-3">Scrie-i Dorinei</a>
         </>
       )}

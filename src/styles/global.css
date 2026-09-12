@@ -111,6 +111,15 @@
 
   p { text-wrap: pretty; }
 
+  /* Paragrafele scurte de sub titluri si randurile din carduri: se echilibreaza
+     pe randuri, ca sa nu ramana doua cuvinte singure pe ultimul rand. Artiom a
+     aratat patru locuri unde se intampla asta si a spus ca „nu este frumos".
+     `pretty` singur nu ajunge: scurteaza doar uneori ultimul rand.
+     NU se pune pe textul lung, unde randurile perfect egale arata artificial;
+     de aia e clasa si nu regula pe `p`. Oricum, browserele renunta la
+     echilibrare peste sase randuri. */
+  .echilibrat { text-wrap: balance; }
+
   :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
     outline: 2px solid var(--color-albastru);
     outline-offset: 3px;
@@ -213,5 +222,73 @@
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 }
+/* ---------------------------------------------------------------------------
+ *  CARDURILE CARE SE RIDICA SUB CURSOR
+ *
+ *  Artiom a spus ca ridicarea „apare brusc". Erau trei lucruri, nu unul, si
+ *  toate veneau din faptul ca aceste carduri stau intr-un `dezvaluie-rand`:
+ *
+ *  1. Regula de dezvaluire declara `transition: opacity, transform` si bate la
+ *     specificitate o tranzitie pusa pe o singura clasa. Umbra nu era deloc in
+ *     lista, deci sarea dintr-o data.
+ *  2. Dezvaluirea are si `transition-delay`, ca sa intre cardurile pe rand.
+ *     Intarzierea aia se aplica si la hover: ridicarea pornea cu o pauza.
+ *  3. `.js .dezvaluie.vizibil` pune `transform: none`, care bate ridicarea. Nici
+ *     nu se ridica, se vedea doar umbra aparuta brusc.
+ *
+ *  Solutia nu e in CSS, ci in scriptul de dezvaluire din Base.astro: dupa ce
+ *  cardul a intrat, ii scoate clasele de dezvaluire. Vizual nu se schimba nimic,
+ *  fiindca starea finala a dezvaluirii e chiar starea implicita, dar regulile de
+ *  mai jos raman singure pe teren.
+ *
+ *  Umbra de repaus are aceeasi structura ca cea de la hover, doar transparenta:
+ *  `none` nu se interpoleaza curat cu o umbra pe doua straturi.
+ * ------------------------------------------------------------------------ */
+.card-ridicat {
+  box-shadow:
+    0 0 0 0 rgb(75 68 57 / 0),
+    0 0 0 0 rgb(75 68 57 / 0);
+  transition:
+    transform 420ms var(--ease-afara),
+    box-shadow 420ms var(--ease-afara);
+}
+
+.card-ridicat:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-cald-lg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-ridicat { transition: none; }
+  .card-ridicat:hover { transform: none; }
+}
+
+/* ---------------------------------------------------------------------------
+ *  PASII DE LA „CUM DECURGE"
+ *  Cel aprins e inchis la culoare. Trece singur pe urmatorul din cinci in cinci
+ *  secunde, dar numai cat timp sectiunea e pe ecran: cine derulează repede pe
+ *  langa ea o gaseste tot pe primul.
+ * ------------------------------------------------------------------------ */
+.pas {
+  background-color: var(--color-crem);
+  transition: background-color 600ms var(--ease-afara), color 600ms var(--ease-afara);
+}
+.pas .pas-numar,
+.pas .pas-text {
+  transition: color 600ms var(--ease-afara);
+}
+.pas .pas-numar { color: var(--color-albastru); }
+.pas .pas-text { color: var(--color-gri); }
+
+.pas.aprins { background-color: var(--color-navy); color: var(--color-alb); }
+.pas.aprins .pas-numar { color: rgb(255 255 255 / 0.6); }
+.pas.aprins .pas-text { color: rgb(255 255 255 / 0.8); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pas,
+  .pas .pas-numar,
+  .pas .pas-text { transition: none; }
+}
+
 .plutitor { animation: plutire 7s ease-in-out infinite; }
 .plutitor-lent { animation: plutire 9s ease-in-out infinite; animation-delay: -3s; }

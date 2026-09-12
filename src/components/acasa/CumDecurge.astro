@@ -10,7 +10,7 @@ import PersonajCerc from '../PersonajCerc.astro'
     <div class="dezvaluie lg:sticky lg:top-32 lg:self-start">
       <p class="eticheta">Cum decurge</p>
       <h2 id="titlu-pasi" class="mt-3 text-4xl sm:text-5xl">Trei pași. Primul e gratuit.</h2>
-      <p class="mt-5 text-lg text-gri">Nu îți vând un pachet înainte să ne cunoaștem. Întâi vorbim, apoi decizi.</p>
+      <p class="echilibrat mt-5 text-lg text-gri">Nu îți vând un pachet înainte să ne cunoaștem. Întâi vorbim, apoi decizi.</p>
       {/* Figura arata spre stanga ei, adica spre stanga privitorului, deci sta
           in dreapta butonului si degetul cade fix pe el. */}
       <div class="mt-8 flex items-center gap-5">
@@ -21,16 +21,76 @@ import PersonajCerc from '../PersonajCerc.astro'
       </div>
     </div>
 
-    <ol class="dezvaluie-rand space-y-4">
+    {/*
+      Pasul aprins nu mai e fixat pe primul din cod: il muta scriptul de mai jos,
+      din cinci in cinci secunde, cat timp lista e pe ecran. Culorile stau in
+      clasa `.pas` din global.css, ca sa poata trece lin dintr-una in alta.
+    */}
+    <ol class="dezvaluie-rand space-y-4" data-pasi>
       {pasi.map((p, i) => (
-        <li class:list={['flex gap-6 rounded-[1.5rem] p-7 sm:p-8', i === 0 ? 'bg-navy text-alb' : 'bg-crem']}>
-          <span class:list={['font-display text-3xl leading-none', i === 0 ? 'text-alb/60' : 'text-albastru']}>{p.numar}</span>
+        <li class:list={['pas flex gap-6 rounded-[1.5rem] p-7 sm:p-8', i === 0 && 'aprins']}>
+          <span class="pas-numar font-display text-3xl leading-none">{p.numar}</span>
           <div>
             <h3 class="font-sans text-xl font-medium">{p.titlu}</h3>
-            <p class:list={['mt-2 leading-relaxed', i === 0 ? 'text-alb/80' : 'text-gri']}>{p.text}</p>
+            <p class="pas-text mt-2 leading-relaxed">{p.text}</p>
           </div>
         </li>
       ))}
     </ol>
   </div>
 </section>
+
+<script>
+  // Pasul aprins trece singur pe urmatorul, din cinci in cinci secunde, DAR
+  // numai cat timp lista chiar se vede. Cine deruleaza repede pe langa sectiune
+  // o gaseste tot pe primul pas, fiindca ceasul porneste abia cand intra in
+  // ecran si se opreste, cu revenire la primul, cand iese.
+  //
+  // Continut care se schimba singur are nevoie de o cale de oprire (WCAG 2.2.2),
+  // asa ca ceasul sta pe loc cat timp cursorul e deasupra listei sau cat timp
+  // cineva are tastatura intr-un element dinauntru. Si nu porneste deloc pentru
+  // cine a cerut sistemului mai putina miscare.
+  const PAUZA = 5000
+
+  document.querySelectorAll<HTMLElement>('[data-pasi]').forEach((lista) => {
+    const pasi = [...lista.querySelectorAll<HTMLElement>('.pas')]
+    if (pasi.length < 2) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    let curent = 0
+    let ceas: number | undefined
+    let peEcran = false
+    let oprit = false
+
+    const aprinde = (i: number) => {
+      curent = (i + pasi.length) % pasi.length
+      pasi.forEach((p, k) => p.classList.toggle('aprins', k === curent))
+    }
+    const porneste = () => {
+      if (ceas !== undefined || oprit || !peEcran) return
+      ceas = window.setInterval(() => aprinde(curent + 1), PAUZA)
+    }
+    const opreste = () => {
+      if (ceas === undefined) return
+      clearInterval(ceas)
+      ceas = undefined
+    }
+
+    lista.addEventListener('pointerenter', () => { oprit = true; opreste() })
+    lista.addEventListener('pointerleave', () => { oprit = false; porneste() })
+    lista.addEventListener('focusin', () => { oprit = true; opreste() })
+    lista.addEventListener('focusout', () => { oprit = false; porneste() })
+
+    if (!('IntersectionObserver' in window)) return
+    new IntersectionObserver(
+      (intrari) => {
+        for (const i of intrari) {
+          peEcran = i.isIntersecting
+          if (peEcran) porneste()
+          else { opreste(); aprinde(0) }
+        }
+      },
+      { threshold: 0.35 },
+    ).observe(lista)
+  })
+</script>

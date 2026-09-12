@@ -83,7 +83,23 @@ const ogImage = new URL(image, Astro.site).href
         })
       })
       const toate = document.querySelectorAll<HTMLElement>('.dezvaluie')
-      const arata = (el: Element) => el.classList.add('vizibil')
+      const arata = (el: Element) => {
+        el.classList.add('vizibil')
+        // Cardurile care se ridica sub cursor scapa de clasele de dezvaluire
+        // dupa ce au intrat. Starea finala a dezvaluirii e chiar starea
+        // implicita, deci vizual nu se schimba nimic, dar asa tranzitia de
+        // hover nu mai e batuta de cea de dezvaluire, care are si intarziere.
+        // si pasii de la „Cum decurge": si acolo tranzitia proprie trebuie sa
+        // ramana singura pe teren dupa ce elementul a intrat
+        if (!el.matches('.card-ridicat, .pas')) return
+        const curata = () => {
+          el.classList.remove('dezvaluie', 'vizibil')
+          ;(el as HTMLElement).style.removeProperty('--intarziere')
+        }
+        el.addEventListener('transitionend', curata, { once: true })
+        // plasa de siguranta, daca transitionend nu ajunge sa fie emis
+        setTimeout(curata, 1800)
+      }
       if ('IntersectionObserver' in window) {
         let aEmis = false
         const obs = new IntersectionObserver(
