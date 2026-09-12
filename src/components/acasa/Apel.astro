@@ -10,6 +10,19 @@ import Semn from '../Semn.astro'
       <div class="absolute -left-16 -top-16 size-56 rounded-full bg-roz/70" aria-hidden="true"></div>
       <div class="absolute -bottom-20 -right-10 size-64 rounded-full bg-portocaliu/80" aria-hidden="true"></div>
       <Semn nume="accent-linie" inaltime={190} class="pointer-events-none absolute right-10 top-8 opacity-[0.14] [filter:brightness(0)_invert(1)] sm:right-20" />
+      {/*
+        Versiunea pentru fundal inchis: contur crem, haine bleumarin. Cea
+        obisnuita are contur albastru si ar disparea in cardul albastru.
+        Sta jos in stanga, taiata de marginea cardului.
+      */}
+      <img
+        src="/images/personaj/invita.webp"
+        alt=""
+        aria-hidden="true"
+        width="347"
+        height="640"
+        class="pointer-events-none absolute -bottom-10 left-2 hidden h-[250px] w-auto md:block xl:left-10 xl:h-[300px]"
+      />
       <div class="relative">
         <h2 id="titlu-apel" class="mx-auto max-w-2xl text-4xl sm:text-5xl">Hai să vorbim 20 de minute. Gratuit, fără obligații.</h2>
         <p class="mx-auto mt-5 max-w-xl text-lg text-alb">Îți spun sincer de unde pornim, cât durează și dacă merită. Restul decizi tu.</p>

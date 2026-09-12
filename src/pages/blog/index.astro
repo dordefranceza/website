@@ -31,7 +31,10 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-r
       </div>
 
       {articole.length === 0 ? (
-        <p class="mt-12 rounded-[1.5rem] bg-alb px-6 py-10 text-center text-gri">Primele articole sunt pe drum. Până atunci, scrie-i Dorinei pe WhatsApp.</p>
+        <div class="mt-12 flex flex-col items-center gap-6 rounded-[1.5rem] bg-alb px-6 py-10 text-center sm:flex-row sm:gap-10 sm:px-10 sm:text-left">
+          <img src="/images/personaj/scrie.webp" alt="" aria-hidden="true" width="270" height="640" class="h-[150px] w-auto shrink-0 sm:h-[190px]" />
+          <p class="text-gri">Primele articole sunt pe drum. Dorina scrie despre ce vede în lecțiile de zi cu zi. Până atunci, scrie-i pe WhatsApp.</p>
+        </div>
       ) : (
         <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {articole.map((a) => (
