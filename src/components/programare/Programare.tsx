@@ -17,7 +17,8 @@ import { dataRo, desfaZi, localDin, numeLuna, oraRo } from '@/lib/timp'
 import { sursaVizitei } from '@/lib/sursa'
 import IconArrow from '~icons/solar/arrow-right-linear'
 import IconBack from '~icons/solar/arrow-left-linear'
-import IconChat from '~icons/solar/chat-round-line-bold'
+import IconMail from '~icons/solar/letter-bold'
+import { IconWhatsApp } from '@/components/IconWhatsApp'
 import IconCheck from '~icons/solar/check-circle-bold'
 import IconCalendar from '~icons/solar/calendar-mark-bold'
 import IconClock from '~icons/solar/clock-circle-bold'
@@ -211,14 +212,24 @@ export default function Programare({ whatsapp }: Props) {
         </p>
       </div>
       <p className="mt-8 text-sm text-alb/60">Preferi să vorbim direct?</p>
-      <a
-        href={`https://wa.me/${whatsapp}?text=${encodeURIComponent('Bună, Dorina! Aș vrea să programez o lecție.')}`}
-        target="_blank"
-        rel="noopener"
-        className="mt-2 inline-flex items-center gap-2 rounded-full bg-alb/10 px-4 py-2.5 text-sm font-medium hover:bg-alb/15"
-      >
-        <IconChat className="size-4 text-verde-10" /> Scrie pe WhatsApp
-      </a>
+      {/* Doua usi, nu una: nu toata lumea are WhatsApp si nu toata lumea vrea
+          sa dea numarul de telefon ca sa puna o intrebare. */}
+      <div className="mt-2 flex flex-wrap gap-2">
+        <a
+          href={`https://wa.me/${whatsapp}?text=${encodeURIComponent('Bună, Dorina! Aș vrea să programez o lecție.')}`}
+          target="_blank"
+          rel="noopener"
+          className="inline-flex items-center gap-2 rounded-full bg-alb/10 px-4 py-2.5 text-sm font-medium hover:bg-alb/15"
+        >
+          <IconWhatsApp className="size-4 text-verde-10" /> Scrie pe WhatsApp
+        </a>
+        <a
+          href={`mailto:${site.email}?subject=${encodeURIComponent('Programare lecție de franceză')}&body=${encodeURIComponent('Bună, Dorina! Aș vrea să programez o lecție.')}`}
+          className="inline-flex items-center gap-2 rounded-full bg-alb/10 px-4 py-2.5 text-sm font-medium hover:bg-alb/15"
+        >
+          <IconMail className="size-4 text-roz" /> Scrie pe email
+        </a>
+      </div>
     </aside>
   )
 
@@ -241,7 +252,7 @@ export default function Programare({ whatsapp }: Props) {
             rel="noopener"
             className="pastila pastila-albastra"
           >
-            <IconChat className="size-5" /> Salută-o pe Dorina
+            <IconWhatsApp className="size-5" /> Salută-o pe Dorina
           </a>
         </div>
       </div>

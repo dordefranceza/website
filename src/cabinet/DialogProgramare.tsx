@@ -7,7 +7,7 @@ import { dataOraRo } from '@/lib/timp'
 import { apel } from './api'
 import { Camp, EtichetaTip, STARE_TEXT, clasaInput, clasaSelect, clasaTextarea } from './comune'
 import { isoLaLocal, localLaIso } from './timpLocal'
-import IconChat from '~icons/solar/chat-round-line-bold'
+import { IconWhatsApp } from '@/components/IconWhatsApp'
 import IconLetter from '~icons/solar/letter-bold'
 import IconPhone from '~icons/solar/phone-bold'
 
@@ -96,7 +96,7 @@ export default function DialogProgramare({ programare, inchide, laSalvare, anunt
             <div className="mt-4 flex flex-wrap gap-2">
               {c.telefon && (
                 <a href={`https://wa.me/${cifre(c.telefon)}`} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 rounded-full bg-whatsapp px-3 py-1.5 text-xs font-bold text-cerneala">
-                  <IconChat className="size-4" /> WhatsApp
+                  <IconWhatsApp className="size-4" /> WhatsApp
                 </a>
               )}
               {c.telefon && (
