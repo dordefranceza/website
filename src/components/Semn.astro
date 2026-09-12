@@ -12,6 +12,9 @@ interface Props {
     | 'accent-o' | 'accent-linie' | 'randunica' | 'monograma-df' | 'usa' | 'samanta'
     | 'podul' | 'fereastra' | 'd-vorbire' | 'balcon'
     | 'servieta' | 'valiza' | 'diploma' | 'rasarit' | 'balon' | 'barcuta'
+    /* familia frantuzeasca, generata pe 12 septembrie 2026 */
+    | 'eiffel' | 'bagheta' | 'cafea' | 'felinar'
+    | 'bicicleta' | 'acordeon' | 'croasant' | 'carte'
   /** înălțimea afișată, în pixeli */
   inaltime?: number
   /** gol pentru decor, altfel descrierea pentru cititoarele de ecran */
@@ -41,6 +44,14 @@ const RAPORT: Record<Props['nume'], number> = {
   'balon': 1.1397,
   'barcuta': 1.4338,
   'balcon': 1.0056,
+  'eiffel': 0.5654,
+  'bagheta': 1.1,
+  'cafea': 1.3038,
+  'felinar': 0.4269,
+  'bicicleta': 1.5962,
+  'acordeon': 1.4154,
+  'croasant': 1.3308,
+  'carte': 1.15,
 }
 
 const { nume, inaltime = 56, alt = '', class: clasa = '', imediat = false } = Astro.props

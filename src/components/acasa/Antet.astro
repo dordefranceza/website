@@ -33,7 +33,7 @@ import Semn from '../Semn.astro'
 ---
 
 <section class="relative overflow-hidden bg-alb pt-24 sm:pt-28 lg:pt-32" aria-labelledby="titlu-antet">
-  <div class="container-site relative z-10 grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+  <div class="container-site relative z-10 grid items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-14">
     <div class="relative order-2 flex justify-center lg:order-1">
       <div
         class="absolute left-1/2 top-[10%] -z-10 size-[380px] -translate-x-1/2 rounded-full bg-albastru-5 sm:size-[460px] lg:size-[560px]"
@@ -53,13 +53,19 @@ import Semn from '../Semn.astro'
     </div>
 
     <div class="relative order-1 text-center lg:order-2 lg:text-left">
-      {/* Randunica, singurul semn al marcii care zboara. Tine dinamica ceruta
-          langa titlu fara sa aduca rosul unui steag, care nu e in paleta. */}
-      <Semn nume="randunica" inaltime={62} class="plutitor mx-auto mb-4 lg:mx-0" />
+      {/* Familia de semne frantuzesti. Turnul sta deasupra titlului, cum sta
+          cate un semn deasupra fiecarei sectiuni. */}
+      <Semn nume="eiffel" inaltime={78} class="plutitor mx-auto mb-5 lg:mx-0" imediat />
 
-      <h1 id="titlu-antet" class="intrare text-[2.9rem] leading-[1.02] sm:text-[3.4rem] lg:text-[4rem] 2xl:text-[4.4rem]">
-        Franceza explicată simplu,{' '}
-<em class="not-italic text-albastru">pe înțelesul tău</em>
+      {/*
+        Cele doua randuri sunt blocuri separate dinadins. Lasat sa curga singur,
+        titlul rupea „pe" la capatul randului si arata a poezie: „simplu, pe" pe
+        un rand, „intelesul tau" pe urmatorul. Asa, „pe intelesul tau" incepe
+        mereu pe rand nou, la orice latime.
+      */}
+      <h1 id="titlu-antet" class="intrare text-[2.7rem] leading-[1.06] sm:text-[3.2rem] lg:text-[3.4rem] 2xl:text-[3.9rem]">
+        <span class="block">Franceza explicată simplu,</span>
+        <span class="block text-albastru">pe înțelesul tău</span>
       </h1>
 
       <a
@@ -70,6 +76,13 @@ import Semn from '../Semn.astro'
         Programează o discuție gratuită
       </a>
     </div>
+  </div>
+
+  {/* Doua semne mici in golul din dreapta, sub buton. Doar de la 1280px in sus,
+      unde chiar exista gol; mai jos ar sta peste text. */}
+  <div class="pointer-events-none absolute inset-0 hidden xl:block" aria-hidden="true">
+    <Semn nume="cafea" inaltime={66} class="plutitor-lent absolute right-[7%] top-[56%]" />
+    <Semn nume="bicicleta" inaltime={84} class="plutitor absolute right-[20%] top-[74%]" />
   </div>
 
   {/* Banda crem ondulata, trecerea spre panza crem a paginii */}

@@ -107,6 +107,48 @@ niciodată direct, conturul cobalt dispare.
 La `marime`, un raport bun: 130 lângă un buton, 170-190 într-o coloană goală,
 200 singur pe pagină.
 
+## Familia de semne frantuzesti
+
+Generata pe 12 septembrie 2026, seara, la cererea lui Artiom: „ceva cu tematica,
+poate ceva Franta, bagheta, de ce nu, poate Turnul Eiffel, ceva cultura
+franceza". Opt semne, doua planse, 6 credite cu totul.
+
+| Semn | Ce e |
+|---|---|
+| `eiffel` | Turnul Eiffel, doar contur |
+| `bagheta` | bagheta, cu accentul portocaliu |
+| `cafea` | ceasca de espresso pe farfurioara |
+| `felinar` | felinar parizian |
+| `bicicleta` | bicicleta cu cos |
+| `acordeon` | acordeon |
+| `croasant` | croasant |
+| `carte` | carte deschisa |
+
+**Cum s-au facut, ca sa iasa in acelasi stil.** Nu s-au descris cuvintele
+stilului, ci s-au dat ca referinta chiar doua semne existente, `barcuta.webp` si
+`randunica.webp`, luate prin adresa lor de pe GitHub, fiindca repo-ul e public.
+Asa familia noua nu arata lipita de altundeva.
+
+**Decuparea unei planse e un script:**
+
+```bash
+node scripts/decupa-plansa.mjs plansa.png 260 eiffel bagheta cafea felinar
+```
+
+Numele se dau in ordinea citirii: stanga-sus, dreapta-sus, stanga-jos,
+dreapta-jos.
+
+**Capcana din el, platita deja.** Prima incercare taia dupa bucati legate intre
+ele si a gasit 15 semne intr-o plansa de 4. Motivul: acordeonul e desenat din
+foaie si foaie, cartea din pagini, ceasca si farfurioara sunt doua piese
+separate. Acum grupeaza dupa sfertul de plansa in care cade fiecare bucata, si
+semnul e reuniunea lor.
+
+**Cremul din interiorul semnelor** vine din generare si e 250,243,229, fata de
+cremul site-ului care e 248,243,235. Diferenta de sase unitati pe albastru nu se
+vede cu ochiul: verificat punand semnele exact pe cremul paginii. Pe alb,
+umplutura calda arata intentionata, ca la semnele vechi.
+
 ## Decuparea pe transparent
 
 Nu prin scoaterea unei culori: bluza e crem exact ca fundalul și s-ar găuri.
