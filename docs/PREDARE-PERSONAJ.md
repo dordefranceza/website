@@ -40,7 +40,20 @@ Referința se trece așa, cu `job_id`-ul unei generări anterioare sau cu un
 ```
 
 Job-ul caietului curat, din 12 septembrie: `4cf2bc10-bda5-488d-9111-14515f20f212`.
-Dacă expiră, se urcă din nou fișierul din `docs/personaj/`.
+
+**Dacă job-ul ăla nu mai merge** (sesiune nouă, altă zi), nu te chinui să urci
+fișierul de pe disc. Repo-ul e public, deci caietul are o adresă web directă:
+
+```
+https://raw.githubusercontent.com/dordefranceza/website/main/docs/personaj/caiet-fara-biscuite.webp
+```
+
+Se trece prin `media_import_url`, care întoarce un `media_id`, iar `media_id`-ul
+ăla se pune la `medias[].value`. Verificat pe 12 septembrie: răspunde 200,
+`image/webp`, 2040x1152.
+
+Același lucru pentru caietul cu biscuite, dacă va fi vreodată nevoie: aceeași
+adresă, cu `caiet-cu-biscuite.webp` la capăt.
 
 Forma promptului care a mers de cinci ori din cinci:
 
