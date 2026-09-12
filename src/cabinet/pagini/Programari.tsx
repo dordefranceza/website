@@ -12,7 +12,7 @@ const FILTRE: { cheie: Filtru; nume: string }[] = [
   { cheie: 'noi', nume: 'Noi' },
   { cheie: 'debifat', nume: 'De bifat' },
   { cheie: 'propuse', nume: 'Așteaptă răspuns' },
-  { cheie: 'viitoare', nume: 'Viitoare' },
+  { cheie: 'viitoare', nume: 'Viitoare, confirmate' },
   { cheie: 'trecute', nume: 'Trecute' },
   { cheie: 'anulate', nume: 'Anulate' },
   { cheie: 'toate', nume: 'Toate' },
@@ -58,7 +58,12 @@ export default function Programari() {
             setFiltru('toate')
           }
         }
+        /* Ce are nevoie de tine se pune singur in fata: intai cererile noi,
+           apoi lectiile trecute nebifate. Daca nu e nimic de facut, ramane pe
+           lectiile confirmate care urmeaza. */
+        const acum = new Date().toISOString()
         if (r.programari.some((p) => p.stare === 'noua')) setFiltru('noi')
+        else if (r.programari.some((p) => deBifat(p, acum))) setFiltru('debifat')
       })
       .catch((e: Error) => setEroare(e.message))
   }
@@ -83,7 +88,14 @@ export default function Programari() {
         if (filtru === 'noi') return p.stare === 'noua'
         if (filtru === 'debifat') return deBifat(p, acum)
         if (filtru === 'propuse') return p.stare === 'propusa'
-        if (filtru === 'viitoare') return p.incepe >= acum && p.stare !== 'anulata'
+        /*
+         * „Viitoare" inseamna lectii care CHIAR vor avea loc, adica cele
+         * confirmate. Inainte intra aici si cererile nerezolvate si
+         * propunerile fara raspuns, iar Artiom le vedea de doua ori: „daca
+         * asteapta raspunsul inseamna ca asteapta raspunsul, nu viitoare".
+         * Cele nerezolvate isi au filtrele lor, „Noi" si „Asteapta raspuns".
+         */
+        if (filtru === 'viitoare') return p.incepe >= acum && p.stare === 'confirmata'
         if (filtru === 'trecute') return p.incepe < acum && p.stare !== 'anulata'
         if (filtru === 'anulate') return p.stare === 'anulata'
         return true
