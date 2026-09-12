@@ -244,6 +244,32 @@ Nu e nici Turnstile, nici reCAPTCHA, dinadins: amândouă sunt scripturi de la
 terți, iar politica de cookie-uri promite că site-ul nu cheamă pe nimeni fără
 acord.
 
+## Blogul: cum ajunge un articol pe site
+
+Articolele **nu stau în cod**, stau în Supabase, ca să poată scrie Dorina fără
+să atingă nimeni codul. Textele pregătite dinainte stau în `docs/articole/`, cu
+câmpurile gata de copiat în cap.
+
+Calea normală: cabinet, `/admin/`, Blog, articol nou.
+
+Calea folosită pe 12 septembrie pentru primul articol, când nu exista încă un
+cont de cabinet: **direct din editorul SQL al Supabase**, proiectul
+`tlssfcovuhonydonuevb`. Două capcane, amândouă costă timp dacă nu le știi:
+
+1. **`pbcopy` strică diacriticele** dacă `LANG` e gol, cum e în shellul de aici.
+   Textul ajunge în clipboard citit ca MacRoman și în editor apare „Predau √Æn
+   rom√¢n√£". Se rezolvă cu `LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 pbcopy`, și se
+   verifică comparând octeții: `pbpaste` față de fișier.
+2. **Indexul unic pe `slug` e parțial** (`where slug <> ''`), deci
+   `on conflict (slug)` dă eroarea 42P10. Clauza trebuie să repete condiția:
+   `on conflict (slug) where slug <> '' do update set ...`.
+
+**După fiecare articol publicat trebuie un redeploy.** Paginile de blog se
+randează la cerere, deci articolul apare imediat, dar **sitemap-ul se scrie la
+build**, din `adreseBlog()` din `astro.config.mjs`. Fără reconstruire, adresa
+articolului nu intră în sitemap și Google îl găsește mult mai greu. Un commit
+gol e de ajuns.
+
 ## Ce a rămas de făcut, în ordine
 
 ### 1. Domeniul: GATA
