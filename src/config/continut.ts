@@ -115,6 +115,14 @@ export const beneficiiIndividual = [
   'Corectură pe WhatsApp între lecții',
   'Rezumatul lecției pe email, în aceeași zi',
   'Reprogramare gratuită cu 24 de ore înainte',
+  /*
+   * Al saselea. Lista se aseaza pe trei coloane si cu cinci randuri ramanea o
+   * casuta goala pe al doilea rand. Nu e o promisiune noua: acelasi lucru scrie
+   * si la „cum arata o lectie", si pe pagina de programare. Aici doar il pune
+   * langa pret, unde omul se intreaba daca mai are ceva de facut sau de platit
+   * ca sa inceapa.
+   */
+  'Linkul de Zoom, fără cont',
 ] as const
 
 /** Ce primesti la cursul de grup. */
