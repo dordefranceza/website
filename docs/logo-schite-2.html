@@ -1,0 +1,123 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family:'SS4'; src:url('file:///Users/artiom/LUCRU/Claude Code/dordefranceza/public/fonts/source-serif-4-latin-400-normal.woff2') format('woff2'); }
+  @font-face { font-family:'SS4'; src:url('file:///Users/artiom/LUCRU/Claude Code/dordefranceza/public/fonts/source-serif-4-latin-ext-400-normal.woff2') format('woff2'); }
+  @font-face { font-family:'Satoshi'; src:url('file:///Users/artiom/LUCRU/Claude Code/dordefranceza/public/fonts/satoshi-500.woff2') format('woff2'); font-weight:500; }
+  @font-face { font-family:'Satoshi'; src:url('file:///Users/artiom/LUCRU/Claude Code/dordefranceza/public/fonts/satoshi-400.woff2') format('woff2'); font-weight:400; }
+  body { margin:0; background:#f8f3eb; font-family:'Satoshi',system-ui,sans-serif; color:#080331; padding:50px 44px; }
+  h1 { font-family:'SS4',Georgia,serif; font-weight:400; font-size:38px; margin:0 0 6px; letter-spacing:-.015em; }
+  .sub { color:#5b5a75; font-size:15px; margin:0 0 38px; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .cell { background:#fff; border-radius:22px; padding:24px 22px 20px; box-shadow:0 8px 16px rgba(99,91,79,.08), 0 32px 32px -16px rgba(99,91,79,.06); }
+  .mark { height:112px; display:flex; align-items:center; justify-content:center; }
+  .nume { font-family:'SS4',Georgia,serif; font-size:18px; margin:14px 0 3px; }
+  .desc { font-size:12.5px; line-height:1.5; color:#5b5a75; margin:0; min-height:54px; }
+  .mini { display:flex; align-items:center; gap:10px; margin-top:10px; }
+  .dot { width:24px; height:24px; border-radius:50%; background:#4865ff; display:flex; align-items:center; justify-content:center; }
+  .mini span { font-size:11.5px; color:#5b5a75; }
+</style>
+<h1>Încă șase idei, tot în vector</h1>
+<p class="sub">Alte direcții decât primele trei. Aceeași paletă, aceeași grosime de linie.</p>
+
+<div class="grid">
+
+  <div class="cell">
+    <div class="mark">
+      <svg width="104" height="104" viewBox="0 0 100 100" fill="none">
+        <path d="M10 68 h80" stroke="#4865ff" stroke-width="9" stroke-linecap="round"/>
+        <path d="M22 68 a28 28 0 0 1 56 0" stroke="#4865ff" stroke-width="9"/>
+        <path d="M50 40 V22" stroke="#ff6d39" stroke-width="8.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="nume">Podul</p>
+    <p class="desc">Un arc care leagă două maluri. Româna pe o parte, franceza pe alta, lecția între ele.</p>
+    <div class="mini">
+      <span class="dot"><svg width="13" height="13" viewBox="0 0 100 100" fill="none"><path d="M10 68 h80" stroke="#fff" stroke-width="11" stroke-linecap="round"/><path d="M22 68 a28 28 0 0 1 56 0" stroke="#fff" stroke-width="11"/></svg></span>
+      <span>merge și la 16 px</span>
+    </div>
+  </div>
+
+  <div class="cell">
+    <div class="mark">
+      <svg width="104" height="104" viewBox="0 0 100 100" fill="none">
+        <path d="M34 84 V34 a16 16 0 0 1 32 0 V84" stroke="#4865ff" stroke-width="8.5" stroke-linejoin="round"/>
+        <path d="M50 84 V26" stroke="#4865ff" stroke-width="7"/>
+        <path d="M20 84 V44 a8 8 0 0 1 8-8" stroke="#ff6d39" stroke-width="8" stroke-linecap="round"/>
+        <path d="M80 84 V44 a8 8 0 0 0 -8-8" stroke="#ff6d39" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="nume">Fereastra</p>
+    <p class="desc">Fereastra pariziană cu obloanele deschise. Se deschide ceva, nu se predă ceva.</p>
+    <div class="mini">
+      <span class="dot"><svg width="13" height="13" viewBox="0 0 100 100" fill="none"><path d="M34 84 V34 a16 16 0 0 1 32 0 V84" stroke="#fff" stroke-width="11" stroke-linejoin="round"/><path d="M50 84 V26" stroke="#fff" stroke-width="9"/></svg></span>
+      <span>merge și la 16 px</span>
+    </div>
+  </div>
+
+  <div class="cell">
+    <div class="mark">
+      <svg width="104" height="104" viewBox="0 0 100 100" fill="none">
+        <path d="M26 58 a13 13 0 0 0 26 0" stroke="#080331" stroke-width="9" stroke-linecap="round"/>
+        <path d="M62 58 L78 36" stroke="#ff6d39" stroke-width="9" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="nume">Două accente</p>
+    <p class="desc">Căciula lui „ă” din română și accentul lui „é” din franceză, unul lângă altul.</p>
+    <div class="mini">
+      <span class="dot"><svg width="14" height="14" viewBox="0 0 100 100" fill="none"><path d="M26 58 a13 13 0 0 0 26 0" stroke="#fff" stroke-width="11" stroke-linecap="round"/><path d="M62 58 L78 36" stroke="#fff" stroke-width="11" stroke-linecap="round"/></svg></span>
+      <span>merge și la 16 px</span>
+    </div>
+  </div>
+
+  <div class="cell">
+    <div class="mark">
+      <svg width="104" height="104" viewBox="0 0 100 100" fill="none">
+        <circle cx="38" cy="50" r="24" stroke="#4865ff" stroke-width="8.5"/>
+        <circle cx="62" cy="50" r="24" stroke="#4865ff" stroke-width="8.5"/>
+        <path d="M50 30.5 a24 24 0 0 1 0 39 a24 24 0 0 1 0 -39Z" fill="#ff6d39"/>
+      </svg>
+    </div>
+    <p class="nume">Întâlnirea</p>
+    <p class="desc">Două cercuri care se suprapun. Partea comună e lecția: tu și ea, în același loc.</p>
+    <div class="mini">
+      <span class="dot"><svg width="15" height="15" viewBox="0 0 100 100" fill="none"><circle cx="38" cy="50" r="24" stroke="#fff" stroke-width="10"/><circle cx="62" cy="50" r="24" stroke="#fff" stroke-width="10"/></svg></span>
+      <span>merge și la 16 px</span>
+    </div>
+  </div>
+
+  <div class="cell">
+    <div class="mark">
+      <svg width="104" height="104" viewBox="0 0 100 100" fill="none">
+        <circle cx="36" cy="36" r="18" stroke="#4865ff" stroke-width="8.5"/>
+        <path d="M48 48 L80 80" stroke="#4865ff" stroke-width="8.5" stroke-linecap="round"/>
+        <path d="M64 64 L74 54" stroke="#4865ff" stroke-width="8.5" stroke-linecap="round"/>
+        <path d="M32 12 L44 2" stroke="#ff6d39" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="nume">Cheia</p>
+    <p class="desc">O cheie al cărei cap e litera „o” cu accent. Franceza descuie: job, țară, examen.</p>
+    <div class="mini">
+      <span class="dot"><svg width="14" height="14" viewBox="0 0 100 100" fill="none"><circle cx="36" cy="36" r="18" stroke="#fff" stroke-width="11"/><path d="M48 48 L80 80" stroke="#fff" stroke-width="11" stroke-linecap="round"/><path d="M64 64 L74 54" stroke="#fff" stroke-width="11" stroke-linecap="round"/></svg></span>
+      <span>merge și la 16 px</span>
+    </div>
+  </div>
+
+  <div class="cell">
+    <div class="mark">
+      <svg width="104" height="104" viewBox="0 0 100 100" fill="none">
+        <circle cx="26" cy="50" r="6" fill="#ff6d39"/>
+        <path d="M42 32 a26 26 0 0 1 0 36" stroke="#4865ff" stroke-width="8" stroke-linecap="round"/>
+        <path d="M58 22 a40 40 0 0 1 0 56" stroke="#4865ff" stroke-width="8" stroke-linecap="round"/>
+        <path d="M74 12 a54 54 0 0 1 0 76" stroke="#4865ff" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="nume">Vocea</p>
+    <p class="desc">Un punct și trei unde care pleacă din el. Sunetul care iese, adică exact ce exersați.</p>
+    <div class="mini">
+      <span class="dot"><svg width="14" height="14" viewBox="0 0 100 100" fill="none"><circle cx="26" cy="50" r="8" fill="#fff"/><path d="M46 32 a26 26 0 0 1 0 36" stroke="#fff" stroke-width="10" stroke-linecap="round"/><path d="M66 22 a40 40 0 0 1 0 56" stroke="#fff" stroke-width="10" stroke-linecap="round"/></svg></span>
+      <span>merge și la 16 px</span>
+    </div>
+  </div>
+
+</div>

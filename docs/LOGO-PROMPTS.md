@@ -120,6 +120,120 @@ lettering, no brand name, no watermark.
 
 ---
 
+## 4. Planșă cu simboluri, al doilea val
+
+Idei diferite de primele nouă, tot în stilul site-ului.
+
+```
+Logo exploration sheet for a premium online French-tutoring brand for Romanian
+adults, taught one to one by a woman. Warm, editorial, humanist, intelligent.
+
+LAYOUT: flat 2D presentation board on a warm cream background (#f8f3eb). A
+3 x 3 grid of nine separate logo marks, each isolated and centred in its own
+generous cell of empty space. No frames, no captions, no numbers, no text.
+
+THE NINE MARKS:
+1. a Romanian breve accent and a French acute accent placed side by side as two
+   abstract strokes, like two small flags leaning toward each other
+2. a simple single-arch stone bridge reduced to its purest geometry
+3. a tall Parisian window with two open shutters, drawn with thin even lines
+4. two overlapping circles where the almond-shaped overlap is filled solid
+5. a capital letter D whose inner counter is shaped like a speech bubble
+6. a small key whose head is a letter o wearing an acute accent
+7. three ascending steps, each step a simple bar, suggesting progress
+8. four concentric arcs radiating from a single point, like a voice travelling
+9. a Parisian wrought-iron balcony railing abstracted into a small repeating
+   geometric pattern inside a circle
+
+COLOUR: each mark in ONE flat colour, either vivid indigo blue (#4865ff) or
+near-black violet (#080331). Two or three marks may carry a single small accent
+shape in warm coral (#ff6d39) or soft pink (#f098d7). Nothing else.
+
+STYLE: contemporary editorial branding, Pentagram-grade minimalism,
+Scandinavian restraint, geometric precision, even confident stroke weights,
+generous negative space, perfectly flat. Each mark must read at 16 pixels.
+
+DO NOT INCLUDE: no gradients, no 3D, no bevels, no drop shadows, no glow, no
+texture, no photography, no mockups, no hands, no Eiffel Tower, no croissants,
+no berets, no national flags, no tricolour stripes, no lettering, no brand
+name, no tagline, no watermark, no signature.
+```
+
+---
+
+## 5. Planșă cu semne făcute doar din cercuri
+
+Se potrivește cel mai bine cu site-ul, care e construit din cercuri colorate.
+
+```
+Logo exploration sheet for a warm premium education brand whose entire visual
+identity is built from coloured circles on a cream canvas.
+
+LAYOUT: flat 2D presentation board on a warm cream background (#f8f3eb). A
+3 x 3 grid of nine separate logo marks, each isolated and centred in its own
+generous cell of empty space. No frames, no captions, no numbers, no text.
+
+THE NINE MARKS, all built only from circles, arcs and one small accent stroke:
+1. a solid circle with a small tilted accent stroke floating just above it
+2. a ring with a single gap at the top where an accent stroke sits
+3. three circles of decreasing size arranged in a gentle rising diagonal
+4. two circles side by side, one solid and one outlined, slightly overlapping
+5. a circle made of two facing crescent halves in two different colours
+6. a ring with a smaller solid circle centred inside it
+7. a circle quartered into four separate arcs, each arc a different colour
+8. a large ring with a tiny solid circle sitting on its upper right edge
+9. a solid circle with a crescent bite taken out of its lower left
+
+COLOUR: use only this brand palette, one or two flat colours per mark: vivid
+indigo (#4865ff), near-black violet (#080331), warm coral (#ff6d39), soft pink
+(#f098d7), forest green (#2c7a34). No other colours.
+
+STYLE: geometric perfection, compass-drawn precision, generous negative space,
+perfectly flat, confident and calm. Each mark must read at 16 pixels and feel
+like it belongs to the same family as the other eight.
+
+DO NOT INCLUDE: no gradients, no 3D, no shadows, no texture, no photography,
+no lettering, no brand name, no watermark.
+```
+
+---
+
+## 6. Planșă cu numele, șase variante
+
+Cea care a ieșit cel mai bine. Ține instrucțiunea de ortografie exact așa,
+altfel modelul scrie greșit.
+
+```
+Typography logo lockup sheet on a warm cream background (#f8f3eb). Six wordmark
+variations arranged in a calm vertical column with generous spacing, each
+centred horizontally. Nothing else on the board.
+
+THE BRAND NAME, spelled exactly: Dor de Franceza. Always set in a refined
+editorial serif at regular weight, elegant and high-contrast, in the spirit of
+Source Serif or Freight Display. The letter o in Dor always carries a small
+French acute accent in warm coral (#ff6d39), which is the brand's signature
+detail. Main text colour near-black violet (#080331).
+
+THE SIX VARIATIONS, top to bottom:
+1. Dor de Franceza on one line, the word de in italic, everything else upright
+2. the same one line, but de is smaller and set in a grey sans-serif
+3. Dor de Franceza stacked on two lines, Dor above and de Franceza below,
+   left-aligned to each other
+4. DOR DE FRANCEZA in small elegant capitals with wide letter-spacing
+5. a small indigo circular badge holding a white accented letter o, placed to
+   the left of the one-line wordmark
+6. the one-line wordmark with a short line of small grey sans-serif capitals
+   beneath it reading LECTII DE FRANCEZA ONLINE
+
+STYLE: flat vector typography specimen, precise letterforms, correct spelling,
+generous letter-spacing, no distortion, editorial, calm, expensive.
+
+DO NOT INCLUDE: no gradients, no 3D, no shadows, no texture, no mockups, no
+extra words, no Eiffel Tower, no flags, no watermark.
+```
+
+---
+
 ## Ideile, pe scurt, și de ce
 
 **1. Litera „o" cu accent francez.** Cuvântul românesc „dor" îmbrăcat într-un
