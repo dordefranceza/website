@@ -161,13 +161,37 @@ Supabase, de la utilizator.
 Nu a fost încercat pe viu: cere o intrare în cabinet, deci întâi trebuie pusă
 parola din invitație.
 
-### 4. Orarul Dorinei
+### 4. Google Analytics, cu consimțământ
+
+Cont `DorDeFranceza` pe `dordefranceza@gmail.com`, proprietate
+`dordefranceza.com`, fus România, monedă euro. Condițiile acceptate cu țara pe
+**România**, deci înțelegerea e cu Google Ireland, nu cu Google LLC. Toate cele
+patru opțiuni de partajare a datelor cu Google sunt **debifate**.
+
+Cod de măsurare: `G-ZD3K7S0VPR`, pus pe Vercel ca `PUBLIC_GA_ID`, tip Config.
+
+Regula din cod, în `src/components/Consimtamant.astro`: până când vizitatorul
+nu apasă „Sunt de acord", nu se încarcă nimic de la Google. Alegerea stă în
+localStorage, nu într-un cookie. Se schimbă dintr-un buton pus în politica de
+cookie-uri, care cheamă `window.ddfCookie.redeschide()`.
+
+Fără `PUBLIC_GA_ID`, componenta nu scoate nimic în pagină: ștergi variabila și
+site-ul se întoarce la starea fără urmărire, fără alte modificări.
+
+Verificat pe domeniul live, toate trei căile: fără alegere nu există nici
+script, nici dataLayer; după „Sunt de acord" apare scriptul cu codul corect;
+după „Nu, mulțumesc" nu se încarcă nimic.
+
+Politica de cookie-uri e rescrisă din temelii, iar cea de confidențialitate
+spune ce se trimite, cui, pe ce temei și cum se retrage acordul.
+
+### 5. Orarul Dorinei
 
 Tabelul `disponibilitate` e gol, deci `/api/sloturi` întoarce zile goale și
 formularul de programare nu arată nicio oră liberă. Dorina își pune orarul din
 cabinet, la Disponibilitate. Până atunci nimeni nu poate rezerva.
 
-### 5. Datele reale, în cod
+### 6. Datele reale, în cod
 
 - `src/config/firma.ts`: tot ce e în `[paranteze]` e necompletat. Fără ele,
   paginile legale sunt incomplete. În dezvoltare apare un avertisment portocaliu
@@ -176,7 +200,7 @@ cabinet, la Disponibilitate. Până atunci nimeni nu poate rezerva.
   substituenți.
 - `src/config/continut.ts`: bucățile marcate DE CONFIRMAT despre Dorina.
 
-### 6. O programare de probă
+### 7. O programare de probă
 
 De făcut după ce domeniul e verificat în Resend, ca să se vadă că emailul
 pleacă și către cursant, nu doar către Dorina. Emailurile de test nu se trimit
