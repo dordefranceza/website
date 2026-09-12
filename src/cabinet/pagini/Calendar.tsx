@@ -18,6 +18,7 @@ import { cheieZi, desfaZi, localDin, numeLuna, numeZi, oraRo } from '@/lib/timp'
 import { apel } from '../api'
 import { Card, Eroare, EtichetaTip, Titlu, Toast } from '../comune'
 import DialogProgramare from '../DialogProgramare'
+import { PersonajCerc } from '../PersonajCerc'
 import { ziIntreaga } from '../timpLocal'
 import IconBack from '~icons/solar/arrow-left-linear'
 import IconNext from '~icons/solar/arrow-right-linear'
@@ -193,7 +194,12 @@ export default function Calendar() {
           )}
 
           {lectiileZilei.length === 0 ? (
-            <p className="mt-4 text-sm text-gri">Nicio lecție în ziua asta.</p>
+            /* O zi goala lasa cardul aproape gol. Personajul umple locul si da
+               ecranului acelasi ton ca site-ul. */
+            <div className="mt-4 flex items-center gap-4">
+              <PersonajCerc nume="asezata" inel="crem" disc="alb" marime={72} marimeMare={84} grosime={8} />
+              <p className="text-sm leading-relaxed text-gri">Nicio lecție în ziua asta.</p>
+            </div>
           ) : (
             <ul className="mt-4 space-y-2">
               {lectiileZilei.map((x) => (

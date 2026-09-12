@@ -3,6 +3,7 @@ import type { Programare } from '@/lib/tipuri'
 import { dataScurtaRo, numeLuna, oraRo } from '@/lib/timp'
 import { apel } from '../api'
 import { Card, Eroare, EtichetaStare, EtichetaTip, Gol, Titlu, bani } from '../comune'
+import { PersonajCerc } from '../PersonajCerc'
 
 type Sumar = {
   mod: 'supabase' | 'local'
@@ -33,7 +34,16 @@ export default function Tablou() {
 
   return (
     <>
-      <Titlu sub={`${lunaNume} ${s.luna.cheie.slice(0, 4)}`}>Bună, Dorina</Titlu>
+      {/* Personajul, si aici. Artiom: „adaugă fața noastră în cabinet, unde
+          s-ar potrivi, să arate mai bine". Locul lui e primul ecran pe care il
+          vede Dorina cand intra, langa „Bună, Dorina". Mic pe telefon, mare pe
+          calculator, ca sa nu manance randul de sus. */}
+      <Titlu
+        sub={`${lunaNume} ${s.luna.cheie.slice(0, 4)}`}
+        actiuni={<PersonajCerc nume="saluta" inel="albastru-10" disc="alb" marime={64} marimeMare={104} grosime={8} />}
+      >
+        Bună, Dorina
+      </Titlu>
 
       {s.mod === 'local' && (
         <p className="mb-6 rounded-2xl bg-portocaliu-5 px-5 py-3 text-sm text-[#b8431a]">

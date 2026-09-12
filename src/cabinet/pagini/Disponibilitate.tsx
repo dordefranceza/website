@@ -388,12 +388,17 @@ export default function Disponibilitate() {
                 </button>
               </div>
             ))}
+            {/* Artiom: „acest buton să fie mai vizibil, ăsta e unul din cele mai
+                importante". Era un rand de text albastru, de aceeasi marime cu
+                explicatiile din jur, si se pierdea intre ele. Acum e un buton
+                cat randul, cu fundal, greu de ratat si usor de nimerit cu
+                degetul. */}
             <button
               type="button"
               onClick={() => setCiorna((c) => [...c, c.length ? { de_la: '17:00', pana_la: '21:00' } : { de_la: '09:00', pana_la: '13:00' }])}
-              className="inline-flex items-center gap-1 text-sm font-medium text-albastru-text"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-albastru-10 px-4 py-3 font-medium text-albastru-text transition hover:bg-albastru hover:text-alb"
             >
-              <IconPlus className="size-4" /> Adaugă interval
+              <IconPlus className="size-5" /> Adaugă interval
             </button>
           </div>
 
