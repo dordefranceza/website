@@ -128,6 +128,10 @@ function sablon(o: {
   subsol: string
   figura?: 'saluta' | 'telefon' | 'incurajeaza' | 'scrie'
 }): string {
+  /* Intro-ul, fara etichete HTML si fara spatii duble: exact ce merita citit
+     in lista de mesaje, inainte ca omul sa deschida. */
+  const previzualizare = o.intro.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().slice(0, 160)
+
   const figura = o.figura
     ? `<td width="112" style="width:112px;vertical-align:top;padding-left:18px" class="figura-cel">
           <img src="${adresaSite()}/images/email/${o.figura}.png" alt="" width="112" height="112" style="display:block;width:112px;height:112px;border:0;border-radius:999px" class="figura-img">
@@ -153,6 +157,15 @@ function sablon(o: {
 </style>
 </head>
 <body style="margin:0;padding:32px 16px;background:${CREM};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased">
+  <!--
+    Randul pe care il arata Gmail sub subiect.
+    Fara el, cutia postala citeste inceputul paginii si iese „D'or de Franceza
+    Prima ta lectie Bine ai ve…", adica numele si eticheta lipite una de alta.
+    Artiom a vazut exact asta pe telefon. Aici punem o propozitie intreaga, iar
+    dupa ea o coada de spatii invizibile, ca sa nu mai traga Gmail si din HTML.
+  -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0">${scapa(previzualizare)}</div>
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0">${'&#847;&zwnj;&nbsp;'.repeat(60)}</div>
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;margin:0 auto;border-collapse:separate">
     <tr><td style="background:${NAVY};border-radius:24px 24px 0 0;padding:34px 32px 30px">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse"><tr>
