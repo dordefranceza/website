@@ -211,6 +211,39 @@ Dorina și cursant, ca și plata, care se face manual prin transfer. Pachetul al
 pe pagina de prețuri intră scris în mesajul care ajunge la ea, atât. Artiom a
 decis conștient să lăsăm așa până după lansare.
 
+## Formularele: cine trece și cine nu
+
+Refăcut pe 12 septembrie, la cererea lui Artiom: „să nu fie un gmail aiurea pus
+care poate să-l pună oricare".
+
+Adresa de email trece prin `src/server/posta.ts`, nu printr-un regex:
+
+1. sintaxa strânsă (lungimile din RFC 5321, fără puncte lipite sau la capete);
+2. 73 de domenii de unică folosință;
+3. **întrebăm DNS-ul dacă domeniul chiar primește poștă.** Asta taie și
+   `gmail.con`, și domeniile inventate pe loc. Fără MX încercăm și adresa A,
+   cum cere RFC 5321, altfel am tăia domenii mici dar adevărate;
+4. greșelile de tastat la furnizorii mari întorc o sugestie cu buton, nu un
+   refuz: „ai vrut gmail.com?".
+
+**Dacă DNS-ul nu răspunde, adresa trece.** Un mesaj pierdut de la un om
+adevărat costă mai mult decât un spam primit.
+
+**Capcană de ținut minte:** unele filtre DNS nu spun „nu există", ci răspund cu
+o adresă a lor din intervalele private. Pe mașina lui Artiom, un domeniu
+inventat întoarce `100.127.132.229`. De aceea adresele din 10/8, 100.64/10,
+127/8, 169.254/16, 172.16/12 și 192.168/16 nu se numără ca „domeniul există".
+
+Roboții au trei capcane: câmpul invizibil (scos din ecran, nu `display:none`,
+fiindcă pe ăla îl sar), formularul trimis sub 2,5 secunde, și mesajele cu două
+linkuri sau vocabular de reclamă. Un singur link trece. **Robotul prins
+primește „gata, am primit"**: dacă i-am spune adevărul, ar încerca altă formă
+până trece. A doua frână e pe adresa de email, nu doar pe IP.
+
+Nu e nici Turnstile, nici reCAPTCHA, dinadins: amândouă sunt scripturi de la
+terți, iar politica de cookie-uri promite că site-ul nu cheamă pe nimeni fără
+acord.
+
 ## Ce a rămas de făcut, în ordine
 
 ### 1. Domeniul: GATA
