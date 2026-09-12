@@ -49,12 +49,16 @@ export const site = {
   tiktok: 'https://www.tiktok.com/@dordefranceza',
 
   durataLectie: 50,
+  /** Lectia de grup e mai lunga: sunt mai multi oameni si fiecare trebuie sa vorbeasca. */
+  durataGrup: 80,
   durataCunoastere: 20,
   moneda: '€',
   preturi: {
     cunoastere: 0,
+    /** pretul unei lectii singure, cea mai scumpa cale */
     individual: 40,
-    grup: 25,
+    /** pe lectie, in cursul de doua luni; grupul nu se vinde la bucata */
+    grup: 20,
   },
   marimeGrup: '3 sau 4 persoane',
 
@@ -70,36 +74,72 @@ export const site = {
 } as const
 
 /**
- * Pachetele. Reducerile sunt modelate dupa ce fac scolile de limbi din
- * Romania (Ibsen: 5% la 10 sedinte, 10% la 20), ca oferta sa fie citita ca
- * normala, nu ca improvizatie.
+ * Pachetele individuale, de la cea mai scumpa cale la cea mai ieftina.
+ *
+ * Reducerile de dinainte, 5% si 10%, erau decorative: nimeni nu plateste 190 €
+ * inainte ca sa economiseasca 10. Scolile din piata dau intre 10 si 20%, asa ca
+ * acolo sunt si astea acum.
+ *
+ * `intensiv` e produsul care justifica pretul premium: doua luni, trei lectii pe
+ * saptamana, un obiectiv cu termen.
  */
 export const pachete = [
   {
     id: 'una',
-    nume: 'Lecție de lecție',
+    nume: 'O lecție',
     lectii: 1,
     pretLectie: site.preturi.individual,
-    reducere: 0,
     nota: 'Plătești după fiecare lecție. Te oprești când vrei.',
+    evidentiat: false,
   },
   {
     id: 'cinci',
     nume: 'Pachet de 5 lecții',
     lectii: 5,
-    pretLectie: 38,
-    reducere: 5,
+    pretLectie: 36,
     nota: 'Cât să apuci să vezi primele rezultate. Valabil 3 luni.',
+    evidentiat: false,
   },
   {
     id: 'zece',
     nume: 'Pachet de 10 lecții',
     lectii: 10,
-    pretLectie: 36,
-    reducere: 10,
+    pretLectie: 33,
     nota: 'Pentru un obiectiv cu termen: interviu, examen, mutare. Valabil 5 luni.',
+    evidentiat: false,
+  },
+  {
+    id: 'intensiv',
+    nume: 'Intensiv, 2 luni',
+    lectii: 24,
+    pretLectie: 31,
+    nota: 'Trei lecții pe săptămână, două luni. Ritmul în care se vede saltul de nivel.',
+    evidentiat: true,
   },
 ] as const
+
+/**
+ * Cursul de grup. NU se vinde la bucata: un grup are nevoie ca aceiasi oameni sa
+ * vina la aceeasi ora, saptamani la rand. De aia e un curs de doua luni, cu loc
+ * rezervat, nu o lectie pe care o iei cand vrei.
+ */
+export const cursGrup = {
+  nume: 'Curs în grup, 2 luni',
+  lectii: 15,
+  pretLectie: site.preturi.grup,
+  durata: site.durataGrup,
+  nota: 'Loc rezervat într-o grupă de același nivel, cu orar fix.',
+} as const
+
+/** Cat la suta economisesti fata de pretul unei lectii singure. */
+export function reducere(pretLectie: number): number {
+  return Math.round((1 - pretLectie / site.preturi.individual) * 100)
+}
+
+/** Cat te costa cu totul un pachet. */
+export function total(lectii: number, pretLectie: number): number {
+  return lectii * pretLectie
+}
 
 /** Mesajul care se deschide in WhatsApp cand cineva apasa butonul. */
 export const mesajWhatsApp = 'Bună, Dorina! Am văzut site-ul DorDeFranceza și aș vrea să aflu mai multe despre lecții.'

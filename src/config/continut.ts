@@ -93,43 +93,37 @@ export const metoda = [
   },
 ]
 
-export const planuri = [
-  {
-    tip: 'cunoastere',
-    nume: 'Discuție de cunoaștere',
-    pret: 'Gratuit',
-    pretSecundar: '',
-    detaliu: `${site.durataCunoastere} de minute, pe Zoom`,
-    beneficii: ['Îți evaluez nivelul real, nu cel din CV', 'Îmi spui obiectivul și termenul tău', 'Pleci cu un plan, chiar dacă nu continui'],
-    buton: 'Programează gratuit',
-    evidentiat: false,
-  },
-  {
-    tip: 'individual',
-    nume: 'Lecție individuală',
-    pret: `${site.preturi.individual} ${site.moneda}`,
-    pretSecundar: `${inLei(site.preturi.individual)} lei`,
-    detaliu: `pe lecție, ${site.durataLectie} de minute`,
-    beneficii: [
-      'Plan scris, cu obiective la 4, 8 și 12 lecții',
-      'Materiale făcute pe situația ta, incluse',
-      'Corectură pe WhatsApp între lecții',
-      'Rezumatul lecției pe email, în aceeași zi',
-      'Reprogramare gratuită cu 24 de ore înainte',
-    ],
-    buton: 'Alege individual',
-    evidentiat: true, // eticheta spune „Recomandat”, nu „cel mai ales”: nu avem inca date care sa sustina asta
-  },
-  {
-    tip: 'grup',
-    nume: 'Lecție în grup mic',
-    pret: `${site.preturi.grup} ${site.moneda}`,
-    pretSecundar: `${inLei(site.preturi.grup)} lei`,
-    detaliu: `pe lecție, ${site.durataLectie} de minute`,
-    beneficii: [`${site.marimeGrup} de același nivel`, 'Orar fix, în fiecare săptămână', 'Conversație și exerciții în echipă', 'Materiale incluse'],
-    buton: 'Alege grup',
-    evidentiat: false,
-  },
+/**
+ * Discutia gratuita si listele de beneficii. Preturile si pachetele NU stau aici,
+ * stau in site.ts, ca sa existe intr-un singur loc.
+ */
+export const discutie = {
+  nume: 'Discuție de cunoaștere',
+  detaliu: `${site.durataCunoastere} de minute, pe Zoom`,
+  beneficii: [
+    'Îți evaluez nivelul real, nu cel din CV',
+    'Îmi spui obiectivul și termenul tău',
+    'Pleci cu un plan, chiar dacă nu continui',
+  ],
+  buton: 'Programează gratuit',
+} as const
+
+/** Ce primesti la orice lectie individuala, indiferent de pachet. */
+export const beneficiiIndividual = [
+  'Plan scris, cu obiective la 4, 8 și 12 lecții',
+  'Materiale făcute pe situația ta, incluse',
+  'Corectură pe WhatsApp între lecții',
+  'Rezumatul lecției pe email, în aceeași zi',
+  'Reprogramare gratuită cu 24 de ore înainte',
+] as const
+
+/** Ce primesti la cursul de grup. */
+export const beneficiiGrup = [
+  `${site.marimeGrup} de același nivel`,
+  `Lecții de ${site.durataGrup} de minute, ca să vorbească toată lumea`,
+  'Orar fix, aceeași zi și oră în fiecare săptămână',
+  'Conversație și exerciții în echipă',
+  'Materiale incluse',
 ] as const
 
 export const intrebari = [

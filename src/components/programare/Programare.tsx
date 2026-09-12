@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 import { NIVELURI, SCOPURI, TIPURI, type TipProgramare } from '@/lib/tipuri'
+import { cursGrup, site } from '@/config/site'
 import { dataRo, desfaZi, localDin, numeLuna, oraRo } from '@/lib/timp'
 import { sursaVizitei } from '@/lib/sursa'
 import IconArrow from '~icons/solar/arrow-right-linear'
@@ -27,10 +28,19 @@ import IconCup from '~icons/solar/cup-hot-bold'
 type Props = { whatsapp: string }
 type Sloturi = Record<string, string[]>
 
+/**
+ * Preturile si duratele vin din TIPURI, nu sunt scrise aici, ca sa nu ramana in
+ * urma cand se schimba grila. Grupul are si o nota in plus: nu se ia la bucata,
+ * lectia rezervata aici e prima dintr-un curs de doua luni.
+ */
 const TIPURI_LISTA: { tip: TipProgramare; Icon: typeof IconUser; text: string }[] = [
   { tip: 'cunoastere', Icon: IconCup, text: 'Ne cunoaștem, îți evaluez nivelul și pleci cu un plan. Gratuit.' },
-  { tip: 'individual', Icon: IconUser, text: 'Doar tu și Dorina, pe obiectivul tău. 50 de minute.' },
-  { tip: 'grup', Icon: IconUsers, text: '3 sau 4 persoane de același nivel. 50 de minute.' },
+  { tip: 'individual', Icon: IconUser, text: `Doar tu și Dorina, pe obiectivul tău. ${TIPURI.individual.durata} de minute.` },
+  {
+    tip: 'grup',
+    Icon: IconUsers,
+    text: `${site.marimeGrup} de același nivel, ${TIPURI.grup.durata} de minute. Alegi ora de start a grupei, iar cursul ține ${cursGrup.lectii} lecții.`,
+  },
 ]
 
 const ZILE_SCURT = ['Lu', 'Ma', 'Mi', 'Jo', 'Vi', 'Sâ', 'Du']
@@ -254,7 +264,14 @@ export default function Programare({ whatsapp }: Props) {
                     <span className="block font-medium">{TIPURI[t].nume}</span>
                     <span className="block text-sm text-gri">{text}</span>
                   </span>
-                  <span className="shrink-0 font-display text-xl">{TIPURI[t].pret ? `${TIPURI[t].pret} €` : 'Gratuit'}</span>
+                  <span className="shrink-0 text-right">
+                    <span className="block font-display text-xl">{TIPURI[t].pret ? `${TIPURI[t].pret} €` : 'Gratuit'}</span>
+                    {t === 'grup' && (
+                      <span className="block text-xs text-gri">
+                        pe lecție, {cursGrup.lectii * cursGrup.pretLectie} € cursul
+                      </span>
+                    )}
+                  </span>
                 </button>
               ))}
             </div>

@@ -2,7 +2,7 @@
 import Legal from '../layouts/Legal.astro'
 import { site } from '../config/site'
 import { firma } from '../config/firma'
-import { inLei } from '../config/site'
+import { cursGrup, inLei, total } from '../config/site'
 ---
 <Legal title="Termeni și condiții" description="Regulile lecțiilor de franceză DorDeFranceza: cine prestează, ce primești, cât costă, cum plătești, cum anulezi și ce drepturi ai ca și consumator." actualizat="12 septembrie 2026">
   <p>Acești termeni descriu contractul dintre tine și {firma.denumire} pentru lecțiile de franceză online oferite sub numele {site.nume}. Făcând o programare pe site sau prin WhatsApp, ești de acord cu ei. Dacă ceva nu e clar, întreabă înainte: <a href={`mailto:${firma.email}`}>{firma.email}</a>.</p>
@@ -11,14 +11,14 @@ import { inLei } from '../config/site'
   <p><strong>{firma.denumire}</strong>, CUI {firma.cui}, înregistrată sub nr. {firma.registru}, cu sediul în {firma.sediu}. Email: <a href={`mailto:${firma.email}`}>{firma.email}</a>. Telefon: {firma.telefon}. Lecțiile sunt ținute de Dorina.</p>
 
   <h2>2. Serviciul</h2>
-  <p>Lecții de franceză online, pe Zoom, de {site.durataLectie} de minute, individuale sau în grup mic de {site.marimeGrup}. Discuția de cunoaștere de 20 de minute este gratuită și nu te obligă la nimic. Materialele de lucru sunt incluse și se trimit pe email sau pe WhatsApp.</p>
+  <p>Lecții de franceză online, pe Zoom. Lecția individuală durează {site.durataLectie} de minute. Lecția în grup mic, de {site.marimeGrup} de același nivel, durează {site.durataGrup} de minute și se vinde numai ca parte dintr-un curs de {cursGrup.lectii} lecții, întins pe două luni. Discuția de cunoaștere de {site.durataCunoastere} de minute este gratuită și nu te obligă la nimic. Materialele de lucru sunt incluse și se trimit pe email sau pe WhatsApp.</p>
   <p>Nu promitem un nivel sau un rezultat la examen într-un anumit termen: progresul depinde de nivelul de la care pornești, de obiectiv și de cât exersezi. La discuția de cunoaștere primești o estimare sinceră pentru situația ta.</p>
 
   <h2>3. Programarea și încheierea contractului</h2>
   <p>Programarea se face din calendarul de pe site sau prin WhatsApp. Contractul se încheie când primești emailul de confirmare cu ziua, ora (ora României) și linkul de Zoom. Dacă ora aleasă devine indisponibilă înainte de confirmare, te anunțăm și alegem alta.</p>
 
   <h2>4. Prețuri și plată</h2>
-  <p>Prețurile sunt afișate pe pagina de <a href="/preturi/">prețuri</a>: {site.preturi.individual} € lecția individuală și {site.preturi.grup} € lecția în grup, pentru {site.durataLectie} de minute. Sub fiecare preț este trecut și echivalentul în lei ({inLei(site.preturi.individual)} lei, respectiv {inLei(site.preturi.grup)} lei), calculat la cursul Băncii Naționale a României. Plata se poate face în euro sau în lei, la cursul BNR din ziua plății. {firma.platitorTva ? 'Prețurile includ TVA.' : 'Prestatorul nu este plătitor de TVA, prețurile sunt finale.'} Plata se face prin transfer bancar sau Revolut, după fiecare lecție sau la finalul lunii, conform înțelegerii. Primești document fiscal pentru fiecare plată.</p>
+  <p>Prețurile sunt afișate pe pagina de <a href="/preturi/">prețuri</a>: {site.preturi.individual} € o lecție individuală luată singură, mai puțin dacă e luată în pachet de 5, 10 sau 24 de lecții, și {total(cursGrup.lectii, cursGrup.pretLectie)} € cursul în grup de {cursGrup.lectii} lecții, adică {cursGrup.pretLectie} € lecția. Sub fiecare preț este trecut și echivalentul în lei, calculat la cursul Băncii Naționale a României. Plata se poate face în euro sau în lei, la cursul BNR din ziua plății. {firma.platitorTva ? 'Prețurile includ TVA.' : 'Prestatorul nu este plătitor de TVA, prețurile sunt finale.'} Plata se face prin transfer bancar sau Revolut, după fiecare lecție sau la finalul lunii, conform înțelegerii. Primești document fiscal pentru fiecare plată.</p>
 
   <p>Lecțiile individuale se pot plăti și în pachete de 5 sau 10, la prețul redus afișat pe pagina de prețuri. Un pachet nu este un abonament: nu se reînnoiește singur, iar lecțiile neefectuate din el se returnează integral la cerere, oricând, conform <a href="/anulare-si-rambursare/">politicii de anulare și rambursare</a>.</p>
 

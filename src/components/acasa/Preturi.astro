@@ -1,14 +1,24 @@
 ---
 /**
- * Preturile. Trei decizii care tin de vanzare stau aici:
- *  1. leul e pretul principal, euro e sub el (si asa cere HG 947/2000);
- *  2. pachetele stau langa lectia individuala, ca ancora sa lucreze;
- *  3. garantia e imediat sub preturi, acolo unde apare ezitarea.
+ * Preturile. Structura vine dintr-o discutie de strategie cu Artiom:
+ *
+ *  1. lectia singura, 40 €, e ancora. E cea mai scumpa cale si asa si arata;
+ *  2. pachetele au reduceri care chiar schimba o decizie, 10 pana la 22%.
+ *     Cele de dinainte, 5 si 10%, erau decorative;
+ *  3. grupul NU se vinde la bucata, ci ca un curs de doua luni cu loc rezervat:
+ *     o grupa are nevoie ca aceiasi oameni sa vina la aceeasi ora, saptamani la
+ *     rand. La 20 € pentru 80 de minute iese 15 € pe ora, adica exact media
+ *     platformelor ieftine, deci raspunde obiectiei de pret fara sa scada
+ *     pretul individual;
+ *  4. un comutator intre individual si grup, ca omul sa nu se piarda in sapte
+ *     carduri deodata.
+ *
+ * Preturile stau in `site.ts`, nu aici.
  */
 import { Icon } from 'astro-icon/components'
+import { beneficiiGrup, beneficiiIndividual, discutie } from '../../config/continut'
+import { cursGrup, inLei, pachete, reducere, site, total } from '../../config/site'
 import Semn from '../Semn.astro'
-import { planuri } from '../../config/continut'
-import { inLei, pachete, site } from '../../config/site'
 import PersonajCerc from '../PersonajCerc.astro'
 
 interface Props {
@@ -24,74 +34,167 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
       <PersonajCerc nume="se-uita-jos-a" inel="portocaliu" disc="alb" marime={150} marimeMare={165} class="mx-auto mb-6" />
       <p class="eticheta">Prețuri</p>
       <h2 id="titlu-preturi" class="mt-3 text-4xl sm:text-5xl">{titlu}</h2>
-      <p class="echilibrat mt-5 text-lg text-gri">Plătești lecțiile pe care le faci. Fără taxă de înscriere, fără abonament, fără manuale de cumpărat.</p>
+      <p class="echilibrat mt-5 text-lg text-gri">
+        Plătești lecțiile pe care le faci. Fără taxă de înscriere, fără abonament, fără manuale de cumpărat.
+      </p>
     </div>
 
-    <div class="dezvaluie-rand mt-12 grid gap-5 lg:grid-cols-3">
-      {
-        planuri.map((p) => (
-          <div class:list={['relative flex flex-col rounded-[1.5rem] p-8', p.evidentiat ? 'bg-navy text-alb lg:-translate-y-3' : 'bg-alb']}>
-            {p.evidentiat && (
-              <span class="absolute right-6 top-6 rounded-full bg-roz px-3 py-1 text-xs font-bold uppercase tracking-wider text-cerneala">Recomandat</span>
-            )}
-            <h3 class="font-sans text-lg font-medium">{p.nume}</h3>
-            <p class="mt-4 font-display text-5xl">{p.pret}</p>
-            {p.pretSecundar && <p class:list={['mt-1 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>adică {p.pretSecundar}</p>}
-            <p class:list={['mt-1 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>{p.detaliu}</p>
-            <ul class="mt-7 space-y-3 text-[0.98rem]">
-              {p.beneficii.map((b) => (
-                <li class="flex gap-3">
-                  <Icon name="solar:check-circle-bold" class:list={['mt-0.5 size-5 shrink-0', p.evidentiat ? 'text-roz' : 'text-verde']} />
-                  <span class:list={p.evidentiat ? 'text-alb/90' : 'text-cerneala/85'}>{b}</span>
-                </li>
-              ))}
-            </ul>
-            <a href={`/programare/?tip=${p.tip}`} class:list={['pastila mt-8 w-full', p.evidentiat ? 'pastila-alba' : 'pastila-albastra']}>
-              {p.buton}
-            </a>
-          </div>
-        ))
-      }
-    </div>
-
-    {/* Pachetele: aceeasi lectie individuala, mai ieftina daca iei mai multe. */}
-    <div class="dezvaluie mt-6 rounded-[1.5rem] bg-alb p-8 sm:p-10">
-      <div class="max-w-2xl">
-        <h3 class="font-sans text-xl font-medium">Dacă știi că mergi până la capăt</h3>
-        <p class="echilibrat mt-2 text-gri">Lecțiile individuale luate în pachet costă mai puțin. Aceeași lecție, același profesor, doar plătită înainte.</p>
+    {/* Discutia gratuita sta deasupra comutatorului: e valabila pentru amandoua. */}
+    <div class="dezvaluie mt-12 flex flex-col items-start gap-6 rounded-[1.5rem] bg-alb p-7 sm:flex-row sm:items-center sm:p-9">
+      <span class="flex size-14 shrink-0 items-center justify-center rounded-full bg-verde-5">
+        <Icon name="solar:chat-round-check-bold" class="size-7 text-verde" />
+      </span>
+      <div class="flex-1">
+        <p class="font-sans text-xl font-medium">{discutie.nume} <span class="text-verde">gratuită</span></p>
+        <p class="echilibrat mt-1.5 text-gri">{discutie.detaliu}. {discutie.beneficii[2]}.</p>
       </div>
-      <div class="mt-7 grid gap-4 sm:grid-cols-3">
+      <a href="/programare/?tip=cunoastere" class="pastila pastila-albastra shrink-0 !py-3">{discutie.buton}</a>
+    </div>
+
+    {/* Comutatorul. Cu tastatura merge cu sageti, ca orice set de file. */}
+    <div class="dezvaluie mt-10 flex justify-center">
+      <div class="inline-flex rounded-full bg-crem-inchis p-1.5" role="tablist" aria-label="Fel de lecții" data-file>
+        <button
+          type="button"
+          role="tab"
+          id="fila-individual"
+          aria-selected="true"
+          aria-controls="panou-individual"
+          data-fila="individual"
+          class="fila rounded-full px-6 py-2.5 text-[0.98rem] font-medium"
+        >
+          Individual
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="fila-grup"
+          aria-selected="false"
+          aria-controls="panou-grup"
+          data-fila="grup"
+          tabindex="-1"
+          class="fila rounded-full px-6 py-2.5 text-[0.98rem] font-medium"
+        >
+          În grup
+        </button>
+      </div>
+    </div>
+
+    {/* ---------------------------------------------------------------- individual */}
+    <div id="panou-individual" role="tabpanel" aria-labelledby="fila-individual" tabindex="0">
+      <div class="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {
-          pachete.map((pachet) => (
-            <div class:list={['rounded-[1.25rem] p-6', pachet.reducere ? 'bg-crem' : 'bg-gri-deschis']}>
-              <div class="flex items-baseline justify-between gap-3">
-                <p class="font-medium">{pachet.nume}</p>
-                {pachet.reducere > 0 && <span class="rounded-full bg-verde-5 px-2.5 py-1 text-xs font-bold text-verde">-{pachet.reducere}%</span>}
-              </div>
-              <p class="mt-4 font-display text-3xl">{pachet.pretLectie} {site.moneda}</p>
-              <p class="text-sm text-gri">
-                {pachet.lectii > 1 ? `pe lecție, adică ${pachet.pretLectie * pachet.lectii} ${site.moneda} în total` : 'pe lecție'}
+          pachete.map((p) => (
+            <div
+              class:list={[
+                'relative flex flex-col rounded-[1.5rem] p-7',
+                p.evidentiat ? 'bg-navy text-alb xl:-translate-y-3' : 'bg-alb',
+              ]}
+            >
+              {p.evidentiat && (
+                <span class="absolute right-6 top-6 rounded-full bg-roz px-3 py-1 text-xs font-bold uppercase tracking-wider text-cerneala">
+                  Cel mai bun preț
+                </span>
+              )}
+              {/* pe cardul evidentiat, eticheta sta in coltul din dreapta sus,
+                  deci numele are nevoie de loc ca sa nu treaca pe sub ea */}
+              <p class:list={['font-sans text-lg font-medium', p.evidentiat && 'pr-36']}>{p.nume}</p>
+
+              <p class="mt-5 font-display text-5xl leading-none">
+                {total(p.lectii, p.pretLectie)} {site.moneda}
               </p>
-              <p class="text-xs text-gri">{inLei(pachet.pretLectie)} lei la cursul de azi</p>
-              <p class="mt-3 text-sm leading-relaxed text-gri">{pachet.nota}</p>
+              <p class:list={['mt-2 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>
+                {p.lectii === 1
+                  ? `pentru o lecție de ${site.durataLectie} de minute`
+                  : `${p.lectii} lecții de ${site.durataLectie} de minute, ${p.pretLectie} ${site.moneda} una`}
+              </p>
+              <p class:list={['text-sm', p.evidentiat ? 'text-alb/60' : 'text-gri']}>
+                {inLei(total(p.lectii, p.pretLectie))} lei la cursul de azi
+              </p>
+
+              {reducere(p.pretLectie) > 0 && (
+                <p
+                  class:list={[
+                    'mt-4 inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold',
+                    p.evidentiat ? 'bg-alb/15 text-alb' : 'bg-verde-5 text-verde',
+                  ]}
+                >
+                  Economisești {reducere(p.pretLectie)}%, adică{' '}
+                  {total(p.lectii, site.preturi.individual) - total(p.lectii, p.pretLectie)} {site.moneda}
+                </p>
+              )}
+
+              <p class:list={['mt-4 flex-1 text-sm leading-relaxed', p.evidentiat ? 'text-alb/80' : 'text-gri']}>
+                {p.nota}
+              </p>
+
+              <a
+                href={`/programare/?tip=individual&pachet=${p.id}`}
+                class:list={['pastila mt-6 w-full', p.evidentiat ? 'pastila-alba' : 'pastila-albastra']}
+              >
+                Alege
+              </a>
             </div>
           ))
         }
       </div>
-      <p class="mt-6 text-sm text-gri">
-        Lecțiile dintr-un pachet neefectuate se returnează integral, oricând, la cerere. Detalii în{' '}
-        <a href="/anulare-si-rambursare/" class="text-albastru-text underline">politica de anulare</a>.
-      </p>
+
+      <div class="mt-6 rounded-[1.5rem] bg-alb p-7 sm:p-9">
+        <p class="font-sans text-lg font-medium">La orice lecție individuală primești</p>
+        <ul class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            beneficiiIndividual.map((b) => (
+              <li class="flex gap-3 text-[0.98rem]">
+                <Icon name="solar:check-circle-bold" class="mt-0.5 size-5 shrink-0 text-verde" />
+                <span class="leading-relaxed text-cerneala/85">{b}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    {/* --------------------------------------------------------------------- grup */}
+    <div id="panou-grup" role="tabpanel" aria-labelledby="fila-grup" tabindex="0" hidden>
+      <div class="mt-8 grid gap-5 lg:grid-cols-[1fr_1.1fr]">
+        <div class="relative flex flex-col justify-center rounded-[1.5rem] bg-navy p-8 text-alb sm:p-10">
+          <p class="font-sans text-lg font-medium">{cursGrup.nume}</p>
+          <p class="mt-5 font-display text-6xl leading-none">{total(cursGrup.lectii, cursGrup.pretLectie)} {site.moneda}</p>
+          <p class="mt-2 text-alb/70">
+            {cursGrup.lectii} lecții de {cursGrup.durata} de minute, {cursGrup.pretLectie} {site.moneda} una
+          </p>
+          <p class="text-sm text-alb/60">{inLei(total(cursGrup.lectii, cursGrup.pretLectie))} lei la cursul de azi</p>
+          <p class="mt-4 inline-flex w-fit rounded-full bg-alb/15 px-3 py-1 text-xs font-bold">
+            {Math.round((cursGrup.pretLectie * 60) / cursGrup.durata)} {site.moneda} pe oră de lecție
+          </p>
+          <p class="echilibrat mt-4 leading-relaxed text-alb/80">{cursGrup.nota}</p>
+          <a href="/programare/?tip=grup" class="pastila pastila-alba mt-7 w-full sm:w-fit sm:!px-8">Vreau un loc în grupă</a>
+        </div>
+
+        <div class="rounded-[1.5rem] bg-alb p-8 sm:p-10">
+          <p class="font-sans text-lg font-medium">Cum merge o grupă</p>
+          <ul class="mt-5 space-y-3">
+            {
+              beneficiiGrup.map((b) => (
+                <li class="flex gap-3 text-[0.98rem]">
+                  <Icon name="solar:check-circle-bold" class="mt-0.5 size-5 shrink-0 text-verde" />
+                  <span class="leading-relaxed text-cerneala/85">{b}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="echilibrat mt-6 text-sm leading-relaxed text-gri">
+            Grupa pornește când se strâng {site.marimeGrup}. Până atunci nu plătești nimic: îți spun eu când e gata și abia
+            atunci confirmi.
+          </p>
+        </div>
+      </div>
     </div>
 
     {/*
       Banda si figura sunt LIPITE, nu despartite: figura sta peste capatul din
-      dreapta al benzii. Dar asezata asa incat sa nu reapara verdele pe care
-      Artiom l-a hasurat de doua ori:
-        `right-0`  -> banda nu mai iese in dreapta cercului, se termina sub el;
-        `-bottom-4`-> cercul coboara sub linia de jos a benzii, deci nici pe sub
-                      arcul lui nu mai ramane verde la vedere.
-      Textul din banda are `lg:pr-56`, ca sa nu treaca pe sub figura.
+      dreapta al benzii, dar asezata ca sa nu ramana verde nici dupa ea, nici pe
+      sub arcul ei. `right-0` si `-bottom-4` sunt exact numerele care fac asta.
     */}
     {site.garantie.activa && (
       <div class="dezvaluie relative mt-6 flex flex-col items-start gap-5 rounded-[1.5rem] bg-verde-5 px-8 py-7 sm:flex-row sm:items-center sm:px-10 lg:mt-24 lg:pr-56 2xl:pr-64">
@@ -104,13 +207,60 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
           <h3 class="font-sans text-xl font-medium">Nu rămâi cu banii dați degeaba</h3>
           <p class="echilibrat mt-2 leading-relaxed text-cerneala/85">{site.garantie.text}</p>
         </div>
-        {/* Promisiunea e personala, deci o tine cineva, nu doar o iconita. */}
         <PersonajCerc nume="inima" inel="verde-10" disc="alb" marime={160} marimeMare={184} class="absolute -bottom-4 right-0 hidden lg:block" />
       </div>
     )}
 
     <p class="dezvaluie mt-6 text-center text-sm text-gri lg:mt-14">
-      Prețurile sunt în euro. Suma în lei e trecută dedesubt, la cursul BNR, și se poate schimba puțin de la o zi la alta. Plata se face prin transfer bancar sau Revolut.
+      Prețurile sunt în euro. Suma în lei e trecută dedesubt, la cursul BNR, și se poate schimba puțin de la o zi la alta.
+      Plata se face prin transfer bancar sau Revolut.
     </p>
   </div>
 </section>
+
+<style>
+  .fila {
+    color: var(--color-gri);
+    transition:
+      background-color 260ms var(--ease-afara),
+      color 260ms var(--ease-afara);
+  }
+  .fila[aria-selected='true'] {
+    background-color: var(--color-alb);
+    color: var(--color-cerneala);
+    box-shadow: var(--shadow-cald-sm);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fila { transition: none; }
+  }
+</style>
+
+<script>
+  // Comutatorul dintre lectii individuale si grup. Se poarta ca un set de file
+  // adevarat: sagetile stanga si dreapta trec de la una la alta, iar fila care
+  // nu e aleasa iese din drumul tastaturii.
+  document.querySelectorAll<HTMLElement>('[data-file]').forEach((grup) => {
+    const file = [...grup.querySelectorAll<HTMLButtonElement>('[data-fila]')]
+    const panouri = file
+      .map((f) => document.getElementById(f.getAttribute('aria-controls') ?? ''))
+      .filter((p): p is HTMLElement => p !== null)
+
+    const alege = (i: number, mutaFocus = false) => {
+      file.forEach((f, k) => {
+        f.setAttribute('aria-selected', String(k === i))
+        f.tabIndex = k === i ? 0 : -1
+      })
+      panouri.forEach((p, k) => (p.hidden = k !== i))
+      if (mutaFocus) file[i].focus()
+    }
+
+    file.forEach((f, i) => {
+      f.addEventListener('click', () => alege(i))
+      f.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+        e.preventDefault()
+        alege((i + (e.key === 'ArrowRight' ? 1 : file.length - 1)) % file.length, true)
+      })
+    })
+  })
+</script>

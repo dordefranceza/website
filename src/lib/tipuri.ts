@@ -98,7 +98,9 @@ export type CerereProgramare = {
 export const TIPURI: Record<TipProgramare, { nume: string; durata: number; pret: number }> = {
   cunoastere: { nume: 'Discuție de cunoaștere', durata: 20, pret: 0 },
   individual: { nume: 'Lecție individuală', durata: site.durataLectie, pret: site.preturi.individual },
-  grup: { nume: 'Lecție în grup mic', durata: site.durataLectie, pret: site.preturi.grup },
+  /* grupul are lectii mai lungi: sunt mai multi oameni si fiecare trebuie sa
+     apuce sa vorbeasca. Durata intra direct in calculul sloturilor libere. */
+  grup: { nume: 'Lecție în grup mic', durata: site.durataGrup, pret: site.preturi.grup },
 }
 
 export const NIVELURI = ['Încep de la zero', 'A1', 'A2', 'B1', 'B2', 'C1', 'Nu știu sigur'] as const
