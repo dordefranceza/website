@@ -121,13 +121,20 @@ export default function Setari() {
 
   return (
     <>
-      <Titlu sub="Zoom, notificări și regulile calendarului.">Setări</Titlu>
+      <Titlu sub="Sala de lecții, notificările și regulile calendarului.">Setări</Titlu>
       <div className="grid gap-6 xl:grid-cols-2">
         <Card>
           <h2 className="font-sans text-lg font-medium">Lecțiile</h2>
           <div className="mt-5 space-y-5">
-            <Camp eticheta="Linkul tău de Zoom" ajutor="Personal Meeting Room din Zoom. Intră automat în emailul de confirmare al fiecărui cursant.">
-              <input type="url" value={s.link_zoom} onChange={(e) => setS({ ...s, link_zoom: e.target.value })} placeholder="https://zoom.us/j/1234567890?pwd=…" className={clasaInput} />
+            {/* Nu e „linkul de Zoom", e linkul salii tale, oricare ar fi ea.
+                Artiom intreba pe buna dreptate „unde primeste clientul linkul,
+                Zoom sau Meet?": raspunsul e ca aici pui unul singur, permanent,
+                si pleaca singur la toata lumea. */}
+            <Camp
+              eticheta="Linkul sălii tale, Zoom sau Google Meet"
+              ajutor="Unul singur, permanent. Intră automat în emailul fiecărui cursant, în fișierul de calendar și în butonul de intrat. La Zoom e „Personal Meeting Room”, la Meet e linkul din meet.google.com/new pe care îl păstrezi."
+            >
+              <input type="url" value={s.link_zoom} onChange={(e) => setS({ ...s, link_zoom: e.target.value })} placeholder="https://meet.google.com/abc-defg-hij" className={clasaInput} />
             </Camp>
             <Camp eticheta="Emailul pe care primești notificările">
               <input type="email" value={s.email_notificari} onChange={(e) => setS({ ...s, email_notificari: e.target.value })} placeholder="dorina@exemplu.ro" className={clasaInput} />

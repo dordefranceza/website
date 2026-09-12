@@ -5,7 +5,7 @@ import { Switch } from '@/components/ui/switch'
 import type { Programare, StareProgramare } from '@/lib/tipuri'
 import { dataOraRo } from '@/lib/timp'
 import { apel } from './api'
-import { Camp, EtichetaTip, STARE_TEXT, clasaInput, clasaSelect, clasaTextarea } from './comune'
+import { Camp, EtichetaTip, STARE_TEXT, clasaInput, clasaTextarea } from './comune'
 import { isoLaLocal, localLaIso } from './timpLocal'
 import { IconWhatsApp } from '@/components/IconWhatsApp'
 import IconLetter from '~icons/solar/letter-bold'
@@ -120,14 +120,31 @@ export default function DialogProgramare({ programare, inchide, laSalvare, anunt
             </div>
           )}
 
+          {/*
+            Starea, pusa pe butoane, nu intr-o lista derulanta.
+            Artiom, a doua oara despre acelasi lucru: lista derulanta e a
+            sistemului, se deschide cenusie peste fereastra noastra si nu
+            seamana cu nimic din cabinet. Pe butoane se vad toate cele cinci
+            stari deodata si se apasa dintr-o data, nu din doua.
+          */}
+          <div>
+            <p className="mb-2 text-sm font-medium">Stare</p>
+            <div className="flex flex-wrap gap-2">
+              {(Object.keys(STARE_TEXT) as StareProgramare[]).map((sv) => (
+                <button
+                  key={sv}
+                  type="button"
+                  onClick={() => setStare(sv)}
+                  aria-pressed={stare === sv}
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition ${stare === sv ? 'bg-cerneala text-alb' : 'bg-crem hover:bg-crem-inchis'}`}
+                >
+                  {STARE_TEXT[sv]}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
-            <Camp eticheta="Stare">
-              <select value={stare} onChange={(e) => setStare(e.target.value as StareProgramare)} className={clasaSelect}>
-                {(Object.keys(STARE_TEXT) as StareProgramare[]).map((s) => (
-                  <option key={s} value={s}>{STARE_TEXT[s]}</option>
-                ))}
-              </select>
-            </Camp>
             <Camp eticheta="Data și ora (ora României)">
               <input type="datetime-local" value={incepe} onChange={(e) => setIncepe(e.target.value)} className={clasaInput} />
             </Camp>
@@ -140,9 +157,9 @@ export default function DialogProgramare({ programare, inchide, laSalvare, anunt
             </div>
           </div>
 
-          <Camp eticheta="Link Zoom pentru această lecție" ajutor="Gol înseamnă linkul din Setări.">
+          <Camp eticheta="Link de întâlnire pentru lecția asta" ajutor="Zoom, Google Meet, orice. Gol înseamnă linkul din Setări.">
             <div className="flex gap-2">
-              <input type="url" value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://zoom.us/j/…" className={clasaInput} />
+              <input type="url" value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://meet.google.com/… sau https://zoom.us/j/…" className={clasaInput} />
               <button type="button" onClick={trimiteLink} disabled={asteapta} className="shrink-0 rounded-xl bg-albastru-5 px-4 text-sm font-medium text-navy hover:bg-albastru-10 disabled:opacity-60">
                 Trimite linkul
               </button>
