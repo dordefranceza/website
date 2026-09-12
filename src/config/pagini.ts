@@ -28,7 +28,15 @@ export type Caz = {
 
 export const pentruCe = {
   eticheta: 'Pentru ce ai nevoie de franceză',
-  titlu: 'Șase motive cu care vin oamenii la mine',
+  /*
+   * Era „Șase motive cu care vin oamenii la mine". La 48px cerea 884 de pixeli
+   * si avea 672, deci se rupea in doua randuri. Masurat, nu ghicit.
+   *
+   * L-am scurtat in loc sa largesc coloana: `max-w-4xl` l-ar fi incaput pe
+   * ecran mare, dar intre 768 si 960 de pixeli tot s-ar fi rupt. Cuvantul
+   * „sase" nu se pierde, e chiar in randul de dedesubt.
+   */
+  titlu: 'Cu ce vin oamenii la mine',
   intro:
     'Nu predau «franceză în general». Fiecare plan pleacă de la o situație reală, cu un termen și cu o măsură. Mai jos sunt cele șase cu care vin cei mai mulți, și ce înseamnă fiecare în lecții.',
   final: {
