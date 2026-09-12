@@ -38,14 +38,26 @@ const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
       aria-hidden="true"
       class="pointer-events-none absolute -bottom-16 left-1 h-[190px] w-auto select-none sm:left-2 sm:-bottom-[70px] sm:h-[220px]"
     />
-    <p id="ddf-cookie-titlu" class="font-sans text-[1.05rem] font-medium">Cookie-uri pe acest site</p>
+    {/*
+      Textul e scris cald, dar cele doua lucruri pe care legea cere sa fie
+      numite raman numite: **la ce folosesc** cookie-urile si **cine le pune**.
+      Consimtamantul trebuie sa fie „liber, specific si informat"; „folosim
+      cookie-uri ca sa iti imbunatatim experienta" nu informeaza pe nimeni si
+      exact formularile alea se amendeaza. Deci se poate scrie frumos, nu se
+      poate scrie pe ocolite.
+
+      Butoanele spun acum „Sunt de acord", ca sa se potriveasca cu politica de
+      cookie-uri, care citeaza chiar cuvintele astea. Inainte scria „Accept" pe
+      buton si „Sunt de acord" in pagina.
+    */}
+    <p id="ddf-cookie-titlu" class="font-sans text-[1.05rem] font-medium">Cookie-uri, pe scurt</p>
     <p class="mt-2 text-sm leading-relaxed text-gri">
-      Folosim cookie-uri de analiză, prin Google Analytics, numai dacă ești de acord. Fără acordul tău nu se salvează nimic în browser, iar site-ul merge la fel. Alegerea o schimbi oricând din
+      Ne-ar ajuta să știm câți oameni ajung aici. Numărătoarea o face Google Analytics și pornește numai dacă spui da. Dacă spui nu, site-ul merge la fel și nu se salvează nimic la tine în browser. Te răzgândești oricând din
       <a href="/cookies/" class="text-albastru-text underline-offset-4 hover:underline">politica de cookie-uri</a>.
     </p>
     <div class="mt-5 flex flex-wrap gap-3">
-      <button type="button" data-ddf-cookie="da" class="pastila pastila-albastra !py-2.5 text-sm">Accept</button>
-      <button type="button" data-ddf-cookie="nu" class="pastila pastila-alba !py-2.5 text-sm">Refuz</button>
+      <button type="button" data-ddf-cookie="da" class="pastila pastila-albastra !py-2.5 text-sm">Sunt de acord</button>
+      <button type="button" data-ddf-cookie="nu" class="pastila pastila-alba !py-2.5 text-sm">Nu, mulțumesc</button>
     </div>
   </div>
 
