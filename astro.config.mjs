@@ -43,6 +43,10 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss(), Icons({ compiler: 'jsx', jsx: 'react' })],
+    // sanitize-html e CommonJS si cere htmlparser2, care e doar ESM. Lasat pe
+    // dinafara pachetului, Node de pe Vercel crapa cu ERR_REQUIRE_ESM si /blog/
+    // da 500. Impachetat aici, Rollup rezolva importurile la build.
+    ssr: { noExternal: ['sanitize-html', 'htmlparser2', 'is-plain-object'] },
   },
   // Tot CSS-ul intra in HTML: o cerere blocanta mai putin inainte de primul pixel.
   build: { inlineStylesheets: 'always' },
