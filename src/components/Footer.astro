@@ -2,7 +2,7 @@
 import Logo from './Logo.astro'
 import { Icon } from 'astro-icon/components'
 import { site, linkWhatsApp } from '../config/site'
-import { firma } from '../config/firma'
+import { firma, firmaCompleta } from '../config/firma'
 import PersonajCerc from './PersonajCerc.astro'
 const an = new Date().getFullYear()
 ---
@@ -57,12 +57,20 @@ const an = new Date().getFullYear()
         {site.instagram && <li><a class="text-alb/80 hover:text-alb" href={site.instagram} target="_blank" rel="noopener">Instagram</a></li>}
         {site.tiktok && <li><a class="text-alb/80 hover:text-alb" href={site.tiktok} target="_blank" rel="noopener">TikTok</a></li>}
       </ul>
-      <p class="mb-3 mt-8 text-sm font-bold uppercase tracking-wider text-alb/60">Date de identificare</p>
-      <p class="text-sm leading-relaxed text-alb/70">
-        {firma.denumire}<br />
-        CUI {firma.cui} · {firma.registru}<br />
-        {firma.sediu}
-      </p>
+      {/* Datele de identificare apar DOAR cand exista cu adevarat. Cat timp
+          firma nu e deschisa, aici scria „[Nume Prenume] PFA, CUI [CUI]", ceea
+          ce arata a site neterminat si nu acopera pe nimeni juridic. Cand se
+          completeaza `src/config/firma.ts`, blocul reapare singur. */}
+      {firmaCompleta && (
+        <>
+          <p class="mb-3 mt-8 text-sm font-bold uppercase tracking-wider text-alb/60">Date de identificare</p>
+          <p class="text-sm leading-relaxed text-alb/70">
+            {firma.denumire}<br />
+            CUI {firma.cui} · {firma.registru}<br />
+            {firma.sediu}
+          </p>
+        </>
+      )}
     </div>
   </div>
 

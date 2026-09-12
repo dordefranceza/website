@@ -1,14 +1,20 @@
 ---
 import Legal from '../layouts/Legal.astro'
 import { site } from '../config/site'
-import { firma } from '../config/firma'
+import { firma, firmaCompleta, numeLegal } from '../config/firma'
 import { cursGrup, inLei, total } from '../config/site'
 ---
 <Legal title="Termeni și condiții" description="Regulile lecțiilor de franceză DorDeFranceza: cine prestează, ce primești, cât costă, cum plătești, cum anulezi și ce drepturi ai ca și consumator." actualizat="12 septembrie 2026">
-  <p>Acești termeni descriu contractul dintre tine și {firma.denumire} pentru lecțiile de franceză online oferite sub numele {site.nume}. Făcând o programare pe site sau prin WhatsApp, ești de acord cu ei. Dacă ceva nu e clar, întreabă înainte: <a href={`mailto:${firma.email}`}>{firma.email}</a>.</p>
+  <p>Acești termeni descriu contractul dintre tine și {numeLegal} pentru lecțiile de franceză online oferite sub numele {site.nume}. Făcând o programare pe site sau prin WhatsApp, ești de acord cu ei. Dacă ceva nu e clar, întreabă înainte: <a href={`mailto:${firma.email}`}>{firma.email}</a>.</p>
 
   <h2>1. Cine prestează serviciul</h2>
-  <p><strong>{firma.denumire}</strong>, CUI {firma.cui}, înregistrată sub nr. {firma.registru}, cu sediul în {firma.sediu}. Email: <a href={`mailto:${firma.email}`}>{firma.email}</a>. Telefon: {firma.telefon}. Lecțiile sunt ținute de Dorina.</p>
+  {/* Identificarea completa se afiseaza doar cand exista. Pana atunci ramane
+      ce e adevarat: marca si datele de contact, fara o forma juridica inventata. */}
+  {firmaCompleta ? (
+    <p><strong>{firma.denumire}</strong>, CUI {firma.cui}, înregistrată sub nr. {firma.registru}, cu sediul în {firma.sediu}. Email: <a href={`mailto:${firma.email}`}>{firma.email}</a>. Telefon: {firma.telefon}. Lecțiile sunt ținute de Dorina.</p>
+  ) : (
+    <p>Lecțiile sunt oferite sub numele <strong>{site.nume}</strong> și sunt ținute de Dorina. Ne scrii la <a href={`mailto:${firma.email}`}>{firma.email}</a> sau la {firma.telefon}.</p>
+  )}
 
   <h2>2. Serviciul</h2>
   <p>Lecții de franceză online, pe Zoom. Lecția individuală durează {site.durataLectie} de minute. Lecția în grup mic, de {site.marimeGrup} de același nivel, durează {site.durataGrup} de minute și se vinde numai ca parte dintr-un curs de {cursGrup.lectii} lecții, întins pe două luni. Discuția de cunoaștere de {site.durataCunoastere} de minute este gratuită și nu te obligă la nimic. Materialele de lucru sunt incluse și se trimit pe email sau pe WhatsApp.</p>

@@ -1,0 +1,122 @@
+---
+/**
+ * Pagina de adâncime pentru „Pentru ce ai nevoie de franceză".
+ *
+ * Pe pagina de start, secțiunea cu același nume dă șase carduri, fiecare cu un
+ * titlu și o frază. Aici fiecare caz își primește situația întreagă: cum arată
+ * în lecții și ce știi să faci la final.
+ *
+ * Textele NU se repetă. Cardurile de pe start vorbesc despre ce vrei; pagina
+ * asta despre ce facem și ce iese. Fiecare caz duce la formularul de programare
+ * cu scopul deja ales, ca omul să nu-l mai caute dintr-o listă.
+ */
+import Base from '../layouts/Base.astro'
+import { Icon } from 'astro-icon/components'
+import Semn from '../components/Semn.astro'
+import PersonajCerc from '../components/PersonajCerc.astro'
+import Apel from '../components/acasa/Apel.astro'
+import { pentruCe } from '../config/pagini'
+import { site } from '../config/site'
+
+const fundal = { albastru: 'bg-albastru-5', verde: 'bg-verde-5', portocaliu: 'bg-portocaliu-5', roz: 'bg-roz-5' }
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: pentruCe.cazuri.map((c) => ({
+    '@type': 'Question',
+    name: c.titlu,
+    acceptedAnswer: { '@type': 'Answer', text: c.paragrafe.join(' ') },
+  })),
+}
+---
+
+<Base
+  title="Pentru ce ai nevoie de franceză · DorDeFranceza"
+  description="Job la o firmă franceză, mutare în Franța, BAC, DELF sau DALF, de la zero, conversație, sau pentru copil. Ce lucrăm la fiecare și ce știi să faci la final."
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <main id="continut" class="bg-crem pt-32 pb-20 sm:pt-40 sm:pb-28">
+    <div class="container-site">
+      <div class="flex items-end justify-between gap-12">
+        <div class="dezvaluie max-w-2xl">
+          <p class="eticheta">{pentruCe.eticheta}</p>
+          <h1 class="mt-3 text-4xl sm:text-5xl">{pentruCe.titlu}</h1>
+          <p class="echilibrat mt-5 text-lg text-gri">{pentruCe.intro}</p>
+        </div>
+        <PersonajCerc nume="prezinta" inel="roz" disc="alb" marime={185} class="dezvaluie hidden shrink-0 xl:block" />
+      </div>
+
+      {/* Cuprins scurt: șase blocuri lungi cer o hartă la început, altfel omul
+          nu știe cât are de derulat ca să ajungă la al lui. */}
+      <nav class="dezvaluie mt-12 flex flex-wrap gap-2.5" aria-label="Sari la situația ta">
+        {pentruCe.cazuri.map((c) => (
+          <a href={`#${c.scop.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} class="rounded-full bg-alb px-5 py-2.5 text-[0.95rem] transition hover:-translate-y-0.5">
+            {c.titlu}
+          </a>
+        ))}
+      </nav>
+
+      <div class="mt-14 space-y-6">
+        {
+          pentruCe.cazuri.map((c, i) => (
+            <article
+              id={c.scop.toLowerCase().replace(/[^a-z0-9]+/g, '-')}
+              class="dezvaluie scroll-mt-28 rounded-[2rem] bg-alb p-7 sm:p-10 lg:p-12"
+            >
+              <div class:list={['flex flex-col gap-10 lg:gap-16', i % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row']}>
+                <div class="flex-1">
+                  <span class:list={['flex size-16 items-center justify-center rounded-2xl', fundal[c.culoare]]}>
+                    <Semn nume={c.semn as any} inaltime={34} />
+                  </span>
+                  <h2 class="mt-6 text-3xl sm:text-4xl">{c.titlu}</h2>
+                  {c.paragrafe.map((p) => (
+                    <p class="mt-4 leading-relaxed text-cerneala/85">{p}</p>
+                  ))}
+                  <a
+                    href={`/programare/?scop=${encodeURIComponent(c.scop)}`}
+                    class="pastila pastila-albastra mt-8"
+                  >
+                    Programează pentru asta <Icon name="solar:arrow-right-linear" class="size-5" />
+                  </a>
+                </div>
+
+                <div class="shrink-0 rounded-[1.5rem] bg-crem p-7 lg:w-[22rem]">
+                  <p class="font-sans font-medium">Ce știi să faci la final</p>
+                  <ul class="mt-5 space-y-3.5">
+                    {c.rezultate.map((r) => (
+                      <li class="flex gap-3 text-[0.98rem]">
+                        <Icon name="solar:check-circle-bold" class="mt-0.5 size-5 shrink-0 text-verde" />
+                        <span class="leading-relaxed text-cerneala/85">{r}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="dezvaluie relative mt-8 flex flex-col items-start gap-6 rounded-[2rem] bg-albastru-5 p-8 sm:flex-row sm:items-center sm:p-10 lg:pr-56">
+        <div class="flex-1">
+          <h2 class="font-sans text-2xl font-medium">{pentruCe.final.titlu}</h2>
+          <p class="echilibrat mt-2.5 leading-relaxed text-cerneala/85">{pentruCe.final.text}</p>
+        </div>
+        <a href="/programare/?tip=cunoastere" class="pastila pastila-albastra shrink-0">
+          Programează gratuit
+        </a>
+        <PersonajCerc nume="incurajeaza" inel="albastru" disc="alb" marime={160} marimeMare={180} class="absolute -bottom-3 right-4 hidden lg:block" />
+      </div>
+
+      <p class="dezvaluie mt-10 text-center text-gri">
+        Prețurile sunt <a href="/preturi/" class="text-albastru-text underline underline-offset-4">aici</a>, iar cum arată o lecție minut cu minut scrie pe
+        <a href="/cum-decurge/" class="text-albastru-text underline underline-offset-4">pagina despre cum decurge</a>.
+        Lecțiile sunt de {site.durataLectie} de minute individual, {site.durataGrup} la grup.
+      </p>
+    </div>
+  </main>
+
+  <div class="bg-crem"><Apel /></div>
+</Base>

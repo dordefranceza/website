@@ -32,3 +32,20 @@ export const firma = {
 
 /** true cat timp mai exista un camp necompletat. */
 export const firmaIncompleta = Object.values(firma).some((v) => typeof v === 'string' && v.startsWith('['))
+
+/**
+ * Invers, pentru citit mai usor in pagini.
+ *
+ * **Regula, de la Artiom:** cat timp firma nu e deschisa, datele de
+ * identificare NU se afiseaza deloc. Un „[Nume Prenume] PFA" pe un site public
+ * arata a lucru neterminat si nu acopera pe nimeni juridic, deci e mai rau
+ * decat tacerea. In clipa in care se completeaza `firma`, blocul din subsol si
+ * randurile din paginile legale reapar singure, fara sa umble nimeni prin ele.
+ */
+export const firmaCompleta = !firmaIncompleta
+
+/**
+ * Cum ne numim cand nu avem inca denumirea legala. Marca, nu o forma juridica
+ * inventata: nu scriem „PFA" cat timp nu exista un PFA.
+ */
+export const numeLegal = firmaCompleta ? firma.denumire : 'DorDeFranceza'

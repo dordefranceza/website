@@ -1,13 +1,17 @@
 ---
 import Legal from '../layouts/Legal.astro'
 import { site } from '../config/site'
-import { firma } from '../config/firma'
+import { firma, firmaCompleta } from '../config/firma'
 ---
 <Legal title="Politica de confidențialitate" description="Ce date personale colectează DorDeFranceza, în ce scop, cât timp le păstrează, cui le transmite și care sunt drepturile tale conform GDPR." actualizat="12 septembrie 2026">
   <p>Această politică explică ce date personale colectează site-ul {site.nume} și lecțiile oferite prin el, de ce, cât timp le păstrăm și ce drepturi ai. Se aplică Regulamentul (UE) 2016/679 (GDPR) și Legea 190/2018.</p>
 
   <h2>Cine prelucrează datele</h2>
-  <p>Operatorul de date este <strong>{firma.denumire}</strong>, CUI {firma.cui}, cu sediul în {firma.sediu}, reprezentată de Dorina, profesoară de franceză. Ne scrii la <a href={`mailto:${firma.email}`}>{firma.email}</a> pentru orice întrebare legată de datele tale.</p>
+  {firmaCompleta ? (
+    <p>Operatorul de date este <strong>{firma.denumire}</strong>, CUI {firma.cui}, cu sediul în {firma.sediu}, reprezentată de Dorina, profesoară de franceză. Ne scrii la <a href={`mailto:${firma.email}`}>{firma.email}</a> pentru orice întrebare legată de datele tale.</p>
+  ) : (
+    <p>Datele tale sunt prelucrate de <strong>{site.nume}</strong>, adică de Dorina, profesoara care ține lecțiile. Ne scrii la <a href={`mailto:${firma.email}`}>{firma.email}</a> sau la {firma.telefon} pentru orice întrebare legată de datele tale.</p>
+  )}
 
   <h2>Ce date colectăm, de ce și pe ce temei</h2>
   <ul>

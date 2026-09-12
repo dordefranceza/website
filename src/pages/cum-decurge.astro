@@ -1,0 +1,105 @@
+---
+/**
+ * Pagina de adâncime pentru „Cum decurge".
+ *
+ * Pe pagina de start sunt trei pași, cât să înțelegi că primul e gratuit. Aici
+ * sunt cinci, de la primul mesaj până la ce se întâmplă între lecții, plus
+ * partea practică: Zoom, materiale, reprogramare, plată.
+ *
+ * Ce NU intră aici, dinadins: lecția minut cu minut. Aia stă pe /despre/, la
+ * „cum lucrez", fiindcă e metoda Dorinei, nu procesul. Altfel ajungem iar cu
+ * același text pe trei adrese, exact lucrul de care ne plângeam.
+ */
+import Base from '../layouts/Base.astro'
+import { Icon } from 'astro-icon/components'
+import PersonajCerc from '../components/PersonajCerc.astro'
+import Semn from '../components/Semn.astro'
+import Apel from '../components/acasa/Apel.astro'
+import { cumDecurge } from '../config/pagini'
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: cumDecurge.practic.intrebari.map((i) => ({
+    '@type': 'Question',
+    name: i.intrebare,
+    acceptedAnswer: { '@type': 'Answer', text: i.raspuns },
+  })),
+}
+---
+
+<Base
+  title="Cum decurge o lecție de franceză online · DorDeFranceza"
+  description="De la primul mesaj până la a zecea lecție: discuția gratuită de 20 de minute, planul cu obiective, lecțiile pe Zoom și ce se întâmplă între ele. Plus reprogramare, materiale și plată."
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <main id="continut" class="bg-crem pt-32 pb-20 sm:pt-40 sm:pb-28">
+    <div class="container-site">
+      <div class="flex items-end justify-between gap-12">
+        <div class="dezvaluie max-w-2xl">
+          <p class="eticheta">{cumDecurge.eticheta}</p>
+          <h1 class="mt-3 text-4xl sm:text-5xl">{cumDecurge.titlu}</h1>
+          <p class="echilibrat mt-5 text-lg text-gri">{cumDecurge.intro}</p>
+          <a href="/programare/?tip=cunoastere" class="pastila pastila-albastra mt-8">
+            Programează discuția gratuită <Icon name="solar:arrow-right-linear" class="size-5" />
+          </a>
+        </div>
+        <PersonajCerc nume="arata" inel="portocaliu" disc="alb" marime={185} class="dezvaluie hidden shrink-0 xl:block" />
+      </div>
+
+      {/* Etapele. Numărul stă mare, în stânga, și ține locul unei linii de timp:
+          nu punem linii despărțitoare nicăieri, deci ritmul îl dau cifrele. */}
+      <ol class="dezvaluie-rand mt-14 space-y-6">
+        {
+          cumDecurge.etape.map((e) => (
+            <li class="flex flex-col gap-6 rounded-[2rem] bg-alb p-7 sm:flex-row sm:gap-10 sm:p-10">
+              <span class="font-display text-5xl leading-none text-albastru sm:w-20 sm:shrink-0">{e.numar}</span>
+              <div class="flex-1">
+                <h2 class="font-sans text-2xl font-medium leading-snug">{e.titlu}</h2>
+                {e.paragrafe.map((p) => (
+                  <p class="mt-3.5 leading-relaxed text-cerneala/85">{p}</p>
+                ))}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="dezvaluie mt-20">
+        <div class="flex items-end justify-between gap-12">
+          <div class="max-w-2xl">
+            <Semn nume="d-vorbire" inaltime={56} class="mb-5" />
+            <p class="eticheta">{cumDecurge.practic.eticheta}</p>
+            <h2 class="echilibrat mt-3 text-3xl sm:text-4xl">{cumDecurge.practic.titlu}</h2>
+          </div>
+          <PersonajCerc nume="ganditoare" inel="verde" disc="alb" marime={170} class="hidden shrink-0 xl:block" />
+        </div>
+
+        <div class="dezvaluie-rand mt-10 space-y-3">
+          {
+            cumDecurge.practic.intrebari.map((i) => (
+              <details class="group rounded-[1.25rem] bg-alb open:shadow-[var(--shadow-cald-md)]">
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-[1.05rem] font-medium marker:content-none [&::-webkit-details-marker]:hidden">
+                  {i.intrebare}
+                  <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-crem transition group-open:rotate-45">
+                    <Icon name="solar:add-circle-linear" class="size-5 text-albastru" />
+                  </span>
+                </summary>
+                <p class="px-6 pb-6 leading-relaxed text-gri">{i.raspuns}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+
+      <p class="dezvaluie mt-12 text-center text-gri">
+        Ce lucrăm exact, în funcție de ce vrei să obții, scrie pe
+        <a href="/pentru-ce/" class="text-albastru-text underline underline-offset-4">pagina cu situațiile</a>, iar prețurile sunt
+        <a href="/preturi/" class="text-albastru-text underline underline-offset-4">aici</a>.
+      </p>
+    </div>
+  </main>
+
+  <div class="bg-crem"><Apel /></div>
+</Base>

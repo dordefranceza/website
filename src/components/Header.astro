@@ -4,8 +4,11 @@ import { Icon } from 'astro-icon/components'
 import { linkWhatsApp } from '../config/site'
 
 const linkuri = [
-  { href: '/#pentru-ce', text: 'Pentru ce' },
-  { href: '/#cum-decurge', text: 'Cum decurge' },
+  // Duceau la ancore pe pagina de start, adica te miscau in aceeasi pagina, in
+  // timp ce vecinii lor te duceau pe alta. Artiom: „nu prea inteleg structura,
+  // se repeta". Acum toate sase sunt pagini adevarate.
+  { href: '/pentru-ce/', text: 'Pentru ce' },
+  { href: '/cum-decurge/', text: 'Cum decurge' },
   { href: '/preturi/', text: 'Prețuri' },
   { href: '/despre/', text: 'Despre Dorina' },
   { href: '/blog/', text: 'Blog' },
