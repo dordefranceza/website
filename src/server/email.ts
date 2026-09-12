@@ -145,7 +145,7 @@ export function emailNotificare(p: Programare, c: Client, setari: Setari): Email
   ]
 
   const butoane = [
-    buton(`${adresaSite()}/cabinet/#/programari`, 'Deschide în cabinet'),
+    buton(`${adresaSite()}/admin/#/programari`, 'Deschide în cabinet'),
     cifre ? buton(`https://wa.me/${cifre}?text=${encodeURIComponent(`Bună, ${c.nume.split(' ')[0]}! Sunt Dorina, de la DorDeFranceza. Am primit programarea ta pentru ${cand}.`)}`, 'WhatsApp', '#25d366') : '',
     buton(`mailto:${c.email}`, 'Răspunde pe email', '#ffffff', CERNEALA),
   ].join('')

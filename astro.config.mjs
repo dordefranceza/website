@@ -39,7 +39,7 @@ export default defineConfig({
   integrations: [
     react(),
     icon({ include: { solar: ['*'] } }),
-    sitemap({ filter: (p) => !p.includes('/cabinet'), customPages: ADRESE_BLOG }),
+    sitemap({ filter: (p) => !p.includes('/admin'), customPages: ADRESE_BLOG }),
   ],
   vite: {
     plugins: [tailwindcss(), Icons({ compiler: 'jsx', jsx: 'react' })],

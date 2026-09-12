@@ -83,7 +83,20 @@ export async function token(): Promise<string> {
 
 export async function recupereazaParola(email: string): Promise<void> {
   if (!sb) return
-  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: `${location.origin}/cabinet/` })
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: `${location.origin}/admin/` })
+  if (error) throw new Error(mesajAuth(error.message))
+}
+
+/**
+ * Pune o parola noua pe contul cu care esti logat acum.
+ *
+ * Asta e singura cale prin care cineva invitat pe email isi alege parola:
+ * linkul din invitatie deschide o sesiune, dar nu si un loc unde sa scrie
+ * parola. Fara ecranul asta, invitatia nu duce nicaieri.
+ */
+export async function puneParola(parola: string): Promise<void> {
+  if (!sb) return
+  const { error } = await sb.auth.updateUser({ password: parola })
   if (error) throw new Error(mesajAuth(error.message))
 }
 

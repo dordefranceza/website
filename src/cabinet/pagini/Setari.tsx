@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Switch } from '@/components/ui/switch'
 import type { Setari as TipSetari } from '@/lib/tipuri'
 import { apel, descarcaExport } from '../api'
-import { confirmaDoiPasi, incepeDoiPasi, legat, opresteDoiPasi, stareDoiPasi, type StareDoiPasi } from '../auth'
+import { confirmaDoiPasi, incepeDoiPasi, legat, opresteDoiPasi, puneParola, stareDoiPasi, type StareDoiPasi } from '../auth'
 import { Camp, Card, Eroare, Titlu, Toast, clasaInput, clasaSelect } from '../comune'
 
 export default function Setari() {
@@ -16,6 +16,8 @@ export default function Setari() {
   const [inrolare, setInrolare] = useState<{ factorId: string; qr: string; cheie: string } | null>(null)
   const [cod, setCod] = useState('')
   const [lucreaza, setLucreaza] = useState(false)
+  const [parolaNoua, setParolaNoua] = useState('')
+  const [parolaDinNou, setParolaDinNou] = useState('')
 
   const incarca = () => {
     setEroare('')
@@ -52,6 +54,22 @@ export default function Setari() {
       anunta(e instanceof Error ? e.message : 'Nu s-a salvat')
     } finally {
       setAsteapta(false)
+    }
+  }
+
+  async function salveazaParola() {
+    if (parolaNoua.length < 8) return anunta('Parola trebuie să aibă cel puțin 8 caractere')
+    if (parolaNoua !== parolaDinNou) return anunta('Cele două parole nu sunt la fel')
+    setLucreaza(true)
+    try {
+      await puneParola(parolaNoua)
+      setParolaNoua('')
+      setParolaDinNou('')
+      anunta('Parola a fost schimbată')
+    } catch (e) {
+      anunta(e instanceof Error ? e.message : 'Parola nu s-a schimbat')
+    } finally {
+      setLucreaza(false)
     }
   }
 
@@ -154,6 +172,38 @@ export default function Setari() {
             {mod === 'supabase' ? 'Legat la baza de date.' : 'Mod local: datele stau doar pe acest calculator.'}
             {legat ? '' : ' Când se leagă Supabase, cabinetul trece singur pe baza de date.'}
           </p>
+
+          <div className="mt-7">
+            <h3 className="font-sans text-[0.95rem] font-medium">Parola</h3>
+            {!legat ? (
+              <p className="mt-2 text-sm text-gri">Merge doar cu baza de date legată.</p>
+            ) : (
+              <>
+                <p className="mt-2 text-sm text-gri">Dacă ai intrat prima dată din linkul primit pe email, pune-ți aici o parolă a ta. Cel puțin 8 caractere.</p>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    value={parolaNoua}
+                    onChange={(e) => setParolaNoua(e.target.value)}
+                    placeholder="Parola nouă"
+                    aria-label="Parola nouă"
+                    className={`${clasaInput} max-w-[13rem]`}
+                  />
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    value={parolaDinNou}
+                    onChange={(e) => setParolaDinNou(e.target.value)}
+                    placeholder="Încă o dată"
+                    aria-label="Scrie parola încă o dată"
+                    className={`${clasaInput} max-w-[13rem]`}
+                  />
+                  <button type="button" onClick={salveazaParola} disabled={lucreaza || !parolaNoua} className="pastila pastila-albastra !py-2.5 text-sm disabled:opacity-60">Salvează parola</button>
+                </div>
+              </>
+            )}
+          </div>
 
           <div className="mt-7">
             <h3 className="font-sans text-[0.95rem] font-medium">Verificarea în doi pași</h3>

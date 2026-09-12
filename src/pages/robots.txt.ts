@@ -10,7 +10,7 @@ export const GET: APIRoute = () =>
   new Response(
     `User-agent: *
 Allow: /
-Disallow: /cabinet/
+Disallow: /admin/
 Disallow: /api/
 Sitemap: ${adresaSite()}/sitemap-index.xml
 `,
