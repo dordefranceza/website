@@ -5,6 +5,7 @@ import { NIVELURI, SCOPURI } from '@/lib/tipuri'
 import { dataRo } from '@/lib/timp'
 import { apel } from '../api'
 import { Camp, Eroare, Gol, Titlu, Toast, bani, clasaInput, clasaSelect, clasaTextarea } from '../comune'
+import DialogPropunere from '../DialogPropunere'
 
 type Categorie = 'individual' | 'grup' | 'proba'
 
@@ -44,6 +45,10 @@ export default function Clienti() {
   const [cauta, setCauta] = useState('')
   const [grup, setGrup] = useState<'toti' | Categorie>('toti')
   const [deschis, setDeschis] = useState<ClientCuCifre | null>(null)
+  /* Fereastra de propus o ora, deschisa fie goala (cursant nou), fie cu omul
+     deja completat, cand vine de pe fisa lui. Artiom descria fluxul asa: „se
+     duce in cabinet, apasa cursanti, adauga, trimite cerere si gata". */
+  const [propune, setPropune] = useState<null | { nume: string; email: string }>(null)
   const [toast, setToast] = useState('')
 
   const incarca = () => {
@@ -78,7 +83,16 @@ export default function Clienti() {
 
   return (
     <>
-      <Titlu sub="Toți cei care au făcut măcar o programare.">Cursanți</Titlu>
+      <Titlu
+        sub="Toți cei care au făcut măcar o programare."
+        actiuni={
+          <button type="button" onClick={() => setPropune({ nume: '', email: '' })} className="pastila pastila-albastra !py-2.5 text-sm">
+            Cursant nou, propune-i o oră
+          </button>
+        }
+      >
+        Cursanți
+      </Titlu>
 
       {lista && lista.length > 0 && (
         <div className="mb-5 grid gap-3 sm:grid-cols-3">
@@ -143,9 +157,25 @@ export default function Clienti() {
         </ul>
       </div>
 
+      {propune && (
+        <DialogPropunere
+          initial={propune}
+          inchide={() => setPropune(null)}
+          laTrimitere={() => incarca()}
+          anunta={(t) => {
+            setToast(t)
+            window.setTimeout(() => setToast(''), 3000)
+          }}
+        />
+      )}
+
       {deschis && (
         <DialogClient
           client={deschis}
+          laPropunere={() => {
+            setPropune({ nume: deschis.nume, email: deschis.email })
+            setDeschis(null)
+          }}
           inchide={() => setDeschis(null)}
           laSalvare={(c) => {
             setLista((l) => (l ?? []).map((x) => (x.id === c.id ? { ...x, ...c } : x)))
@@ -159,7 +189,7 @@ export default function Clienti() {
   )
 }
 
-function DialogClient({ client, inchide, laSalvare }: { client: ClientCuCifre; inchide: () => void; laSalvare: (c: Client) => void }) {
+function DialogClient({ client, inchide, laSalvare, laPropunere }: { client: ClientCuCifre; inchide: () => void; laSalvare: (c: Client) => void; laPropunere: () => void }) {
   const [d, setD] = useState({ nume: client.nume, email: client.email, telefon: client.telefon, nivel: client.nivel, scop: client.scop, note: client.note })
   const [asteapta, setAsteapta] = useState(false)
   const [eroare, setEroare] = useState('')
@@ -209,7 +239,10 @@ function DialogClient({ client, inchide, laSalvare }: { client: ClientCuCifre; i
           </div>
         </div>
         {eroare && <p role="alert" className="rounded-xl bg-[#fdeaee] px-4 py-3 text-sm text-rosu">{eroare}</p>}
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-wrap justify-end gap-2">
+          {/* Drumul cel mai scurt de la „am vorbit cu el" la „i-am trimis ora":
+              de pe fisa lui, fara sa mai cauti nimic. */}
+          <button type="button" onClick={laPropunere} className="pastila pastila-alba mr-auto !py-3">Propune-i o oră</button>
           <button type="button" onClick={inchide} className="pastila pastila-crem !py-3">Renunță</button>
           <button type="button" onClick={salveaza} disabled={asteapta} className="pastila pastila-albastra !py-3 disabled:opacity-60">{asteapta ? 'Un moment…' : 'Salvează'}</button>
         </div>

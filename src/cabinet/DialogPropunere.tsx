@@ -25,7 +25,13 @@ import { localLaIso } from './timpLocal'
 import { PersonajCerc } from './PersonajCerc'
 import IconCheck from '~icons/solar/check-circle-bold'
 
-type Props = { inchide: () => void; laTrimitere: (p: Programare) => void; anunta: (t: string) => void }
+type Props = {
+  inchide: () => void
+  laTrimitere: (p: Programare) => void
+  anunta: (t: string) => void
+  /** Cursantul deja stiut, cand fereastra se deschide de pe fisa lui. */
+  initial?: { nume: string; email: string }
+}
 
 /** Ziua de azi si ora rotunda urmatoare, ca sa nu porneasca formularul gol. */
 function ziuaDeAzi(): string {
@@ -33,10 +39,10 @@ function ziuaDeAzi(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-export default function DialogPropunere({ inchide, laTrimitere, anunta }: Props) {
+export default function DialogPropunere({ inchide, laTrimitere, anunta, initial }: Props) {
   const [clienti, setClienti] = useState<Client[]>([])
-  const [nume, setNume] = useState('')
-  const [email, setEmail] = useState('')
+  const [nume, setNume] = useState(initial?.nume ?? '')
+  const [email, setEmail] = useState(initial?.email ?? '')
   const [tip, setTip] = useState<TipProgramare>('individual')
   const [zi, setZi] = useState(ziuaDeAzi())
   const [ora, setOra] = useState('18:00')

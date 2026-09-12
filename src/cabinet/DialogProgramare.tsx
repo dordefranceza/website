@@ -66,6 +66,27 @@ export default function DialogProgramare({ programare, inchide, laSalvare, anunt
     }
   }
 
+  /* Linkul salii din Setari, pentru cazul in care lectia n-are unul al ei.
+     Vine din memoria scurta a cabinetului, deci de obicei e deja adus. */
+  const [linkSala, setLinkSala] = useState('')
+  useEffect(() => {
+    if (!programare) return
+    apel<{ setari: { link_zoom: string } }>('setari')
+      .then((r) => setLinkSala(r.setari.link_zoom ?? ''))
+      .catch(() => setLinkSala(''))
+  }, [programare])
+
+  /* Numarul, doar cifre, cum il cere wa.me; gol daca omul n-a lasat telefon. */
+  const cifreTelefon = (c?.telefon ?? '').replace(/\D/g, '')
+
+  const mesajLink = programare
+    ? [
+        `Bună, ${(c?.nume ?? '').split(' ')[0]}!`,
+        `Ne vedem ${dataOraRo(programare.incepe)} (ora României).`,
+        link || linkSala || 'Linkul ți-l trimit înainte de lecție.',
+      ].join('\n')
+    : ''
+
   async function trimiteLink() {
     if (!programare) return
     setAsteapta(true)
@@ -161,10 +182,28 @@ export default function DialogProgramare({ programare, inchide, laSalvare, anunt
             <div className="flex gap-2">
               <input type="url" value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://meet.google.com/… sau https://zoom.us/j/…" className={clasaInput} />
               <button type="button" onClick={trimiteLink} disabled={asteapta} className="shrink-0 rounded-xl bg-albastru-5 px-4 text-sm font-medium text-navy hover:bg-albastru-10 disabled:opacity-60">
-                Trimite linkul
+                Trimite pe email
               </button>
             </div>
           </Camp>
+
+          {/*
+            Acelasi link, dar pe WhatsApp, cu mesajul scris deja.
+            Emailul se pierde, se duce in Promotii, se citeste a doua zi. Cu
+            zece minute inainte de lectie, WhatsApp e singurul care ajunge la
+            om, iar Dorina nu mai are de scris nimic de mana: data, ora si
+            linkul sunt deja acolo.
+          */}
+          {cifreTelefon && (
+            <a
+              href={`https://wa.me/${cifreTelefon}?text=${encodeURIComponent(mesajLink)}`}
+              target="_blank"
+              rel="noopener"
+              className="-mt-2 inline-flex items-center gap-2 rounded-full bg-verde-5 px-4 py-2.5 text-sm font-medium text-verde hover:bg-verde-10"
+            >
+              <IconWhatsApp className="size-4" /> Trimite linkul pe WhatsApp
+            </a>
+          )}
 
           <Camp eticheta="Note (le vezi doar tu)">
             <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3} className={clasaTextarea} />
