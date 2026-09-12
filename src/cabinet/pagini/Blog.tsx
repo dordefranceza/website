@@ -79,7 +79,9 @@ export default function Blog() {
               {a.imagine ? (
                 <img src={a.imagine} alt="" className="size-16 shrink-0 rounded-xl object-cover" />
               ) : (
-                <span className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-albastru-5 font-display text-2xl text-albastru">Fr</span>
+                <span className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-albastru-5">
+                  <img src="/images/semne/randunica.webp" alt="" aria-hidden="true" className="h-8 w-auto" />
+                </span>
               )}
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-medium">{a.titlu || 'Fără titlu'}</span>

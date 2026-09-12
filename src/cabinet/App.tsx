@@ -77,7 +77,10 @@ export default function App() {
   if (stare === 'incarca') {
     return (
       <div className="flex min-h-screen items-center justify-center text-gri">
-        <span className="animate-pulse">Se deschide cabinetul…</span>
+        <span className="flex flex-col items-center gap-4">
+          <img src="/images/semne/marca.webp" alt="" aria-hidden="true" className="h-12 w-auto animate-pulse" />
+          <span>Se deschide cabinetul…</span>
+        </span>
       </div>
     )
   }
@@ -93,8 +96,9 @@ export default function App() {
     <div className="min-h-screen lg:grid lg:grid-cols-[250px_1fr]">
       <aside className="bg-cerneala text-alb lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
         <div className="flex items-center justify-between px-5 py-4 lg:block lg:px-6 lg:py-7">
-          <a href="/" className="font-display text-2xl leading-none">
-            Dor<span className="italic">de</span>Franceza
+          <a href="/" className="inline-flex items-center gap-2.5">
+            <img src="/images/semne/marca.webp" alt="" aria-hidden="true" className="h-7 w-auto [filter:brightness(0)_invert(1)]" />
+            <img src="/images/semne/nume.webp" alt="Dór de Franceza" className="h-[22px] w-auto [filter:brightness(0)_invert(1)]" />
           </a>
           <p className="hidden text-xs text-alb/50 lg:mt-2 lg:block">Cabinetul Dorinei</p>
           <button type="button" onClick={laIesire} className="inline-flex items-center gap-1.5 rounded-full bg-alb/10 px-3 py-1.5 text-xs font-medium lg:hidden">

@@ -8,6 +8,7 @@ import Base from '../../layouts/Base.astro'
 import { dataRo } from '../../lib/timp'
 import { depozit } from '../../server/depozit'
 import { minuteCitit } from '../../server/markdown'
+import Semn from '../../components/Semn.astro'
 
 export const prerender = false
 
@@ -40,7 +41,7 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-r
                   <img src={a.imagine} alt={a.imagine_alt} class="aspect-[16/10] w-full object-cover" width="640" height="400" loading="lazy" decoding="async" />
                 ) : (
                   <div class="flex aspect-[16/10] items-center justify-center bg-albastru-5" aria-hidden="true">
-                    <span class="font-display text-5xl text-albastru">Fr</span>
+                    <Semn nume="randunica" inaltime={72} />
                   </div>
                 )}
                 <div class="flex flex-1 flex-col p-6">

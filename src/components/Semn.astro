@@ -1,0 +1,51 @@
+---
+/**
+ * Semnele brandului: figurile alese de Artiom din planșele generate, decupate
+ * exact așa cum arată acolo și puse peste fundal cu transparență.
+ *
+ * NU se redesenează în cod. Fișierele stau în public/images/semne/ și sunt
+ * WebP la 260px înălțime, adică dublul mărimii maxime de afișare.
+ */
+interface Props {
+  /** numele fișierului din public/images/semne/, fără extensie */
+  nume: 'accent-o' | 'accent-linie' | 'randunica' | 'monograma-df' | 'usa' | 'samanta' | 'podul' | 'fereastra' | 'd-vorbire' | 'balcon'
+  /** înălțimea afișată, în pixeli */
+  inaltime?: number
+  /** gol pentru decor, altfel descrierea pentru cititoarele de ecran */
+  alt?: string
+  class?: string
+  /** true doar pentru semnul din antet, care intră în primul ecran */
+  imediat?: boolean
+}
+/**
+ * Raportul latime/inaltime al fiecarui fisier. Fara el, browserul nu stie cat
+ * loc sa rezerve si pagina sare cand se incarca semnul.
+ */
+const RAPORT: Record<Props['nume'], number> = {
+  'accent-o': 0.7667,
+  'accent-linie': 0.9889,
+  'randunica': 1.0389,
+  'monograma-df': 0.8444,
+  'usa': 0.6889,
+  'samanta': 0.6944,
+  'podul': 1.7889,
+  'fereastra': 0.9778,
+  'd-vorbire': 0.9611,
+  'balcon': 1.0056,
+}
+
+const { nume, inaltime = 56, alt = '', class: clasa = '', imediat = false } = Astro.props
+const latime = Math.round(inaltime * RAPORT[nume])
+---
+
+<img
+  src={`/images/semne/${nume}.webp`}
+  alt={alt}
+  width={latime}
+  height={inaltime}
+  style={`height:${inaltime}px;width:${latime}px`}
+  class={clasa}
+  loading={imediat ? 'eager' : 'lazy'}
+  decoding="async"
+  aria-hidden={alt === '' ? 'true' : undefined}
+/>

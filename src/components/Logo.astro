@@ -1,13 +1,38 @@
 ---
-interface Props { class?: string; culoare?: string }
-const { class: clasa = '', culoare = 'currentColor' } = Astro.props
+/**
+ * Marca brandului: cercul „ó” plus numele „Dór de Franceza”.
+ *
+ * Sunt fișiere, nu desen în cod. Au fost generate, alese de Artiom și decupate
+ * cu fundal transparent. Pe fundal închis, `brightness(0) invert(1)` le face
+ * albe fără să ținem un al doilea fișier: ambele sunt o singură culoare închisă.
+ */
+interface Props {
+  /** 'deschis' = antet alb, 'inchis' = subsol întunecat */
+  pe?: 'deschis' | 'inchis'
+  class?: string
+  /** înălțimea numelui, în pixeli. Marca se scalează după el. */
+  inaltime?: number
+}
+const { pe = 'deschis', class: clasa = '', inaltime = 21 } = Astro.props
+const alb = pe === 'inchis' ? 'filter:brightness(0) invert(1)' : ''
 ---
-<span class:list={['inline-flex items-center gap-2', clasa]}>
-  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true" class="size-7 shrink-0 sm:size-[30px]">
-    <circle cx="15" cy="15" r="14" fill="#4865ff" />
-    <circle cx="10.5" cy="12" r="4.2" fill="#f098d7" />
-    <circle cx="19.5" cy="12" r="4.2" fill="#ff6d39" />
-    <circle cx="15" cy="19.5" r="4.2" fill="#f8f3eb" />
-  </svg>
-  <span class="whitespace-nowrap font-display text-[1.2rem] leading-none tracking-tight sm:text-[1.45rem]" style={`color:${culoare}`}>Dor<span class="italic">de</span>Franceza</span>
+
+<span class:list={['inline-flex items-center gap-2.5', clasa]}>
+  <img
+    src="/images/semne/marca.webp"
+    alt=""
+    aria-hidden="true"
+    style={`height:${Math.round(inaltime * 1.28)}px;width:auto;${alb}`}
+    height={Math.round(inaltime * 1.28)}
+    loading="eager"
+    decoding="async"
+  />
+  <img
+    src="/images/semne/nume.webp"
+    alt="Dór de Franceza"
+    style={`height:${inaltime}px;width:auto;${alb}`}
+    height={inaltime}
+    loading="eager"
+    decoding="async"
+  />
 </span>

@@ -8,6 +8,7 @@
 import { Icon } from 'astro-icon/components'
 import { planuri } from '../../config/continut'
 import { inLei, pachete, site } from '../../config/site'
+import Semn from '../Semn.astro'
 
 interface Props {
   titlu?: string
@@ -19,6 +20,7 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
 <section id="preturi" class:list={['bg-crem', compact ? 'py-16' : 'py-20 sm:py-28']} aria-labelledby="titlu-preturi">
   <div class="container-site">
     <div class="dezvaluie mx-auto max-w-2xl text-center">
+      <Semn nume="samanta" inaltime={58} class="mx-auto mb-5" />
       <p class="eticheta">Prețuri</p>
       <h2 id="titlu-preturi" class="mt-3 text-4xl sm:text-5xl">{titlu}</h2>
       <p class="mt-5 text-lg text-gri">Plătești lecțiile pe care le faci. Fără taxă de înscriere, fără abonament, fără manuale de cumpărat.</p>

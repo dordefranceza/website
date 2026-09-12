@@ -5,11 +5,13 @@
  */
 import { Icon } from 'astro-icon/components'
 import { comparatie } from '../../config/continut'
+import Semn from '../Semn.astro'
 ---
 
 <section class="bg-alb py-20 sm:py-28" aria-labelledby="titlu-comparatie">
   <div class="container-site">
     <div class="dezvaluie mx-auto max-w-2xl text-center">
+      <Semn nume="monograma-df" inaltime={54} class="mx-auto mb-5" />
       <p class="eticheta">Întrebarea despre preț</p>
       <h2 id="titlu-comparatie" class="mt-3 text-4xl sm:text-5xl">{comparatie.titlu}</h2>
       <p class="mt-5 text-lg text-gri">{comparatie.intro}</p>

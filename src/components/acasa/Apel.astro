@@ -1,6 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components'
 import { linkWhatsApp } from '../../config/site'
+import Semn from '../Semn.astro'
 ---
 
 <section class="bg-crem pb-20 sm:pb-28" aria-labelledby="titlu-apel">
@@ -8,6 +9,7 @@ import { linkWhatsApp } from '../../config/site'
     <div class="dezvaluie relative overflow-hidden rounded-[2rem] bg-albastru px-6 py-16 text-center text-alb sm:px-12 sm:py-24">
       <div class="absolute -left-16 -top-16 size-56 rounded-full bg-roz/70" aria-hidden="true"></div>
       <div class="absolute -bottom-20 -right-10 size-64 rounded-full bg-portocaliu/80" aria-hidden="true"></div>
+      <Semn nume="accent-linie" inaltime={190} class="pointer-events-none absolute right-10 top-8 opacity-[0.14] [filter:brightness(0)_invert(1)] sm:right-20" />
       <div class="relative">
         <h2 id="titlu-apel" class="mx-auto max-w-2xl text-4xl sm:text-5xl">Hai să vorbim 20 de minute. Gratuit, fără obligații.</h2>
         <p class="mx-auto mt-5 max-w-xl text-lg text-alb">Îți spun sincer de unde pornim, cât durează și dacă merită. Restul decizi tu.</p>
