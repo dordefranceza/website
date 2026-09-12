@@ -218,6 +218,63 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
   }
 }
 
+/**
+ * Propunerea pe care Dorina o trimite unui cursant: o ora anume, cu doua
+ * butoane. Confirmarea se face dintr-un clic, fara cont si fara parola, pe
+ * baza codului din link. Linkul expira, ca sa nu ramana valabil la nesfarsit.
+ */
+export function emailPropunere(p: Programare, c: Client, setari: Setari, mesajDorinei = ''): Email {
+  const tip = TIPURI[p.tip]
+  const zi = dataRo(p.incepe)
+  const ora = oraRo(p.incepe)
+  const prenume = c.nume.split(' ')[0]
+  const link = `${adresaSite()}/confirma/?t=${encodeURIComponent(p.token_confirmare ?? '')}`
+  const panaLa = p.token_expira ? dataRo(p.token_expira) : ''
+
+  const lista = [
+    { eticheta: 'Ce', valoare: tip.nume },
+    { eticheta: 'Când', valoare: `${zi}, ora ${ora} (ora României)` },
+    { eticheta: 'Durată', valoare: `${p.durata_min} de minute` },
+    { eticheta: 'Preț', valoare: p.suma ? `${p.suma} €` : 'Gratuit' },
+    { eticheta: 'De la Dorina', valoare: mesajDorinei },
+  ]
+
+  // Un singur buton, si acela doar deschide pagina. Confirmarea propriu-zisa
+  // se face printr-un POST de acolo: altfel, orice program care deschide
+  // linkurile din emailuri ar confirma lectia in locul omului.
+  const butoane = buton(link, 'Vezi și răspunde')
+
+  const subsolPas = panaLa
+    ? `<p style="margin:12px 0 0;font-size:13px;line-height:1.6;color:${GRI}">Ora e ținută pentru tine până pe ${scapa(panaLa)}. După aceea se eliberează.</p>`
+    : ''
+
+  return {
+    catre: [c.email],
+    raspundeLa: setari.email_notificari || variabila('EMAIL_DORINA') || undefined,
+    subiect: `Propunere de lecție: ${zi}, ora ${ora}`,
+    text: [
+      `Bună, ${prenume}!`,
+      '',
+      `Îți propun ${tip.nume.toLowerCase()} pe ${zi}, ora ${ora} (ora României), ${p.durata_min} de minute${p.suma ? `, ${p.suma} €` : ', gratuit'}.`,
+      mesajDorinei ? `\n${mesajDorinei}` : '',
+      '',
+      `Deschide și răspunde de aici: ${link}`,
+      'Acolo ai și butonul „Nu pot atunci”, dacă ora nu îți convine.',
+      panaLa ? `Ora e ținută pentru tine până pe ${panaLa}.` : '',
+      '',
+      'Dorina, DorDeFranceza',
+    ].filter(Boolean).join('\n'),
+    html: sablon({
+      eticheta: 'Propunere de lecție',
+      titlu: `${zi}, ora ${ora}`,
+      intro: `Bună, ${scapa(prenume)}! Îți propun ora asta. Apasă butonul și îmi spui acolo dacă îți convine sau nu, dintr-un singur clic.`,
+      corp: randuri(lista),
+      butoane: butoane + subsolPas,
+      subsol: 'Trimis de Dorina, de pe site-ul DorDeFranceza.',
+    }),
+  }
+}
+
 /** Mesaj din formularul de contact, catre Dorina. */
 export function emailContact(d: { nume: string; email: string; telefon: string; mesaj: string; sursa: string }, setari: Setari): Email {
   const catre = [setari.email_notificari || variabila('EMAIL_DORINA')].filter(Boolean)

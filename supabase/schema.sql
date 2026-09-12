@@ -59,7 +59,7 @@ create table if not exists public.programari (
   tip text not null check (tip in ('cunoastere', 'individual', 'grup')),
   incepe timestamptz not null,
   durata_min integer not null default 50,
-  stare text not null default 'noua' check (stare in ('noua', 'confirmata', 'anulata', 'finalizata')),
+  stare text not null default 'noua' check (stare in ('propusa', 'noua', 'confirmata', 'anulata', 'finalizata')),
   platit boolean not null default false,
   suma numeric(8, 2) not null default 0,
   sursa text not null default '',
@@ -69,10 +69,14 @@ create table if not exists public.programari (
   note text not null default '',
   reminder_24h timestamptz,
   reminder_20m timestamptz,
+  -- Codul din linkul propunerii trimise de Dorina, si pana cand mai e bun.
+  token_confirmare text,
+  token_expira timestamptz,
   creat timestamptz not null default now()
 );
 create index if not exists programari_incepe on public.programari (incepe);
 create index if not exists programari_client on public.programari (client_id);
+create unique index if not exists programari_token on public.programari (token_confirmare) where token_confirmare is not null;
 
 -- Cine are voie in cabinet. O coloana: emailul contului din Supabase Auth.
 create table if not exists public.admin_email (

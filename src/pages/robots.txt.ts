@@ -11,6 +11,7 @@ export const GET: APIRoute = () =>
     `User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /confirma/
 Disallow: /api/
 Sitemap: ${adresaSite()}/sitemap-index.xml
 `,

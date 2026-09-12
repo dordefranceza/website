@@ -23,14 +23,15 @@
  * =============================================================================
  */
 import type { APIRoute } from 'astro'
-import type { ArticolSchimbari, Blocaj, Disponibilitate, Programare, Setari, StareProgramare } from '../../../lib/tipuri'
+import type { ArticolSchimbari, Blocaj, Disponibilitate, Programare, Setari, StareProgramare, TipProgramare } from '../../../lib/tipuri'
 import { TIPURI } from '../../../lib/tipuri'
+import { oraNeocupata } from '../../../lib/sloturi'
 import { cheieLuna, dataOraRo, localDin, minuteDin } from '../../../lib/timp'
 import { adminDin } from '../../../server/autentificare'
 import { depozit, modDepozit, type SchimbariClient, type SchimbariProgramare } from '../../../server/depozit'
-import { emailLinkZoom, trimite } from '../../../server/email'
+import { emailLinkZoom, emailPropunere, trimite } from '../../../server/email'
 import { slugDin, textSimplu } from '../../../server/markdown'
-import { corpJson, eroare, origineOk, raspunde, text, textLung } from '../../../server/http'
+import { corpJson, emailValid, eroare, origineOk, raspunde, text, textLung } from '../../../server/http'
 
 export const prerender = false
 
@@ -156,6 +157,64 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
       const r = await trimite(emailLinkZoom(p, p.client, link))
       if (!r.ok) return eroare(502, 'Emailul nu a plecat')
       return raspunde(200, { ok: true })
+    }
+
+    /**
+     * Propunerea de lectie: Dorina alege omul si ora, cursantul confirma
+     * dintr-un clic. Ora nu se blocheaza pana la confirmare, deci se verifica
+     * din nou atunci, nu acum.
+     */
+    if (actiune === 'propune' && metoda === 'POST') {
+      const b = (await corpJson(request)) ?? {}
+      const tip = text(b.tip, 20) as TipProgramare
+      if (!(tip in TIPURI)) return eroare(400, 'Tip necunoscut')
+      const incepe = text(b.incepe, 40)
+      if (!Number.isFinite(Date.parse(incepe))) return eroare(400, 'Data nu e bună')
+      if (Date.parse(incepe) < Date.now()) return eroare(400, 'Ora propusă e în trecut')
+
+      const nume = text(b.nume, 120)
+      const email = text(b.email, 160).toLowerCase()
+      if (nume.length < 2) return eroare(400, 'Scrie numele cursantului')
+      if (!emailValid(email)) return eroare(400, 'Adresa de email nu pare corectă')
+
+      const setari = await d.setari()
+      const t = TIPURI[tip]
+
+      // Orarul saptamanal nu conteaza aici: Dorina are voie sa propuna si in
+      // afara lui. Ce nu are voie e sa suprapuna doua lectii sau sa cada peste
+      // un interval pe care tot ea l-a blocat.
+      const [blocaje, active] = await Promise.all([d.blocaje(), d.programari({ deLa: new Date().toISOString(), stare: 'active' })])
+      if (!oraNeocupata(new Date(incepe).toISOString(), t.durata, active, blocaje)) {
+        return eroare(409, 'Ora asta e deja ocupată sau cade într-un interval blocat.')
+      }
+
+      const token = crypto.randomUUID().replace(/-/g, '')
+      const expira = new Date(Date.now() + 3 * 24 * 3600 * 1000).toISOString()
+
+      const p = await d.creeazaProgramare(
+        {
+          tip,
+          incepe: new Date(incepe).toISOString(),
+          nume,
+          email,
+          telefon: text(b.telefon, 40),
+          nivel: text(b.nivel, 60),
+          scop: text(b.scop, 120),
+          mesaj: '',
+          sursa: 'propusa-de-dorina',
+          pagina: '/admin/',
+          gdpr: true,
+        },
+        { durata_min: t.durata, suma: t.pret, link_zoom: setari.link_zoom, stare: 'propusa', token, tokenExpira: expira },
+      )
+      if (!p.client) return eroare(500, 'Cursantul nu s-a salvat')
+
+      const r = await trimite(emailPropunere(p, p.client, setari, textLung(b.mesaj, 600)))
+      if (!r.ok) {
+        await d.actualizeazaProgramare(p.id, { stare: 'anulata' })
+        return eroare(502, 'Emailul nu a plecat, așa că propunerea a fost anulată. Încearcă din nou.')
+      }
+      return raspunde(200, { ok: true, programare: p })
     }
 
     if (actiune === 'clienti' && metoda === 'GET') {

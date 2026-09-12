@@ -1,0 +1,168 @@
+---
+/**
+ * Pagina pe care ajunge cursantul din linkul propunerii trimise de Dorina.
+ * Confirmarea se face fara cont si fara parola, pe baza codului din link.
+ *
+ * Ora e tinuta ocupata cat timp propunerea asteapta raspuns, pentru ca
+ * `programari({ stare: 'active' })` numara si starea `propusa`. La confirmare
+ * verificam din nou, dar scotand chiar propunerea asta din lista, altfel s-ar
+ * lovi de ea insasi.
+ *
+ * Verificarea e cea restransa: nu se suprapune cu alta lectie si nu cade intr-un
+ * interval blocat. Orarul saptamanal nu conteaza aici, fiindca Dorina are voie
+ * sa propuna si in afara lui, pentru cineva anume.
+ */
+import Base from '../layouts/Base.astro'
+import { oraNeocupata } from '../lib/sloturi'
+import { TIPURI } from '../lib/tipuri'
+import { dataRo, oraRo } from '../lib/timp'
+import { depozit } from '../server/depozit'
+import { emailConfirmare, emailNotificare, trimite } from '../server/email'
+import { origineOk } from '../server/http'
+
+export const prerender = false
+
+Astro.response.headers.set('Cache-Control', 'no-store')
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+
+type Stare = 'lipsa' | 'expirat' | 'raspuns-dat' | 'ocupat' | 'confirmat' | 'refuzat' | 'intreaba' | 'eroare'
+
+let stare: Stare = 'lipsa'
+let cand = ''
+let ceva = ''
+let durata = 0
+let suma = 0
+let token = ''
+let prenume = ''
+
+try {
+  const d = depozit()
+  let raspuns = Astro.url.searchParams.get('r') ?? ''
+  token = (Astro.url.searchParams.get('t') ?? '').trim()
+
+  if (Astro.request.method === 'POST') {
+    if (!origineOk(Astro.request)) {
+      stare = 'eroare'
+    } else {
+      const f = await Astro.request.formData()
+      token = String(f.get('t') ?? '').trim()
+      raspuns = String(f.get('r') ?? '')
+    }
+  }
+
+  if (stare !== 'eroare') {
+    const p = token ? await d.programareDupaToken(token) : null
+    if (!p || !p.client) {
+      stare = 'lipsa'
+    } else {
+      const tip = TIPURI[p.tip]
+      cand = `${dataRo(p.incepe)}, ora ${oraRo(p.incepe)}`
+      ceva = tip.nume
+      durata = p.durata_min
+      suma = p.suma
+      prenume = p.client.nume.split(' ')[0]
+
+      if (p.stare !== 'propusa') stare = 'raspuns-dat'
+      else if (p.token_expira && Date.parse(p.token_expira) < Date.now()) stare = 'expirat'
+      else if (Astro.request.method !== 'POST') stare = 'intreaba'
+      else if (raspuns === 'nu') {
+        await d.actualizeazaProgramare(p.id, { stare: 'anulata', token_confirmare: null, token_expira: null })
+        stare = 'refuzat'
+      } else {
+        const [setari, blocaje, active] = await Promise.all([d.setari(), d.blocaje(), d.programari({ deLa: new Date().toISOString(), stare: 'active' })])
+        if (!oraNeocupata(p.incepe, p.durata_min, active, blocaje, p.id)) {
+          stare = 'ocupat'
+        } else {
+          const confirmata = await d.actualizeazaProgramare(p.id, { stare: 'confirmata', token_confirmare: null, token_expira: null })
+          stare = 'confirmat'
+          const client = confirmata.client ?? p.client
+          const [n, c] = await Promise.all([trimite(emailNotificare(confirmata, client, setari)), trimite(emailConfirmare(confirmata, client, setari))])
+          if (!n.ok) console.error('Notificarea nu a plecat', n.motiv)
+          if (!c.ok) console.error('Confirmarea nu a plecat', c.motiv)
+        }
+      }
+    }
+  }
+} catch (e) {
+  console.error('confirma', e)
+  stare = 'eroare'
+}
+
+const titluri: Record<Stare, string> = {
+  intreaba: 'Îți convine ora asta?',
+  confirmat: 'Gata, ne vedem atunci',
+  refuzat: 'Am notat, căutăm altă oră',
+  expirat: 'Linkul a expirat',
+  'raspuns-dat': 'Ai răspuns deja',
+  ocupat: 'Ora tocmai s-a ocupat',
+  lipsa: 'Linkul nu mai e bun',
+  eroare: 'Ceva nu a mers',
+}
+---
+
+<Base title={`${titluri[stare]} · DorDeFranceza`} description="Confirmarea unei lecții propuse de Dorina." noindex faraHeader>
+  <main id="continut" class="flex min-h-screen items-center justify-center bg-crem p-5">
+    <div class="w-full max-w-md rounded-[2rem] bg-alb p-8 sm:p-10">
+      <img src="/images/semne/nume.webp" alt="Dór de Franceza" width="580" height="70" class="h-[26px] w-auto" />
+      <h1 class="mt-6 font-sans text-2xl font-medium">{titluri[stare]}</h1>
+
+      {stare === 'intreaba' && (
+        <>
+          <p class="mt-2 text-gri">Bună, {prenume}! Dorina îți propune ora de mai jos. Dacă îți convine, apasă butonul albastru.</p>
+          <dl class="mt-7 space-y-3">
+            <div><dt class="text-xs text-gri">Ce</dt><dd class="text-[1.05rem]">{ceva}</dd></div>
+            <div><dt class="text-xs text-gri">Când</dt><dd class="text-[1.05rem]">{cand} <span class="text-gri">(ora României)</span></dd></div>
+            <div><dt class="text-xs text-gri">Durată</dt><dd class="text-[1.05rem]">{durata} de minute</dd></div>
+            <div><dt class="text-xs text-gri">Preț</dt><dd class="text-[1.05rem]">{suma ? `${suma} €` : 'Gratuit'}</dd></div>
+          </dl>
+          <form method="POST" class="mt-8 space-y-3">
+            <input type="hidden" name="t" value={token} />
+            <button type="submit" name="r" value="da" class="pastila pastila-albastra w-full !py-3.5">Confirm, ne vedem atunci</button>
+            <button type="submit" name="r" value="nu" class="w-full py-2.5 text-sm text-gri underline-offset-4 hover:underline">Nu pot atunci</button>
+          </form>
+        </>
+      )}
+
+      {stare === 'confirmat' && (
+        <>
+          <p class="mt-2 text-gri">{ceva}, {cand}. Ți-am trimis pe email confirmarea, cu tot ce trebuie.</p>
+          <a href="/" class="pastila pastila-albastra mt-8 inline-block !py-3">Înapoi la site</a>
+        </>
+      )}
+
+      {stare === 'refuzat' && (
+        <>
+          <p class="mt-2 text-gri">Nicio problemă. Dorina vede răspunsul tău și îți propune altă oră. Sau alegi tu una acum.</p>
+          <a href="/programare/" class="pastila pastila-albastra mt-8 inline-block !py-3">Aleg eu ora</a>
+        </>
+      )}
+
+      {stare === 'ocupat' && (
+        <>
+          <p class="mt-2 text-gri">Ne pare rău, între timp ora asta a fost luată. Alege alta, sunt libere destule.</p>
+          <a href="/programare/" class="pastila pastila-albastra mt-8 inline-block !py-3">Aleg altă oră</a>
+        </>
+      )}
+
+      {(stare === 'expirat' || stare === 'raspuns-dat' || stare === 'lipsa') && (
+        <>
+          <p class="mt-2 text-gri">
+            {stare === 'expirat'
+              ? 'Propunerea a stat prea mult fără răspuns și ora s-a eliberat.'
+              : stare === 'raspuns-dat'
+                ? 'La propunerea asta s-a răspuns deja. Dacă nu ai fost tu, scrie-i Dorinei.'
+                : 'Linkul nu mai este valabil. Poate a fost folosit deja.'}
+          </p>
+          <a href="/programare/" class="pastila pastila-albastra mt-8 inline-block !py-3">Alege o oră</a>
+        </>
+      )}
+
+      {stare === 'eroare' && (
+        <>
+          <p class="mt-2 text-gri">Nu am putut duce la capăt confirmarea. Încearcă din nou peste un minut sau scrie-i Dorinei.</p>
+          <a href="/contact/" class="pastila pastila-albastra mt-8 inline-block !py-3">Scrie-i Dorinei</a>
+        </>
+      )}
+    </div>
+  </main>
+</Base>

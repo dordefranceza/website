@@ -2,7 +2,8 @@
 import { site } from '../config/site'
 
 export type TipProgramare = 'cunoastere' | 'individual' | 'grup'
-export type StareProgramare = 'noua' | 'confirmata' | 'anulata' | 'finalizata'
+/** `propusa` = trimisa de Dorina cursantului, asteapta un raspuns de la el. */
+export type StareProgramare = 'propusa' | 'noua' | 'confirmata' | 'anulata' | 'finalizata'
 
 export type Client = {
   id: string
@@ -32,6 +33,10 @@ export type Programare = {
   link_zoom: string
   note: string
   creat: string
+  /** Codul secret din linkul de confirmare, doar pentru propuneri. */
+  token_confirmare?: string | null
+  /** Pana cand mai poate fi confirmata propunerea. */
+  token_expira?: string | null
   /** Completat de server la citire, pentru cabinet. */
   client?: Client
 }

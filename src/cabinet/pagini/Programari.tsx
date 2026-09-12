@@ -5,10 +5,12 @@ import { dataScurtaRo, oraRo } from '@/lib/timp'
 import { apel } from '../api'
 import { Eroare, EtichetaStare, EtichetaTip, Gol, Titlu, Toast, bani } from '../comune'
 import DialogProgramare from '../DialogProgramare'
+import DialogPropunere from '../DialogPropunere'
 
-type Filtru = 'noi' | 'viitoare' | 'trecute' | 'anulate' | 'toate'
+type Filtru = 'noi' | 'propuse' | 'viitoare' | 'trecute' | 'anulate' | 'toate'
 const FILTRE: { cheie: Filtru; nume: string }[] = [
   { cheie: 'noi', nume: 'Noi' },
+  { cheie: 'propuse', nume: 'Așteaptă răspuns' },
   { cheie: 'viitoare', nume: 'Viitoare' },
   { cheie: 'trecute', nume: 'Trecute' },
   { cheie: 'anulate', nume: 'Anulate' },
@@ -22,6 +24,7 @@ export default function Programari() {
   const [cauta, setCauta] = useState('')
   const [deschisa, setDeschisa] = useState<Programare | null>(null)
   const [toast, setToast] = useState('')
+  const [propune, setPropune] = useState(false)
 
   const incarca = () => {
     setEroare('')
@@ -55,6 +58,7 @@ export default function Programari() {
     return lista
       .filter((p) => {
         if (filtru === 'noi') return p.stare === 'noua'
+        if (filtru === 'propuse') return p.stare === 'propusa'
         if (filtru === 'viitoare') return p.incepe >= acum && p.stare !== 'anulata'
         if (filtru === 'trecute') return p.incepe < acum && p.stare !== 'anulata'
         if (filtru === 'anulate') return p.stare === 'anulata'
@@ -86,13 +90,26 @@ export default function Programari() {
 
   return (
     <>
-      <Titlu sub="Toate cererile și lecțiile, cu plata și starea lor." actiuni={<a href="#/calendar" className="pastila pastila-alba !py-2.5 text-sm">Vezi pe calendar</a>}>
+      <Titlu
+        sub="Toate cererile și lecțiile, cu plata și starea lor."
+        actiuni={
+          <>
+            <button type="button" onClick={() => setPropune(true)} className="pastila pastila-albastra !py-2.5 text-sm">Propune o lecție</button>
+            <a href="#/calendar" className="pastila pastila-alba !py-2.5 text-sm">Vezi pe calendar</a>
+          </>
+        }
+      >
         Programări
       </Titlu>
 
       <div className="flex flex-wrap items-center gap-2">
         {FILTRE.map((f) => {
-          const n = f.cheie === 'noi' ? (lista ?? []).filter((p) => p.stare === 'noua').length : 0
+          const n =
+            f.cheie === 'noi'
+              ? (lista ?? []).filter((p) => p.stare === 'noua').length
+              : f.cheie === 'propuse'
+                ? (lista ?? []).filter((p) => p.stare === 'propusa').length
+                : 0
           return (
             <button
               key={f.cheie}
@@ -156,6 +173,16 @@ export default function Programari() {
       </div>
 
       <DialogProgramare programare={deschisa} inchide={() => setDeschisa(null)} laSalvare={(p) => setLista((l) => (l ?? []).map((x) => (x.id === p.id ? p : x)))} anunta={anunta} />
+      {propune && (
+        <DialogPropunere
+          inchide={() => setPropune(false)}
+          laTrimitere={(p) => {
+            setLista((l) => [...(l ?? []), p])
+            setFiltru('propuse')
+          }}
+          anunta={anunta}
+        />
+      )}
       <Toast text={toast} />
     </>
   )

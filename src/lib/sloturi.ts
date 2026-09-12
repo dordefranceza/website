@@ -25,6 +25,33 @@ function seSuprapun(a: Interval, b: Interval): boolean {
 }
 
 /**
+ * Ora e libera in sensul restrans: nu se loveste de o alta lectie si nu cade
+ * intr-un interval blocat. Nu cere si ca ora sa fie in orarul saptamanal.
+ *
+ * Asta foloseste la propunerile facute de Dorina: ea poate propune si in afara
+ * orarului, pentru cineva anume, dar nu are voie sa suprapuna doua lectii.
+ */
+export function oraNeocupata(
+  incepe: string,
+  durataMin: number,
+  programari: Pick<Programare, 'id' | 'incepe' | 'durata_min' | 'stare'>[],
+  blocaje: Blocaj[],
+  exceptaId = '',
+): boolean {
+  const start = Date.parse(incepe)
+  if (!Number.isFinite(start)) return false
+  const slot: Interval = { start, sfarsit: start + durataMin * 60_000 }
+
+  const ocupate = programari
+    .filter((p) => p.stare !== 'anulata' && p.id !== exceptaId)
+    .map((p) => ({ start: Date.parse(p.incepe), sfarsit: Date.parse(p.incepe) + p.durata_min * 60_000 }))
+  if (ocupate.some((o) => seSuprapun(slot, o))) return false
+
+  const blocate = blocaje.map((b) => ({ start: Date.parse(b.de_la), sfarsit: Date.parse(b.pana_la) }))
+  return !blocate.some((b) => seSuprapun(slot, b))
+}
+
+/**
  * Sloturile libere pe zile: { 'YYYY-MM-DD': ['2026-09-15T15:00:00.000Z', ...] }.
  * O programare existenta ocupa un pas intreg (lectia plus pauza), indiferent
  * de tipul ei, ca sa nu apara doua lectii lipite.

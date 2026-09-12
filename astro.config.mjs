@@ -7,6 +7,9 @@ import icon from 'astro-icon'
 import tailwindcss from '@tailwindcss/vite'
 import Icons from 'unplugin-icons/vite'
 
+/** `astro build`, nu `astro dev`. Unele setari au voie doar la build. */
+const LA_BUILD = process.argv.includes('build')
+
 /** Adresa canonica a site-ului. Singurul loc de schimbat cand vine domeniul. */
 const SITE_URL = (process.env.PUBLIC_SITE_URL ?? 'https://dordefranceza.vercel.app').replace(/\/+$/, '')
 
@@ -39,14 +42,18 @@ export default defineConfig({
   integrations: [
     react(),
     icon({ include: { solar: ['*'] } }),
-    sitemap({ filter: (p) => !p.includes('/admin'), customPages: ADRESE_BLOG }),
+    // /confirma/ e o pagina privata, ajunsi acolo doar cu codul din email.
+    sitemap({ filter: (p) => !p.includes('/admin') && !p.includes('/confirma'), customPages: ADRESE_BLOG }),
   ],
   vite: {
     plugins: [tailwindcss(), Icons({ compiler: 'jsx', jsx: 'react' })],
     // sanitize-html e CommonJS si cere htmlparser2, care e doar ESM. Lasat pe
     // dinafara pachetului, Node de pe Vercel crapa cu ERR_REQUIRE_ESM si /blog/
     // da 500. Impachetat aici, Rollup rezolva importurile la build.
-    ssr: { noExternal: ['sanitize-html', 'htmlparser2', 'is-plain-object'] },
+    //
+    // Numai la build: in dezvoltare, Vite le leaga singur, iar fortarea lor in
+    // pachet arunca ReferenceError pe fiecare ruta care trece prin markdown.
+    ssr: LA_BUILD ? { noExternal: ['sanitize-html', 'htmlparser2', 'is-plain-object'] } : {},
   },
   // Tot CSS-ul intra in HTML: o cerere blocanta mai putin inainte de primul pixel.
   build: { inlineStylesheets: 'always' },

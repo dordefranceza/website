@@ -22,7 +22,18 @@ import { inDezvoltare, supabaseLegat, variabila } from './mediu'
 
 export type FiltruProgramari = { deLa?: string; panaLa?: string; stare?: StareProgramare | 'active' }
 
-export type SchimbariProgramare = Partial<Pick<Programare, 'stare' | 'platit' | 'suma' | 'note' | 'link_zoom' | 'incepe'>>
+export type SchimbariProgramare = Partial<Pick<Programare, 'stare' | 'platit' | 'suma' | 'note' | 'link_zoom' | 'incepe' | 'token_confirmare' | 'token_expira'>>
+/** Ce stie serverul in plus fata de ce a trimis omul din formular. */
+export type ExtraProgramare = {
+  durata_min: number
+  suma: number
+  link_zoom: string
+  /** Implicit 'noua'. Propunerile facute de Dorina pornesc ca 'propusa'. */
+  stare?: StareProgramare
+  token?: string
+  tokenExpira?: string
+}
+
 export type SchimbariClient = Partial<Pick<Client, 'nume' | 'email' | 'telefon' | 'nivel' | 'scop' | 'note'>>
 
 export interface Depozit {
@@ -35,7 +46,9 @@ export interface Depozit {
   stergeBlocaj(id: string): Promise<void>
   programari(f?: FiltruProgramari): Promise<Programare[]>
   programare(id: string): Promise<Programare | null>
-  creeazaProgramare(c: CerereProgramare, extra: { durata_min: number; suma: number; link_zoom: string }): Promise<Programare>
+  creeazaProgramare(c: CerereProgramare, extra: ExtraProgramare): Promise<Programare>
+  /** Propunerea gasita dupa codul din linkul de confirmare. */
+  programareDupaToken(token: string): Promise<Programare | null>
   actualizeazaProgramare(id: string, s: SchimbariProgramare): Promise<Programare>
   clienti(): Promise<Client[]>
   actualizeazaClient(id: string, s: SchimbariClient): Promise<Client>
@@ -156,7 +169,12 @@ class DepozitLocal implements Depozit {
     const p = f.programari.find((x) => x.id === idP)
     return p ? this.cuClient(f, p) : null
   }
-  async creeazaProgramare(c: CerereProgramare, extra: { durata_min: number; suma: number; link_zoom: string }) {
+  async programareDupaToken(token: string) {
+    const f = this.citeste()
+    const p = f.programari.find((x) => x.token_confirmare === token)
+    return p ? this.cuClient(f, p) : null
+  }
+  async creeazaProgramare(c: CerereProgramare, extra: ExtraProgramare) {
     const f = this.citeste()
     const email = normalizeazaEmail(c.email)
     let client = f.clienti.find((x) => x.email === email)
@@ -172,7 +190,9 @@ class DepozitLocal implements Depozit {
       tip: c.tip,
       incepe: c.incepe,
       durata_min: extra.durata_min,
-      stare: 'noua',
+      stare: extra.stare ?? 'noua',
+      token_confirmare: extra.token ?? null,
+      token_expira: extra.tokenExpira ?? null,
       platit: false,
       suma: extra.suma,
       sursa: c.sursa,
@@ -332,7 +352,12 @@ class DepozitSupabase implements Depozit {
     this.arunca(error, 'programare')
     return data ? normProgramare(data as Programare) : null
   }
-  async creeazaProgramare(c: CerereProgramare, extra: { durata_min: number; suma: number; link_zoom: string }) {
+  async programareDupaToken(token: string) {
+    const { data, error } = await this.sb.from('programari').select('*, client:clienti(*)').eq('token_confirmare', token).maybeSingle()
+    this.arunca(error, 'programare dupa token')
+    return data ? normProgramare(data as Programare) : null
+  }
+  async creeazaProgramare(c: CerereProgramare, extra: ExtraProgramare) {
     const email = normalizeazaEmail(c.email)
     const { data: existent, error: e0 } = await this.sb.from('clienti').select('*').eq('email', email).maybeSingle()
     this.arunca(e0, 'cautare client')
@@ -362,7 +387,9 @@ class DepozitSupabase implements Depozit {
         tip: c.tip,
         incepe: c.incepe,
         durata_min: extra.durata_min,
-        stare: 'noua',
+        stare: extra.stare ?? 'noua',
+        token_confirmare: extra.token ?? null,
+        token_expira: extra.tokenExpira ?? null,
         platit: false,
         suma: extra.suma,
         sursa: c.sursa,

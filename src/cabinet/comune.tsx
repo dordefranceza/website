@@ -5,9 +5,10 @@ import { TIPURI } from '@/lib/tipuri'
 
 export const bani = (n: number) => `${Number.isInteger(n) ? n : n.toFixed(2)} €`
 
-export const STARE_TEXT: Record<StareProgramare, string> = { noua: 'Nouă', confirmata: 'Confirmată', anulata: 'Anulată', finalizata: 'Făcută' }
+export const STARE_TEXT: Record<StareProgramare, string> = { propusa: 'Așteaptă răspuns', noua: 'Nouă', confirmata: 'Confirmată', anulata: 'Anulată', finalizata: 'Făcută' }
 
 const STARE_CLASA: Record<StareProgramare, string> = {
+  propusa: 'bg-roz-5 text-[#9c2f7a]',
   noua: 'bg-portocaliu-5 text-[#b8431a]',
   confirmata: 'bg-verde-5 text-verde',
   anulata: 'bg-gri-deschis text-gri',
