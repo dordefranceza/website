@@ -1,0 +1,102 @@
+---
+/**
+ * Bannerul de consimțământ pentru Google Analytics.
+ *
+ * Regula, simplu: până când omul nu apasă „Sunt de acord", **nu se încarcă
+ * nimic de la Google**. Nu un script pus pe „așteaptă", nu un cookie pus „doar
+ * tehnic". Nimic. Asta cere ePrivacy și asta scrie și în politica noastră.
+ *
+ * Alegerea stă în localStorage, nu într-un cookie: nu pleacă la niciun server
+ * și nu are ce urmări. Cine vrea să se răzgândească apasă linkul din politica
+ * de cookie-uri, care cheamă `window.ddfCookie.redeschide()`.
+ *
+ * Fără `PUBLIC_GA_ID` setat, componenta nu scoate nimic în pagină: site-ul
+ * rămâne exact cum era, fără banner și fără urmărire.
+ */
+const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
+---
+
+{gaId && (
+  <div
+    id="ddf-cookie"
+    hidden
+    role="dialog"
+    aria-modal="false"
+    aria-labelledby="ddf-cookie-titlu"
+    class="fixed inset-x-3 bottom-3 z-[95] mx-auto max-w-lg rounded-[1.5rem] bg-alb p-5 shadow-[0_10px_40px_rgba(8,3,49,0.18)] sm:inset-x-auto sm:right-4 sm:bottom-4 sm:p-6"
+  >
+    <p id="ddf-cookie-titlu" class="font-sans text-[1.05rem] font-medium">Ne dai voie să numărăm vizitele?</p>
+    <p class="mt-2 text-sm leading-relaxed text-gri">
+      Folosim Google Analytics ca să vedem câți oameni ajung pe site și de unde vin. Nu vindem nimănui datele și nu te urmărim pe alte site-uri. Dacă spui nu, site-ul merge la fel, iar în browserul tău nu se scrie nimic.
+      <a href="/cookies/" class="text-albastru-text underline-offset-4 hover:underline">Ce se salvează, pe larg</a>.
+    </p>
+    <div class="mt-5 flex flex-wrap gap-3">
+      <button type="button" data-ddf-cookie="da" class="pastila pastila-albastra !py-2.5 text-sm">Sunt de acord</button>
+      <button type="button" data-ddf-cookie="nu" class="pastila pastila-alba !py-2.5 text-sm">Nu, mulțumesc</button>
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ gaId }}>
+    ;(function () {
+      var CHEIE = 'ddf-cookie'
+      var banner = document.getElementById('ddf-cookie')
+      if (!banner) return
+
+      function citeste() {
+        try {
+          return localStorage.getItem(CHEIE)
+        } catch (e) {
+          return null
+        }
+      }
+      function scrie(v) {
+        try {
+          localStorage.setItem(CHEIE, v)
+        } catch (e) {
+          /* browser cu memoria blocata: alegerea tine doar pana la reincarcare */
+        }
+      }
+
+      var pornit = false
+      function porneste() {
+        if (pornit) return
+        pornit = true
+        window.dataLayer = window.dataLayer || []
+        window.gtag = function () {
+          window.dataLayer.push(arguments)
+        }
+        window.gtag('js', new Date())
+        // Fara semnale pentru reclame: masuram vizite, nu construim audiente.
+        window.gtag('config', gaId, { anonymize_ip: true, allow_google_signals: false, allow_ad_personalization_signals: false })
+        var s = document.createElement('script')
+        s.async = true
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(gaId)
+        document.head.appendChild(s)
+      }
+
+      function raspunde(v) {
+        scrie(v)
+        banner.hidden = true
+        if (v === 'da') porneste()
+      }
+
+      banner.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-ddf-cookie]')
+        if (b) raspunde(b.getAttribute('data-ddf-cookie'))
+      })
+
+      window.ddfCookie = {
+        stare: citeste,
+        redeschide: function () {
+          banner.hidden = false
+          var b = banner.querySelector('button')
+          if (b) b.focus()
+        },
+      }
+
+      var ales = citeste()
+      if (ales === 'da') porneste()
+      else if (ales !== 'nu') banner.hidden = false
+    })()
+  </script>
+)}

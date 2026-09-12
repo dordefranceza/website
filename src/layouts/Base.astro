@@ -4,6 +4,7 @@ import { site } from '../config/site'
 import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
 import BaraMobila from '../components/BaraMobila.astro'
+import Consimtamant from '../components/Consimtamant.astro'
 import { firmaIncompleta } from '../config/firma'
 
 interface Props {
@@ -55,6 +56,7 @@ const ogImage = new URL(image, Astro.site).href
     <slot />
     {!faraFooter && <Footer />}
     {!faraHeader && !faraFooter && <BaraMobila />}
+    {!noindex && <Consimtamant />}
     {import.meta.env.DEV && firmaIncompleta && (
       <button type="button" onclick="this.remove()" class="fixed bottom-3 left-3 z-[90] max-w-xs rounded-2xl bg-portocaliu px-4 py-3 text-left text-xs font-medium text-alb shadow-lg">
         Datele firmei din src/config/firma.ts sunt necompletate. Se vede doar în dezvoltare. Apasă ca să ascunzi.

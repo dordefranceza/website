@@ -2,22 +2,34 @@
 import Legal from '../layouts/Legal.astro'
 import { site } from '../config/site'
 ---
-<Legal title="Politica de cookie-uri" description="Site-ul DorDeFranceza nu folosește cookie-uri de urmărire și nu are banner de consimțământ, pentru că nu are ce să ceară." actualizat="12 septembrie 2026">
-  <p>Pe scurt: paginile publice ale site-ului {site.nume} <strong>nu pun niciun cookie</strong> și nu scriu nimic în memoria browserului tău. De aceea nu vezi un banner de consimțământ: nu există nimic pentru care să ți-l cerem.</p>
+<Legal title="Politica de cookie-uri" description="Ce salvează site-ul DorDeFranceza în browserul tău, când și de ce, plus cum îți schimbi alegerea oricând." actualizat="12 septembrie 2026">
+  <p>Pe scurt: până când nu apeși tu „Sunt de acord" pe bannerul de jos, site-ul {site.nume} <strong>nu salvează nimic</strong> în browserul tău și <strong>nu încarcă nimic de la Google</strong>. Dacă spui nu, site-ul merge exact la fel.</p>
 
   <h2>Ce înseamnă cookie</h2>
-  <p>Un cookie este un fișier mic pe care un site îl salvează în browserul tău ca să te recunoască la următoarea vizită sau ca să te urmărească între site-uri. Legea 506/2004 și Directiva ePrivacy cer consimțământul tău înainte de a salva orice nu este strict necesar funcționării site-ului.</p>
+  <p>Un cookie este un fișier mic pe care un site îl salvează în browserul tău ca să te recunoască la următoarea vizită sau ca să te urmărească între site-uri. Legea 506/2004 și Directiva ePrivacy cer consimțământul tău <em>înainte</em> de a salva orice nu este strict necesar funcționării site-ului. De aceea vezi bannerul întâi și abia apoi se încarcă ceva.</p>
 
-  <h2>Ce folosim noi</h2>
+  <h2>Ce folosim, dacă ești de acord</h2>
   <ul>
-    <li><strong>Paginile publice</strong> (start, programare, prețuri, despre, blog, contact, paginile legale): niciun cookie, niciun localStorage, niciun pixel de urmărire. Fonturile și iconițele sunt găzduite pe site-ul nostru, nu vin de la Google sau de la altcineva.</li>
-    <li><strong>Analiză de trafic:</strong> nu folosim Google Analytics, Meta Pixel, TikTok Pixel sau alt serviciu de analiză. Singurul lucru pe care îl reținem este, pentru cei care fac o programare, platforma din care au venit (de exemplu «tiktok»), citită din adresa paginii, nu din browserul tău.</li>
-    <li><strong>Cabinetul administratorului</strong> (pagina /admin/, folosită doar de Dorina): browserul păstrează sesiunea de autentificare în localStorage. Este strict necesară pentru ca administratorul să rămână conectat și nu privește vizitatorii.</li>
+    <li><strong>Google Analytics 4.</strong> Ne arată câți oameni ajung pe site, ce pagini citesc și din ce loc au venit (căutare Google, TikTok, un link trimis de cineva). Nu îți vedem numele și nu te urmărim pe alte site-uri. Am oprit din setările contului semnalele pentru reclame și personalizarea lor, iar adresa IP se anonimizează. Cookie-urile pe care le pune Google țin până la doi ani.</li>
   </ul>
+  <p>Datele merg la Google Ireland Limited, în Uniunea Europeană. Prelucrarea are la bază acordul tău (art. 6 alin. 1 lit. a din GDPR), pe care îl poți retrage oricând, fără nicio explicație.</p>
+
+  <h2>Ce folosim oricum, fără să te întrebăm</h2>
+  <ul>
+    <li><strong>Alegerea ta de aici.</strong> Ca să nu te întrebăm la fiecare pagină, răspunsul tău („da" sau „nu") rămâne în memoria browserului, în localStorage. Nu pleacă la niciun server, nu e un cookie și nu poate urmări pe nimeni.</li>
+    <li><strong>Sursa vizitei.</strong> Dacă ai venit dintr-un link cu o etichetă (de exemplu «tiktok»), reținem numele platformei doar în momentul în care faci o programare, citit din adresa paginii. Nu se salvează nimic în browserul tău pentru asta.</li>
+    <li><strong>Cabinetul administratorului</strong> (pagina <code>/admin/</code>, folosită doar de Dorina): browserul păstrează sesiunea de autentificare în localStorage. Este strict necesară ca administratorul să rămână conectat și nu privește vizitatorii.</li>
+  </ul>
+
+  <h2>Cum îți schimbi alegerea</h2>
+  <p>Oricând, cu un singur clic: <button type="button" onclick="window.ddfCookie && window.ddfCookie.redeschide()" class="text-albastru-text underline underline-offset-4">deschide din nou întrebarea despre cookie-uri</button>. Dacă treci de la „da" la „nu", oprim încărcarea Analytics de la următoarea pagină. Cookie-urile rămase de la Google le poți șterge din setările browserului, de la datele site-ului.</p>
+
+  <h2>Ce nu folosim</h2>
+  <p>Nu avem Meta Pixel, TikTok Pixel, hărți de căldură, înregistrări de sesiune sau reclame. Fonturile și iconițele sunt găzduite pe site-ul nostru, nu vin de la Google.</p>
 
   <h2>Servicii terțe care pot pune cookie-uri în afara site-ului</h2>
   <p>Când apeși pe un buton de WhatsApp, Instagram, TikTok sau pe un link de Zoom, părăsești site-ul nostru. Acolo se aplică politicile acelor servicii.</p>
 
   <h2>Dacă vom schimba ceva</h2>
-  <p>Dacă vom adăuga vreodată un instrument de analiză sau alte cookie-uri, vom pune un banner de consimțământ înainte și vom actualiza această pagină. Data de sus arată ultima modificare.</p>
+  <p>Dacă vom adăuga alt instrument care salvează ceva în browserul tău, va apărea întâi în bannerul de consimțământ și pe pagina asta. Data de sus arată ultima modificare.</p>
 </Legal>
