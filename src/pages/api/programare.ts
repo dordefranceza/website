@@ -4,7 +4,11 @@ import { slotEsteLiber } from '../../lib/sloturi'
 import { NIVELURI, SCOPURI, TIPURI, type CerereProgramare, type TipProgramare } from '../../lib/tipuri'
 import { depozit } from '../../server/depozit'
 import { emailConfirmare, emailNotificare, trimite } from '../../server/email'
-import { corpJson, daNu, emailValid, eroare, ipDin, origineOk, preaMulte, raspunde, text, textLung, telefonValid } from '../../server/http'
+import { verificaEmail } from '../../server/posta'
+import {
+  areMirosDeSpam, corpJson, daNu, eroare, ipDin, origineOk, preaDeseDeLa, preaMulte,
+  preaRepede, raspunde, text, textLung, telefonValid,
+} from '../../server/http'
 
 export const prerender = false
 
@@ -15,8 +19,12 @@ export const POST: APIRoute = async ({ request }) => {
   const date = await corpJson(request)
   if (!date) return eroare(400, 'Cerere invalidă')
 
-  // Capcana pentru roboti: campul e invizibil, daca e plin nu e om.
+  // Capcanele pentru roboti. Prins, robotul nu afla ca a fost prins: daca i-am
+  // spune, ar incerca alta forma pana trece.
+  //  1. campul invizibil, pe care un om nu-l vede si deci nu-l completeaza;
+  //  2. formularul trimis mai repede decat poate cineva sa-l scrie.
   if (text(date.botcheck, 10)) return raspunde(200, { ok: true })
+  if (preaRepede(date.zabovit)) return raspunde(200, { ok: true })
 
   const tip = text(date.tip, 20) as TipProgramare
   if (!(tip in TIPURI)) return eroare(400, 'Alege tipul lecției')
@@ -40,13 +48,20 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   if (cerere.nume.length < 2) return eroare(400, 'Scrie numele tău')
-  if (!emailValid(cerere.email)) return eroare(400, 'Adresa de email nu pare corectă')
   if (cerere.telefon && !telefonValid(cerere.telefon)) return eroare(400, 'Numărul de telefon nu pare corect')
+  // 3. reclama trimisa de o masina, tot in tacere.
+  if (cerere.mesaj && areMirosDeSpam(cerere.mesaj, cerere.nume)) return raspunde(200, { ok: true })
+  // Adresa: forma, domeniile de unica folosinta, greselile de tastat, si abia
+  // la urma intrebarea catre DNS, singura care costa timp.
+  const verdict = await verificaEmail(cerere.email)
+  if (!verdict.ok) return raspunde(400, { ok: false, eroare: verdict.motiv, sugestie: verdict.sugestie })
   if (cerere.nivel && !(NIVELURI as readonly string[]).includes(cerere.nivel)) cerere.nivel = ''
   if (cerere.scop && !(SCOPURI as readonly string[]).includes(cerere.scop)) cerere.scop = ''
   if (!cerere.gdpr) return eroare(400, 'Confirmă că ai citit termenii și politica de confidențialitate')
 
-  if (preaMulte(ipDin(request))) return raspunde(429, { ok: false, eroare: 'Prea multe încercări. Reîncearcă peste câteva minute.' }, { 'Retry-After': '600' })
+  if (preaMulte(ipDin(request)) || preaDeseDeLa(cerere.email)) {
+    return raspunde(429, { ok: false, eroare: 'Prea multe încercări. Reîncearcă peste câteva minute.' }, { 'Retry-After': '600' })
+  }
 
   try {
     const d = depozit()

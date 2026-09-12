@@ -4,7 +4,7 @@
  * la /api/programare. Orele se afiseaza in fusul Romaniei, oricare ar fi
  * fusul browserului.
  */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -71,6 +71,13 @@ export default function Programare({ whatsapp }: Props) {
   const [gdpr, setGdpr] = useState(false)
   const [trimite, setTrimite] = useState(false)
   const [eroare, setEroare] = useState('')
+  const [sugestie, setSugestie] = useState('')
+  /**
+   * Cand s-a deschis formularul. Trimitem cate milisecunde a stat omul pe el,
+   * nu ceasul lui: ceasul poate fi oricat de gresit, diferenta nu.
+   */
+  const deschisLa = useRef(typeof performance === 'undefined' ? 0 : performance.now())
+  const formular = useRef<HTMLFormElement | null>(null)
   const [rezultat, setRezultat] = useState<{ incepe: string } | null>(null)
 
   // Parametrii din link: ?tip=individual&scop=...&pachet=cinci
@@ -135,6 +142,7 @@ export default function Programare({ whatsapp }: Props) {
     const f = new FormData(e.currentTarget)
     setTrimite(true)
     setEroare('')
+    setSugestie('')
     try {
       const r = await fetch('/api/programare', {
         method: 'POST',
@@ -148,18 +156,20 @@ export default function Programare({ whatsapp }: Props) {
           nivel: f.get('nivel'),
           scop: f.get('scop'),
           mesaj: f.get('mesaj'),
-          botcheck: f.get('botcheck'),
+          botcheck: f.get('website'),
+          zabovit: typeof performance === 'undefined' ? 0 : Math.round(performance.now() - deschisLa.current),
           gdpr,
           sursa: sursaVizitei(),
           pagina: location.pathname,
         }),
       })
-      const d = (await r.json()) as { ok: boolean; incepe?: string; eroare?: string }
+      const d = (await r.json()) as { ok: boolean; incepe?: string; eroare?: string; sugestie?: string }
       if (!r.ok || !d.ok) {
         if (r.status === 409) {
           setSlot('')
           setPas(2)
         }
+        if (d.sugestie) setSugestie(d.sugestie)
         throw new Error(d.eroare || 'Programarea nu a putut fi salvată')
       }
       setRezultat({ incepe: d.incepe ?? slot })
@@ -170,6 +180,17 @@ export default function Programare({ whatsapp }: Props) {
     } finally {
       setTrimite(false)
     }
+  }
+
+  /** Serverul a ghicit adresa buna dintr-o greseala de tastat; o punem noi. */
+  function acceptaSugestia() {
+    const camp = formular.current?.elements.namedItem('email')
+    if (camp instanceof HTMLInputElement) {
+      camp.value = sugestie
+      camp.focus()
+    }
+    setSugestie('')
+    setEroare('')
   }
 
   const rezumat = (
@@ -374,7 +395,7 @@ export default function Programare({ whatsapp }: Props) {
         )}
 
         {pas === 3 && (
-          <form onSubmit={trimiteFormular} className="mt-8">
+          <form ref={formular} onSubmit={trimiteFormular} className="relative mt-8">
             <div className="flex items-center justify-between gap-4">
               <h2 className="font-sans text-2xl font-medium">Datele tale</h2>
               <button type="button" onClick={() => setPas(2)} className="inline-flex items-center gap-1 text-sm font-medium text-albastru-text">
@@ -419,7 +440,13 @@ export default function Programare({ whatsapp }: Props) {
               </div>
             </div>
 
-            <input type="text" name="botcheck" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
+            {/* Capcana. Nu `display:none`: robotii care citesc CSS sar peste asa
+                ceva. Scos din ecran, fara tab si fara voce, deci niciun om nu-l
+                atinge. */}
+            <div aria-hidden="true" className="absolute left-[-9999px] top-0 h-0 w-0 overflow-hidden">
+              <label htmlFor="p-website">Site web</label>
+              <input type="text" id="p-website" name="website" tabIndex={-1} autoComplete="off" />
+            </div>
 
             <label className="mt-5 flex items-start gap-3 text-sm text-gri">
               <Checkbox checked={gdpr} onCheckedChange={(v) => setGdpr(v === true)} className="mt-0.5" />
@@ -429,7 +456,16 @@ export default function Programare({ whatsapp }: Props) {
               </span>
             </label>
 
-            {eroare && <p role="alert" className="mt-5 rounded-xl bg-[#fdeaee] px-4 py-3 text-sm text-rosu">{eroare}</p>}
+            {eroare && (
+              <div role="alert" className="mt-5 rounded-xl bg-[#fdeaee] px-4 py-3 text-sm text-rosu">
+                <p>{eroare}</p>
+                {sugestie && (
+                  <button type="button" onClick={acceptaSugestia} className="mt-1.5 font-medium underline underline-offset-2">
+                    Da, pune {sugestie}
+                  </button>
+                )}
+              </div>
+            )}
 
             <div className="mt-8 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-gri">

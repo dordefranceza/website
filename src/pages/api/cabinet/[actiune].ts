@@ -31,7 +31,8 @@ import { adminDin } from '../../../server/autentificare'
 import { depozit, modDepozit, type SchimbariClient, type SchimbariProgramare } from '../../../server/depozit'
 import { emailLinkZoom, emailPropunere, trimite } from '../../../server/email'
 import { slugDin, textSimplu } from '../../../server/markdown'
-import { corpJson, emailValid, eroare, origineOk, raspunde, text, textLung } from '../../../server/http'
+import { corpJson, eroare, origineOk, raspunde, text, textLung } from '../../../server/http'
+import { formaEmail } from '../../../server/posta'
 
 export const prerender = false
 
@@ -175,7 +176,10 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
       const nume = text(b.nume, 120)
       const email = text(b.email, 160).toLowerCase()
       if (nume.length < 2) return eroare(400, 'Scrie numele cursantului')
-      if (!emailValid(email)) return eroare(400, 'Adresa de email nu pare corectă')
+      // Dorina scrie adresa cursantului de mana, deci greseala de tastat e mai
+      // probabila decat robotul. `formaEmail` i-o si numeste: „ai vrut gmail.com?"
+      const forma = formaEmail(email)
+      if (!forma.ok) return eroare(400, forma.motiv ?? 'Adresa de email nu pare corectă')
 
       const setari = await d.setari()
       const t = TIPURI[tip]
