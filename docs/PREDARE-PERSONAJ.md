@@ -161,11 +161,22 @@ balconul.
 un personaj, la locul potrivit, cu mimica potrivită, iar lângă butoane să arate
 spre buton. Asta e acum regula.
 
-Sunt șapte apariții pe pagina de start, cam una la două secțiuni: prezintă cu
-palma la „Pentru ce ai nevoie", arată cu degetul spre butonul albastru la „Cum
-decurge", scrie la „Cum arată o lecție", degetul mare ridicat pe cardul negru,
-mâna pe inimă la garanție, telefonul în mână la întrebări, salutul pe cardul
-albastru de la final.
+Sunt **opt apariții** pe pagina de start, cam una la două secțiuni, în ordinea
+în care le vezi la scroll:
+
+1. prezintă cu palma, la „Pentru ce ai nevoie de franceză", cerc roz
+2. arată cu degetul spre butonul albastru, la „Cum decurge", cerc portocaliu
+3. scrie rezumatul, la „Cum arată o lecție", cerc albastru
+4. degetul mare ridicat, pe cardul negru „De ce merge", cerc roz pe disc crem
+5. se apleacă și se uită în jos, deasupra titlului de la prețuri, cerc portocaliu
+6. mâna pe inimă, lângă garanția de bani înapoi, cerc verde
+7. telefonul în mână, la „Întrebări frecvente", cerc verde
+8. salută, pe cardul albastru de la final, în discul crem de dinainte
+
+Ultima e singura care nu trece prin `PersonajCerc`: e scrisă de mână în
+`Apel.astro`, fiindcă iese pe jumătate din marginea cardului, iar un cerc
+obișnuit ar tăia-o altfel. Pe pagina de start caută `personaj-cerc` în sursă și
+numeri șapte, nu opt, exact din motivul ăsta.
 
 Semnele mici au rămas toate. Nu se bat cap în cap fiindcă personajul stă în
 cerc, la altă scară, și nu în locul semnului.
