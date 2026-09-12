@@ -82,7 +82,24 @@ mai apar la „de încasat".
 - Programare adevărată făcută pe site: emailurile au ajuns în amândouă cutiile,
   cu personajul, cu butoanele și cu fișierul de calendar. Gmail recunoaște
   fișierul și arată singur cartonașul cu ora. Proba a fost ștearsă din bază.
-- Confirmarea din email, care era complet stricată, merge acum și pe live.
+- **Confirmarea și refuzul, apăsate cu mâna pe live, nu doar citite:**
+  am pus două propuneri de probă direct în baza de date, am deschis linkul și am
+  apăsat butoanele.
+  - „Confirm, ne vedem atunci" duce la ecranul „Gata, ne vedem atunci /
+    Mulțumim, te-am trecut în calendar", cu fața noastră. În baza de date lecția
+    a trecut pe **confirmată**, iar codul din link s-a șters, deci nu mai poate
+    fi folosit a doua oară.
+  - În cutia Dorinei a venit „Programare nouă", în cutia cursantului
+    „Confirmare", amândouă cu fișierul de calendar.
+  - „Nu pot atunci" duce la „Am notat, căutăm altă oră". În baza de date lecția
+    a trecut pe **anulată**, cu nota „Cursantul a răspuns «nu pot atunci»", iar
+    Dorinei i-a venit emailul „... nu poate la ...".
+  - Toate probele au fost șterse: 0 programări, 0 clienți, 0 grupe, 0 pachete.
+
+**Ce NU am putut verifica:** ecranele din cabinet, apăsate cu mâna. Cabinetul
+cere parolă, iar parole nu cer și nu folosesc. Am verificat în schimb datele pe
+care le citește el, direct în baza de date, și sunt corecte. Ecranele lui le
+încerci tu mâine, cu lista de mai sus.
 
 # Ce rămâne de făcut
 
