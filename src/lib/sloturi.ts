@@ -2,7 +2,7 @@
  * Calculul sloturilor libere. Acelasi cod ruleaza pe server (pentru API) si
  * poate rula in cabinet, ca sa nu existe doua pareri despre ce e liber.
  */
-import type { Blocaj, Disponibilitate, Programare, Setari, TipProgramare } from './tipuri'
+import type { Blocaj, Disponibilitate, OrarZi, Programare, Setari, TipProgramare } from './tipuri'
 import { TIPURI } from './tipuri'
 import { FUS, desfaZi, localLaUtc, minuteDin, ziUrmatoare } from './timp'
 
@@ -11,6 +11,8 @@ export type OptiuniSloturi = {
   panaLa: string
   tip: TipProgramare
   reguli: Disponibilitate[]
+  /** Zilele cu orar propriu. O zi de aici nu mai asculta de regula saptamanala. */
+  orarZi?: OrarZi[]
   blocaje: Blocaj[]
   programari: Pick<Programare, 'incepe' | 'durata_min' | 'stare'>[]
   setari: Setari
@@ -84,7 +86,15 @@ export function sloturiLibere(o: OptiuniSloturi): Record<string, string[]> {
     const ziSapt = ((new Date(Date.UTC(d.an, d.luna - 1, d.zi)).getUTCDay() + 6) % 7) + 1
     const sloturi: string[] = []
 
-    for (const regula of o.reguli.filter((r) => r.zi === ziSapt)) {
+    /*
+     * Ziua cu orar propriu bate saptamana. Nu se aduna cu ea, o inlocuieste:
+     * altfel nu s-ar putea inchide o singura marti fara sa se strice toate
+     * martile. Un rand cu lista goala inseamna tocmai asta, zi inchisa.
+     */
+    const proprie = o.orarZi?.find((z) => z.data === zi)
+    const intervale = proprie ? proprie.intervale : o.reguli.filter((r) => r.zi === ziSapt)
+
+    for (const regula of intervale) {
       const deLa = minuteDin(regula.de_la)
       const panaLa = minuteDin(regula.pana_la)
       if (!Number.isFinite(deLa) || !Number.isFinite(panaLa)) continue

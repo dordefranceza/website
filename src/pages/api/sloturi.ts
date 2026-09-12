@@ -22,7 +22,10 @@ export const GET: APIRoute = async ({ url }) => {
     const panaLa = ziUrmatoare(azi, setari.orizont_zile)
     const programari = await d.programari({ deLa: acum.toISOString(), stare: 'active' })
 
-    const zile = sloturiLibere({ deLa: azi, panaLa, tip, reguli, blocaje, programari, setari, acum })
+    // Zilele cu orar propriu se cer doar pentru fereastra ceruta, nu tot anul.
+    const orarZi = await d.orarZi(azi, panaLa)
+
+    const zile = sloturiLibere({ deLa: azi, panaLa, tip, reguli, orarZi, blocaje, programari, setari, acum })
     return raspunde(200, { ok: true, zile, durata: TIPURI[tip].durata, preaviz_ore: setari.preaviz_ore, orizont_zile: setari.orizont_zile })
   } catch (e) {
     console.error('sloturi', e)

@@ -1,133 +1,192 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import type { Blocaj, Disponibilitate as Regula, Programare, Setari } from '@/lib/tipuri'
+/**
+ * Orarul, ca un calendar adevarat.
+ *
+ * Prima varianta avea doar sapte randuri, „luni" pana „duminica", si atat.
+ * Artiom, a treia oara: „eu sa apas in orice zi a anului sa pun cand sunt
+ * libera, cand nu am pus este blocat, atunci si sa pun de la ora asta pana la
+ * ora asta, sa pot modifica". Avea dreptate: un orar care se repeta e bun ca
+ * temelie, dar nu poate spune „marti, 22 septembrie, doar dimineata".
+ *
+ * Deci: calendar pe luni, apesi orice zi, ii pui orele ei. Ziua apasata bate
+ * saptamana. Zilele neatinse cad pe orarul obisnuit, iar daca nici acela nu
+ * are nimic, ziua e inchisa si nimeni nu poate programa in ea.
+ *
+ * Orele deja luate de cursanti se vad in ziua lor, fiindca intrebarea
+ * urmatoare a fost tocmai asta: dispare ora cand cineva se programeaza? Da,
+ * dispare singura, si acum se si vede de ce.
+ */
+import { useEffect, useMemo, useState } from 'react'
+import type { Blocaj, Disponibilitate as Regula, Interval, OrarZi, Programare, Setari } from '@/lib/tipuri'
 import { SETARI_IMPLICITE } from '@/lib/tipuri'
-import { sloturiLibere } from '@/lib/sloturi'
-import { dataOraRo, dataRo, desfaZi, localDin, numeLuna, numeZi, oraRo, ziUrmatoare } from '@/lib/timp'
+import { cheieZi, dataOraRo, dataRo, desfaZi, localDin, minuteDin, numeLuna, numeZi, oraRo, ziUrmatoare } from '@/lib/timp'
 import { apel } from '../api'
 import { Card, Eroare, Titlu, Toast, clasaInput } from '../comune'
-import { isoLaLocal, localLaIso, ziIntreaga } from '../timpLocal'
+import { isoLaLocal, localLaIso } from '../timpLocal'
 import IconPlus from '~icons/solar/add-circle-bold'
 import IconMinus from '~icons/solar/close-circle-bold'
+import IconInapoi from '~icons/solar/arrow-left-linear'
+import IconInainte from '~icons/solar/arrow-right-linear'
 import { PersonajCerc } from '../PersonajCerc'
 
 type RegulaLocala = { zi: number; de_la: string; pana_la: string }
 
+const CAPETE = ['Lu', 'Ma', 'Mi', 'Jo', 'Vi', 'Sâ', 'Du']
+
+/** Cate zile are luna, si pe ce coloana incepe (0 = luni). */
+function formaLunii(luna: string) {
+  const [an, l] = luna.split('-').map(Number)
+  const nrZile = new Date(Date.UTC(an, l, 0)).getUTCDate()
+  const offset = (new Date(Date.UTC(an, l - 1, 1)).getUTCDay() + 6) % 7
+  return { an, l, nrZile, offset }
+}
+
+/** Luna urmatoare sau cea dinainte, ca 'YYYY-MM'. */
+function mutaLuna(luna: string, pas: number): string {
+  const [an, l] = luna.split('-').map(Number)
+  const d = new Date(Date.UTC(an, l - 1 + pas, 1))
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`
+}
+
+/** Ziua saptamanii ISO (1 = luni) a unei chei 'YYYY-MM-DD'. */
+function ziSaptamanii(cheie: string): number {
+  const d = desfaZi(cheie)
+  if (!d) return 1
+  return ((new Date(Date.UTC(d.an, d.luna - 1, d.zi)).getUTCDay() + 6) % 7) + 1
+}
+
+/** „17-21", sau „17-21 +1" cand ziua are mai multe bucati. */
+function peScurt(intervale: Interval[]): string {
+  if (!intervale.length) return ''
+  const i = intervale[0]
+  const taie = (o: string) => (o.endsWith(':00') ? o.slice(0, 2) : o)
+  return `${taie(i.de_la)}-${taie(i.pana_la)}${intervale.length > 1 ? ` +${intervale.length - 1}` : ''}`
+}
+
 export default function Disponibilitate() {
+  const azi = localDin(new Date()).data
+
   const [reguli, setReguli] = useState<RegulaLocala[] | null>(null)
+  const [zileProprii, setZileProprii] = useState<OrarZi[]>([])
+  const [programari, setProgramari] = useState<Programare[]>([])
   const [blocaje, setBlocaje] = useState<Blocaj[]>([])
+  const [setari, setSetari] = useState<Setari>(SETARI_IMPLICITE)
+
+  const [luna, setLuna] = useState(azi.slice(0, 7))
+  const [aleasa, setAleasa] = useState(azi)
+  const [ciorna, setCiorna] = useState<Interval[]>([])
+  const [ciornaPentru, setCiornaPentru] = useState('')
+
   const [eroare, setEroare] = useState('')
   const [toast, setToast] = useState('')
   const [asteapta, setAsteapta] = useState(false)
   const [nou, setNou] = useState({ de_la: '', pana_la: '', motiv: '' })
-  const [ziIntreagaCheie, setZiIntreagaCheie] = useState('')
-  const [setari, setSetari] = useState<Setari>(SETARI_IMPLICITE)
-  const [programari, setProgramari] = useState<Programare[]>([])
 
-  /*
-   * Amprenta orarului asa cum e salvat pe server. Artiom a adaugat intervale,
-   * a plecat de pe pagina si nu s-a intamplat nimic pe site: „nu apare nimic,
-   * nu inteleg nimic". Nimic nu-i spunea ca mai are de apasat Salveaza.
-   */
-  const salvat = useRef('[]')
+  const anunta = (t: string) => {
+    setToast(t)
+    window.setTimeout(() => setToast(''), 3000)
+  }
+
+  /* Datele care nu tin de luna aratata se cer o singura data. */
   const incarca = () => {
     setEroare('')
-    /*
-     * Setarile si programarile viitoare nu se afiseaza aici, dar intra in
-     * socoteala previzualizarii de mai jos: fara ele am arata ore libere peste
-     * lectii deja luate, sau ore pe care preavizul le ascunde oricum.
-     */
     Promise.all([
       apel<{ reguli: Regula[] }>('disponibilitate'),
       apel<{ blocaje: Blocaj[] }>('blocaje'),
       apel<{ setari: Setari }>('setari'),
-      apel<{ programari: Programare[] }>('programari', { query: { deLa: new Date().toISOString() } }),
     ])
-      .then(([r, b, s, p]) => {
-        const curate = r.reguli.map(({ zi, de_la, pana_la }) => ({ zi, de_la, pana_la }))
-        salvat.current = JSON.stringify(curate)
-        setReguli(curate)
+      .then(([r, b, s]) => {
+        setReguli(r.reguli.map(({ zi, de_la, pana_la }) => ({ zi, de_la, pana_la })))
         setBlocaje(b.blocaje)
         setSetari(s.setari)
-        setProgramari(p.programari)
       })
       .catch((e: Error) => setEroare(e.message))
   }
   useEffect(incarca, [])
 
-  const anunta = (t: string) => {
-    setToast(t)
-    window.setTimeout(() => setToast(''), 2500)
+  /* Zilele proprii si lectiile se cer pe luna aratata, cu o zi in plus de
+     fiecare parte, ca sa nu lipseasca nimic la marginea lunii. */
+  const incarcaLuna = () => {
+    const { an, l, nrZile } = formaLunii(luna)
+    const deLa = ziUrmatoare(cheieZi(an, l, 1), -1)
+    const panaLa = ziUrmatoare(cheieZi(an, l, nrZile), 1)
+    Promise.all([
+      apel<{ zile: OrarZi[] }>('orar-zi', { query: { deLa, panaLa } }),
+      apel<{ programari: Programare[] }>('programari', { query: { deLa: `${deLa}T00:00:00.000Z`, panaLa: `${panaLa}T23:59:59.999Z` } }),
+    ])
+      .then(([z, p]) => {
+        setZileProprii(z.zile)
+        setProgramari(p.programari)
+      })
+      .catch((e: Error) => setEroare(e.message))
+  }
+  useEffect(incarcaLuna, [luna])
+
+  /** Orele care se aplica unei zile: ale ei daca le are, altfel ale saptamanii. */
+  const oreleZilei = (cheie: string): { intervale: Interval[]; proprie: boolean } => {
+    const a = zileProprii.find((z) => z.data === cheie)
+    if (a) return { intervale: a.intervale, proprie: true }
+    const zs = ziSaptamanii(cheie)
+    return { intervale: (reguli ?? []).filter((r) => r.zi === zs).map(({ de_la, pana_la }) => ({ de_la, pana_la })), proprie: false }
   }
 
-  const nesalvat = reguli !== null && JSON.stringify(reguli) !== salvat.current
+  /* Ciorna se ia de la capat ori de cate ori se schimba ziua aleasa sau ajung
+     date noi de pe server. Fara `ciornaPentru`, o salvare ar rescrie ziua cu
+     ce era pe ecran inainte de raspuns. */
+  useEffect(() => {
+    if (reguli === null) return
+    if (ciornaPentru === aleasa) return
+    setCiorna(oreleZilei(aleasa).intervale.map((i) => ({ ...i })))
+    setCiornaPentru(aleasa)
+  }, [aleasa, reguli, zileProprii])
 
-  /*
-   * Previzualizarea, si de ce exista. Orarul de mai jos are doar nume de zile:
-   * „luni", „marti". Artiom, uitandu-se la el: „acolo este doar saptamana si nu
-   * este clar care luna, care data exacta". Avea dreptate, ecranul cerea un
-   * salt in cap intre o regula care se repeta si zilele adevarate din calendar.
-   *
-   * Asa ca aratam chiar zilele: aceleasi ore pe care le vede cursantul pe site,
-   * cu data lor, calculate cu exact acelasi cod ca API-ul public. Se recalculeaza
-   * in timp ce scrii, deci se vede imediat ce iese dintr-un interval schimbat.
-   */
-  const ZILE_ARATATE = 12
-  const ORIZONT_PREVIZUALIZARE = 28
+  const alesProprie = zileProprii.some((z) => z.data === aleasa)
+  const nesalvat = ciornaPentru === aleasa && JSON.stringify(ciorna) !== JSON.stringify(oreleZilei(aleasa).intervale)
 
-  const previzualizare = useMemo(() => {
-    if (!reguli) return [] as [string, string[]][]
-    const acum = new Date()
-    const azi = localDin(acum).data
-    const libere = sloturiLibere({
-      deLa: azi,
-      panaLa: ziUrmatoare(azi, Math.min(setari.orizont_zile, ORIZONT_PREVIZUALIZARE)),
-      tip: 'individual',
-      reguli: reguli.map((r, i) => ({ id: String(i), ...r })),
-      blocaje,
-      programari,
-      setari,
-      acum,
-    })
-    return Object.entries(libere).sort(([a], [b]) => a.localeCompare(b))
-  }, [reguli, blocaje, programari, setari])
+  const lectiileZilei = useMemo(
+    () =>
+      programari
+        .filter((p) => p.stare !== 'anulata' && localDin(p.incepe).data === aleasa)
+        .sort((a, b) => a.incepe.localeCompare(b.incepe)),
+    [programari, aleasa],
+  )
 
-  const oreTotal = previzualizare.reduce((n, [, lista]) => n + lista.length, 0)
+  /** Cate lectii are fiecare zi, ca sa se vada bulina pe calendar. */
+  const lectiiPeZi = useMemo(() => {
+    const m = new Map<string, number>()
+    for (const p of programari) {
+      if (p.stare === 'anulata') continue
+      const z = localDin(p.incepe).data
+      m.set(z, (m.get(z) ?? 0) + 1)
+    }
+    return m
+  }, [programari])
 
-  /** Zilele aratate, grupate pe luni, ca sa scrie o data „septembrie", nu la fiecare rand. */
-  const peLuni: { cheie: string; titlu: string; zile: [string, string[]][] }[] = []
-  for (const intrare of previzualizare.slice(0, ZILE_ARATATE)) {
-    const d = desfaZi(intrare[0])
-    if (!d) continue
-    const cheie = `${d.an}-${d.luna}`
-    const grup = peLuni.find((g) => g.cheie === cheie)
-    if (grup) grup.zile.push(intrare)
-    else peLuni.push({ cheie, titlu: `${numeLuna(d.luna)} ${d.an}`, zile: [intrare] })
-  }
-  const zileRamase = previzualizare.length - Math.min(previzualizare.length, ZILE_ARATATE)
-
-  /** In romana, numerele terminate in 00 sau in 20 pana la 99 cer „de": 28 de zile, dar 12 ore. */
-  const deDe = (n: number) => (n % 100 === 0 || n % 100 >= 20 ? `${n} de` : `${n}`)
-
-  /** „luni" singur nu spune nimic; alaturi de el punem data la care cade data viitoare. */
-  const aziCheie = localDin(new Date()).data
-  const aziZiSapt = localDin(new Date()).ziSapt
-  function urmatoareaData(zi: number): string {
-    const peste = (zi - aziZiSapt + 7) % 7
-    if (peste === 0) return 'azi'
-    if (peste === 1) return 'mâine'
-    const d = desfaZi(ziUrmatoare(aziCheie, peste))
-    return d ? `${d.zi} ${numeLuna(d.luna).slice(0, 3)}.` : ''
-  }
-
-  async function salveazaReguli() {
-    if (!reguli) return
+  async function salveazaZiua(intervale: Interval[] | null, mesaj: string) {
     setAsteapta(true)
     try {
-      const r = await apel<{ reguli: Regula[] }>('disponibilitate', { metoda: 'PUT', corp: { reguli } })
-      const curate = r.reguli.map(({ zi, de_la, pana_la }) => ({ zi, de_la, pana_la }))
-      salvat.current = JSON.stringify(curate)
-      setReguli(curate)
-      anunta('Orarul a fost salvat. Orele apar pe site imediat.')
+      const r = await apel<{ zile: OrarZi[] }>('orar-zi', { metoda: 'PUT', corp: { data: aleasa, intervale } })
+      setZileProprii((toate) => [...toate.filter((z) => z.data !== aleasa), ...r.zile].sort((a, b) => a.data.localeCompare(b.data)))
+      setCiornaPentru('')
+      anunta(mesaj)
+    } catch (e) {
+      anunta(e instanceof Error ? e.message : 'Nu s-a salvat')
+    } finally {
+      setAsteapta(false)
+    }
+  }
+
+  /** Muta orele zilei in orarul saptamanal, si scoate exceptia care le tinea. */
+  async function repetaSaptamanal() {
+    const zs = ziSaptamanii(aleasa)
+    const noi = [...(reguli ?? []).filter((r) => r.zi !== zs), ...ciorna.map((i) => ({ zi: zs, de_la: i.de_la, pana_la: i.pana_la }))]
+    setAsteapta(true)
+    try {
+      const r = await apel<{ reguli: Regula[] }>('disponibilitate', { metoda: 'PUT', corp: { reguli: noi } })
+      setReguli(r.reguli.map(({ zi, de_la, pana_la }) => ({ zi, de_la, pana_la })))
+      await apel('orar-zi', { metoda: 'PUT', corp: { data: aleasa, intervale: null } })
+      setZileProprii((toate) => toate.filter((z) => z.data !== aleasa))
+      setCiornaPentru('')
+      anunta(`Orele astea se repetă acum în fiecare ${numeZi(zs)}.`)
     } catch (e) {
       anunta(e instanceof Error ? e.message : 'Nu s-a salvat')
     } finally {
@@ -141,8 +200,7 @@ export default function Disponibilitate() {
       const r = await apel<{ blocaj: Blocaj }>('blocaj', { metoda: 'POST', corp: { de_la: deLa, pana_la: panaLa, motiv } })
       setBlocaje((b) => [...b, r.blocaj].sort((x, y) => x.de_la.localeCompare(y.de_la)))
       setNou({ de_la: '', pana_la: '', motiv: '' })
-      setZiIntreagaCheie('')
-      anunta('Interval blocat')
+      anunta('Ora blocată')
     } catch (e) {
       anunta(e instanceof Error ? e.message : 'Nu s-a salvat')
     } finally {
@@ -160,111 +218,229 @@ export default function Disponibilitate() {
     }
   }
 
-  const schimba = (i: number, camp: 'de_la' | 'pana_la', v: string) => setReguli((r) => (r ?? []).map((x, j) => (j === i ? { ...x, [camp]: v } : x)))
+  const { an, l, nrZile, offset } = formaLunii(luna)
   const acum = new Date().toISOString()
+  const aleasaParti = desfaZi(aleasa)
+
+  /* Cate zile din luna aratata sunt deschise. Raspunde dintr-o privire la „de
+     ce nu poate nimeni sa programeze", fara sa fie numarate cu ochiul. */
+  const deschiseInLuna = useMemo(() => {
+    let n = 0
+    for (let i = 1; i <= nrZile; i++) if (oreleZilei(cheieZi(an, l, i)).intervale.length) n++
+    return n
+  }, [an, l, nrZile, zileProprii, reguli])
 
   return (
     <>
-      <Titlu sub="Orele în care cursanții pot alege lecții, plus zilele în care nu ești disponibilă.">Orar</Titlu>
+      <Titlu sub="Apasă pe o zi și pune orele în care poți. Zilele fără ore rămân închise.">Orar</Titlu>
       {eroare && <Eroare mesaj={eroare} reincearca={incarca} />}
 
-      {/*
-        Cat timp orarul e gol, calendarul de pe site nu arata NICIO ora si
-        nimeni nu poate programa nimic. Fara randul asta, ecranul arata linistit
-        si nu spune nimanui ca site-ul e, practic, inchis.
-      */}
-      {reguli !== null && reguli.length === 0 && (
+      {/* Cat timp nicio zi nu are ore, site-ul e practic inchis. Randul asta o
+          spune, altfel ecranul pare linistit si nimeni nu afla. */}
+      {reguli !== null && deschiseInLuna === 0 && (
         <div className="mb-6 flex flex-col gap-4 rounded-2xl bg-portocaliu-5 p-5 sm:flex-row sm:items-center">
           <PersonajCerc nume="ganditoare" inel="portocaliu" disc="alb" marime={84} className="hidden sm:block" />
           <div>
-            <p className="font-medium text-cerneala">Deocamdată nimeni nu poate programa o lecție</p>
+            <p className="font-medium text-cerneala">În {numeLuna(l)} nu se poate programa nicio lecție</p>
             <p className="mt-1.5 text-sm leading-relaxed text-cerneala/80">
-              Orarul e gol, deci pe site nu apare nicio oră liberă și butonul de programare nu are ce
-              să arate. Adaugă mai jos măcar un interval, într-o zi, și salvează.
+              Nicio zi din luna asta nu are ore, deci pe site calendarul apare gol. Apasă o zi mai jos, pune orele, și
+              apasă Salvează ziua.
             </p>
           </div>
         </div>
       )}
 
-      {/* Randul asta apare doar cat timp exista modificari neduse la capat. */}
-      {nesalvat && (
-        <p className="mb-4 rounded-2xl bg-albastru-5 px-5 py-3.5 text-sm leading-relaxed text-cerneala">
-          Ai schimbat orarul dar nu l-ai salvat încă. Apasă <strong className="font-medium">Salvează orarul</strong>,
-          altfel nu se schimbă nimic pe site.
-        </p>
-      )}
-
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
         <Card>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="font-sans text-lg font-medium">Orarul săptămânal</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-sans text-lg font-medium first-letter:uppercase">{numeLuna(l)} {an}</h2>
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={() => setLuna(mutaLuna(luna, -1))} className="flex size-9 items-center justify-center rounded-full bg-crem hover:bg-crem-inchis" aria-label="Luna dinainte">
+                <IconInapoi className="size-4" />
+              </button>
+              <button type="button" onClick={() => { setLuna(azi.slice(0, 7)); setAleasa(azi) }} className="rounded-full bg-crem px-4 py-2 text-sm font-medium hover:bg-crem-inchis">
+                Azi
+              </button>
+              <button type="button" onClick={() => setLuna(mutaLuna(luna, 1))} className="flex size-9 items-center justify-center rounded-full bg-crem hover:bg-crem-inchis" aria-label="Luna următoare">
+                <IconInainte className="size-4" />
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-5 grid grid-cols-7 gap-1 sm:gap-1.5">
+            {CAPETE.map((c) => (
+              <p key={c} className="pb-1 text-center text-xs font-medium text-gri">{c}</p>
+            ))}
+            {Array.from({ length: offset }, (_, i) => (
+              <div key={`gol${i}`} />
+            ))}
+            {Array.from({ length: nrZile }, (_, i) => {
+              const cheie = cheieZi(an, l, i + 1)
+              const { intervale, proprie } = oreleZilei(cheie)
+              const deschisa = intervale.length > 0
+              const lectii = lectiiPeZi.get(cheie) ?? 0
+              return (
+                <button
+                  key={cheie}
+                  type="button"
+                  onClick={() => setAleasa(cheie)}
+                  aria-pressed={aleasa === cheie}
+                  className={[
+                    'flex min-h-[3.6rem] flex-col items-center justify-center gap-0.5 rounded-xl px-0.5 py-1.5 text-sm transition sm:min-h-[4.2rem]',
+                    deschisa ? 'bg-albastru-5 font-medium text-cerneala' : 'bg-crem text-gri',
+                    cheie < azi ? 'opacity-45' : 'hover:-translate-y-0.5',
+                    aleasa === cheie ? 'ring-2 ring-albastru' : cheie === azi ? 'ring-1 ring-navy/30' : '',
+                  ].join(' ')}
+                >
+                  <span className="leading-none">{i + 1}</span>
+                  <span className={`text-[0.62rem] leading-none ${deschisa ? 'text-albastru-text' : 'text-gri'}`}>
+                    {deschisa ? peScurt(intervale) : 'închis'}
+                  </span>
+                  <span className="flex h-1.5 items-center gap-0.5">
+                    {proprie && <span className="size-1.5 rounded-full bg-portocaliu" />}
+                    {lectii > 0 && <span className="size-1.5 rounded-full bg-verde" />}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-gri">
+            <span className="flex items-center gap-1.5"><span className="size-2.5 rounded bg-albastru-5" /> zi deschisă</span>
+            <span className="flex items-center gap-1.5"><span className="size-2.5 rounded bg-crem" /> închisă, nu se poate programa</span>
+            <span className="flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-portocaliu" /> orar pus doar pe ziua aia</span>
+            <span className="flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-verde" /> are lecții</span>
+          </div>
+        </Card>
+
+        <Card className="xl:sticky xl:top-6 xl:self-start">
+          {/* `capitalize` ar face „13 Septembrie", cu luna cu majuscula la mijloc
+              de propozitie. `first-letter` ridica doar litera dintai. */}
+          <h2 className="font-sans text-lg font-medium first-letter:uppercase">
+            {aleasaParti ? `${numeZi(ziSaptamanii(aleasa))}, ${aleasaParti.zi} ${numeLuna(aleasaParti.luna)}` : ''}
+          </h2>
+          <p className="mt-1 text-sm leading-relaxed text-gri">
+            {alesProprie
+              ? 'Zi cu orarul ei, pus de tine.'
+              : 'Ziua ține orele din orarul obișnuit. Dacă le schimbi aici, se schimbă numai în ziua asta.'}
+          </p>
+
+          {aleasa < azi && <p className="mt-3 rounded-xl bg-crem px-4 py-2.5 text-sm text-gri">Ziua a trecut. Poți privi, dar nu mai are cine să programeze în ea.</p>}
+
+          <div className="mt-4 space-y-2">
+            {ciorna.length === 0 && <p className="text-sm text-gri">Nicio oră. Ziua e închisă și nu apare pe site.</p>}
+            {ciorna.map((i, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <input
+                  type="time"
+                  step={900}
+                  value={i.de_la}
+                  onChange={(e) => setCiorna((c) => c.map((x, j) => (j === idx ? { ...x, de_la: e.target.value } : x)))}
+                  className={`${clasaInput} !h-10 min-w-0 flex-1 !bg-crem max-sm:!px-2`}
+                />
+                <span className="shrink-0 text-sm text-gri">la</span>
+                <input
+                  type="time"
+                  step={900}
+                  value={i.pana_la}
+                  onChange={(e) => setCiorna((c) => c.map((x, j) => (j === idx ? { ...x, pana_la: e.target.value } : x)))}
+                  className={`${clasaInput} !h-10 min-w-0 flex-1 !bg-crem max-sm:!px-2`}
+                />
+                <button type="button" onClick={() => setCiorna((c) => c.filter((_, j) => j !== idx))} className="shrink-0 text-gri hover:text-rosu" aria-label="Scoate intervalul">
+                  <IconMinus className="size-5" />
+                </button>
+              </div>
+            ))}
             <button
               type="button"
-              onClick={salveazaReguli}
-              disabled={asteapta || !reguli}
-              className={`pastila !py-2.5 text-sm disabled:opacity-60 ${nesalvat ? 'pastila-albastra motion-safe:animate-pulse' : 'bg-crem-inchis text-cerneala'}`}
+              onClick={() => setCiorna((c) => [...c, c.length ? { de_la: '17:00', pana_la: '21:00' } : { de_la: '09:00', pana_la: '13:00' }])}
+              className="inline-flex items-center gap-1 text-sm font-medium text-albastru-text"
             >
-              {nesalvat ? 'Salvează orarul' : 'Orarul e salvat'}
+              <IconPlus className="size-4" /> Adaugă interval
             </button>
           </div>
-          {/*
-            Artiom a citit „Orarul saptamanal" ca „orarul pentru saptamana asta"
-            si a intrebat de ce nu poate pune si mai departe. Nu e vina lui:
-            ecranul nu spunea nicaieri ca intervalele se repeta. Acum o spune
-            din primul rand.
-          */}
+
+          {/* Orele scrise pe dos nu ajung in baza de date, deci se spune inainte. */}
+          {ciorna.some((i) => minuteDin(i.de_la) >= minuteDin(i.pana_la)) && (
+            <p className="mt-3 rounded-xl bg-portocaliu-5 px-4 py-2.5 text-sm leading-relaxed text-cerneala">
+              Un interval se termină înainte să înceapă. Îndreaptă-l, altfel nu se salvează.
+            </p>
+          )}
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={asteapta || !nesalvat}
+              onClick={() => void salveazaZiua(ciorna, 'Ziua a fost salvată. Orele apar pe site imediat.')}
+              className={`pastila !py-2.5 text-sm disabled:opacity-60 ${nesalvat ? 'pastila-albastra motion-safe:animate-pulse' : 'bg-crem-inchis text-cerneala'}`}
+            >
+              {nesalvat ? 'Salvează ziua' : 'Ziua e salvată'}
+            </button>
+            {ciorna.length > 0 && (
+              <button type="button" onClick={() => setCiorna([])} className="pastila pastila-alba !py-2.5 text-sm">
+                Închide ziua
+              </button>
+            )}
+          </div>
+
+          {/* Trecerea la alta zi arunca ciorna. Se spune, fiindca exact asta l-a
+              pacalit pe Artiom la orarul saptamanal: schimbase si plecase. */}
+          {nesalvat && (
+            <p className="mt-2.5 text-sm leading-relaxed text-gri">Nu ai salvat încă. Dacă apeși altă zi, se pierde.</p>
+          )}
+
+          <div className="mt-4 space-y-2">
+            {ciorna.length > 0 && (
+              <button type="button" disabled={asteapta} onClick={() => void repetaSaptamanal()} className="block text-sm font-medium text-albastru-text disabled:opacity-60">
+                Pune la fel în fiecare {numeZi(ziSaptamanii(aleasa))}
+              </button>
+            )}
+            {alesProprie && (
+              <button type="button" disabled={asteapta} onClick={() => void salveazaZiua(null, 'Ziua a revenit la orarul obișnuit.')} className="block text-sm font-medium text-gri underline underline-offset-4 disabled:opacity-60">
+                Revino la orarul obișnuit
+              </button>
+            )}
+          </div>
+
+          {/* Raspunsul la „dispare ora cand se programeaza cineva?". Da, dispare,
+              si de aici se vede cine a luat-o. */}
+          <div className="mt-6">
+            <p className="text-sm font-medium">Lecții în ziua asta</p>
+            {lectiileZilei.length === 0 ? (
+              <p className="mt-1.5 text-sm text-gri">Niciuna deocamdată.</p>
+            ) : (
+              <ul className="mt-2 space-y-1.5">
+                {lectiileZilei.map((p) => (
+                  <li key={p.id} className="flex items-baseline gap-2.5 rounded-xl bg-verde-5 px-3.5 py-2 text-sm">
+                    <span className="font-medium">{oraRo(p.incepe)}</span>
+                    <span className="text-cerneala/80">{p.client?.nume || 'cursant'}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="mt-2 text-sm leading-relaxed text-gri">O oră luată dispare singură de pe site, nu trebuie să o blochezi tu.</p>
+          </div>
+        </Card>
+      </div>
+
+      {/* Temelia: orarul care se repeta. Sta jos, fiindca acum treaba se face in
+          calendar; asta e doar sablonul zilelor neatinse. */}
+      <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <Card>
+          <h2 className="font-sans text-lg font-medium">Orarul obișnuit, în fiecare săptămână</h2>
           <p className="mt-1 text-sm leading-relaxed text-gri">
-            Se repetă în <strong className="font-medium text-cerneala">fiecare săptămână</strong>, la nesfârșit. Pui o dată
-            intervalele și rămân așa până le schimbi tu. Pentru zilele în care nu poți, folosește blocările din dreapta.
+            Șablonul de pornire pentru zilele pe care nu le-ai atins în calendar. Se schimbă apăsând o zi mai sus și
+            alegând „Pune la fel în fiecare". Ora României, lecțiile se așază din oră în oră.
           </p>
-          <p className="mt-2 text-sm leading-relaxed text-gri">
-            Ora României. Lecțiile se așază din oră în oră (50 de minute plus 10 pauză). Cât de departe văd cursanții
-            orele libere se alege la <a href="#/setari" className="text-albastru-text underline underline-offset-2">Setări</a>.
-          </p>
-          <div className="mt-5 space-y-3">
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
             {[1, 2, 3, 4, 5, 6, 7].map((zi) => {
-              const ale = (reguli ?? []).map((r, i) => ({ ...r, i })).filter((r) => r.zi === zi)
+              const ale = (reguli ?? []).filter((r) => r.zi === zi)
               return (
-                <div key={zi} className="grid gap-2 rounded-2xl bg-crem p-3 sm:grid-cols-[110px_1fr]">
-                  <p className="pt-2 text-sm font-medium capitalize">
-                    {numeZi(zi)}
-                    {/* Data viitoare la care cade ziua asta. Fara ea, „luni" e o
-                        idee abstracta si nu se leaga de nicio zi din calendar. */}
-                    <span className="ml-1.5 font-normal normal-case text-gri">{urmatoareaData(zi)}</span>
-                  </p>
-                  <div className="space-y-2">
-                    {/* Scria „liber toată ziua", care înseamnă exact pe dos.
-                        O zi fără niciun interval nu e liberă, e închisă: pe
-                        site nu apare nicio oră și nimeni nu poate programa
-                        nimic în ea. Dorina se putea uita la ecranul ăsta, să
-                        vadă șapte zile „libere" și să nu înțeleagă niciodată
-                        de ce nu vine nimeni. */}
-                    {ale.length === 0 && <p className="pt-2 text-sm text-gri">nicio oră liberă, nu se poate programa</p>}
-                    {ale.map((r) => (
-                      /* Pe telefon cele doua casute de ora, scrisul dintre ele si
-                         butonul de scos nu incap pe 375 de pixeli daca orele sunt
-                         late fix: randul iesea din ecran cu vreo 40 de pixeli.
-                         Asa isi impart ce ramane, iar de la 640 revin la latimea
-                         lor obisnuita. */
-                      <div key={r.i} className="flex items-center gap-2">
-                        <input type="time" step={900} value={r.de_la} onChange={(e) => schimba(r.i, 'de_la', e.target.value)} className={`${clasaInput} !h-10 min-w-0 flex-1 !bg-alb max-sm:!px-2 sm:!w-32 sm:flex-none`} />
-                        <span className="shrink-0 text-sm text-gri">
-                          {/* Pe telefon doar „la": „pana la" fura vreo 35 de pixeli,
-                              iar „09:00" e mai lat decat „17:00" (cifra 1 e ingusta)
-                              si ajungea sub iconita de ceas. */}
-                          <span className="sm:hidden">la</span>
-                          <span className="hidden sm:inline">până la</span>
-                        </span>
-                        <input type="time" step={900} value={r.pana_la} onChange={(e) => schimba(r.i, 'pana_la', e.target.value)} className={`${clasaInput} !h-10 min-w-0 flex-1 !bg-alb max-sm:!px-2 sm:!w-32 sm:flex-none`} />
-                        <button type="button" onClick={() => setReguli((x) => (x ?? []).filter((_, j) => j !== r.i))} className="shrink-0 text-gri hover:text-rosu" aria-label="Scoate intervalul">
-                          <IconMinus className="size-5" />
-                        </button>
-                      </div>
-                    ))}
-                    <button type="button" onClick={() => setReguli((x) => [...(x ?? []), { zi, de_la: '17:00', pana_la: '21:00' }])} className="inline-flex items-center gap-1 text-sm font-medium text-albastru-text">
-                      <IconPlus className="size-4" /> Adaugă interval
-                    </button>
-                  </div>
+                <div key={zi} className="flex items-baseline gap-3 rounded-xl bg-crem px-4 py-2.5 text-sm">
+                  <span className="w-20 shrink-0 font-medium capitalize">{numeZi(zi)}</span>
+                  <span className={ale.length ? 'text-cerneala' : 'text-gri'}>
+                    {ale.length ? ale.map((r) => `${r.de_la} la ${r.pana_la}`).join(', ') : 'închis'}
+                  </span>
                 </div>
               )
             })}
@@ -273,87 +449,15 @@ export default function Disponibilitate() {
 
         <div className="space-y-6">
           <Card>
-            <h2 className="font-sans text-lg font-medium">
-              {nesalvat ? 'Așa va arăta după ce salvezi' : 'Orele libere, pe zile'}
-            </h2>
+            <h2 className="font-sans text-lg font-medium">Blochează o oră anume</h2>
             <p className="mt-1 text-sm leading-relaxed text-gri">
-              Chiar orele pe care le vede cursantul în calendarul de pe site, cu data lor, pe următoarele{' '}
-              {deDe(Math.min(setari.orizont_zile, ORIZONT_PREVIZUALIZARE))} zile.
+              Pentru o gaură într-o zi altfel bună: dentist, ședință, drum. Ca să închizi o zi întreagă, apas-o în
+              calendar și scoate-i orele.
             </p>
-
-            {previzualizare.length === 0 ? (
-              <p className="mt-4 rounded-2xl bg-portocaliu-5 px-4 py-3.5 text-sm leading-relaxed text-cerneala">
-                Nicio oră liberă. Cine intră acum pe site vede calendarul gol și nu poate programa nimic.
-              </p>
-            ) : (
-              <>
-                <p className="mt-3.5 text-sm text-cerneala">
-                  <strong className="font-medium">
-                    {oreTotal === 1 ? 'o oră liberă' : `${deDe(oreTotal)} ore libere`}
-                  </strong>
-                  , în {previzualizare.length === 1 ? 'o zi' : `${deDe(previzualizare.length)} zile`}.
-                </p>
-                <div className="mt-4 space-y-4">
-                  {peLuni.map((g) => (
-                    <div key={g.cheie}>
-                      <p className="text-xs font-medium uppercase tracking-wide text-gri">{g.titlu}</p>
-                      <ul className="mt-2 space-y-1.5">
-                        {g.zile.map(([cheie, lista]) => {
-                          /* Prânzul UTC, ca ziua să rămână aceeași indiferent de fus. */
-                          const p = localDin(new Date(`${cheie}T12:00:00Z`))
-                          return (
-                            <li key={cheie} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-xl bg-crem px-4 py-2.5 text-sm">
-                              <span className="font-medium capitalize">
-                                {numeZi(p.ziSapt)} {p.zi}
-                              </span>
-                              <span className="text-gri">{lista.map((s) => oraRo(s)).join(' · ')}</span>
-                            </li>
-                          )
-                        })}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-                {zileRamase > 0 && (
-                  <p className="mt-3 text-sm text-gri">
-                    Și încă {zileRamase === 1 ? 'o zi' : `${deDe(zileRamase)} zile`} la fel, mai departe.
-                  </p>
-                )}
-              </>
-            )}
-
-            <p className="mt-4 text-sm leading-relaxed text-gri">
-              Orele din următoarele {setari.preaviz_ore === 1 ? 'o oră' : `${deDe(setari.preaviz_ore)} ore`} nu apar, ca
-              să nu te trezești cu o lecție peste câteva minute. Se schimbă la{' '}
-              <a href="#/setari" className="text-albastru-text underline underline-offset-2">Setări</a>.
-            </p>
-          </Card>
-
-          <Card>
-            <h2 className="font-sans text-lg font-medium">Blochează o zi întreagă</h2>
-            <p className="mt-1 text-sm text-gri">Școală, vacanță, orice. În ziua aceea nu apar sloturi.</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <input type="date" value={ziIntreagaCheie} onChange={(e) => setZiIntreagaCheie(e.target.value)} className={`${clasaInput} !w-auto`} />
-              <button
-                type="button"
-                disabled={!ziIntreagaCheie || asteapta}
-                onClick={() => {
-                  const { deLa, panaLa } = ziIntreaga(ziIntreagaCheie)
-                  void adaugaBlocaj(deLa, panaLa, 'Zi liberă')
-                }}
-                className="pastila pastila-navy !py-2.5 text-sm disabled:opacity-60"
-              >
-                Blochează ziua
-              </button>
-            </div>
-          </Card>
-
-          <Card>
-            <h2 className="font-sans text-lg font-medium">Blochează un interval</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <label className="block text-sm"><span className="mb-1 block font-medium">De la</span><input type="datetime-local" value={nou.de_la} onChange={(e) => setNou({ ...nou, de_la: e.target.value })} className={clasaInput} /></label>
               <label className="block text-sm"><span className="mb-1 block font-medium">Până la</span><input type="datetime-local" value={nou.pana_la} onChange={(e) => setNou({ ...nou, pana_la: e.target.value })} className={clasaInput} /></label>
-              <label className="block text-sm sm:col-span-2"><span className="mb-1 block font-medium">Motiv (opțional)</span><input value={nou.motiv} onChange={(e) => setNou({ ...nou, motiv: e.target.value })} placeholder="Școală, examen, vacanță" className={clasaInput} /></label>
+              <label className="block text-sm sm:col-span-2"><span className="mb-1 block font-medium">Motiv (opțional)</span><input value={nou.motiv} onChange={(e) => setNou({ ...nou, motiv: e.target.value })} placeholder="Dentist, ședință, drum" className={clasaInput} /></label>
             </div>
             <button
               type="button"
@@ -361,14 +465,14 @@ export default function Disponibilitate() {
               onClick={() => void adaugaBlocaj(localLaIso(nou.de_la), localLaIso(nou.pana_la), nou.motiv)}
               className="pastila pastila-navy mt-4 !py-2.5 text-sm disabled:opacity-60"
             >
-              Blochează intervalul
+              Blochează
             </button>
           </Card>
 
           <Card>
-            <h2 className="font-sans text-lg font-medium">Intervale blocate</h2>
+            <h2 className="font-sans text-lg font-medium">Ore blocate</h2>
             {blocaje.filter((b) => b.pana_la >= acum).length === 0 ? (
-              <p className="mt-3 text-sm text-gri">Niciunul în viitor.</p>
+              <p className="mt-3 text-sm text-gri">Niciuna în viitor.</p>
             ) : (
               <ul className="mt-4 space-y-2">
                 {blocaje
@@ -390,6 +494,13 @@ export default function Disponibilitate() {
           </Card>
         </div>
       </div>
+
+      <p className="mt-6 text-sm leading-relaxed text-gri">
+        Cursanții văd orele libere pe {setari.orizont_zile} de zile înainte, iar orele din următoarele {setari.preaviz_ore} ore
+        nu apar, ca să nu te trezești cu o lecție peste câteva minute. Amândouă se schimbă la{' '}
+        <a href="#/setari" className="text-albastru-text underline underline-offset-2">Setări</a>.
+      </p>
+
       <Toast text={toast} />
     </>
   )

@@ -134,3 +134,19 @@ revoke all on public.articole from anon, authenticated;
 -- Imaginile articolelor stau intr-un bucket PUBLIC numit "imagini" (Storage >
 -- New bucket > Public). Scrierea se face doar de pe server, cu cheia de
 -- serviciu, deci nu e nevoie de nicio politica de storage pentru anon.
+
+-- -----------------------------------------------------------------------------
+--  ORAR PE ZILE (adaugat 13 septembrie 2026)
+-- -----------------------------------------------------------------------------
+-- Orarul saptamanal raspunde la „in fiecare marti". Nu raspunde la „marti, 22
+-- septembrie, sunt libera doar dimineata". Tabelul asta tine ziua anume, iar
+-- ziua bate saptamana: daca o data are rand aici, conteaza numai ce scrie in el.
+-- Un rand cu `intervale` gol inseamna zi inchisa dinadins, nu zi neatinsa.
+create table if not exists public.orar_zi (
+  data date primary key,
+  intervale jsonb not null default '[]'::jsonb,
+  actualizat timestamptz not null default now()
+);
+
+alter table public.orar_zi enable row level security;
+revoke all on public.orar_zi from anon, authenticated;

@@ -49,6 +49,23 @@ export type Disponibilitate = {
   pana_la: string
 }
 
+/** Un interval dintr-o zi: „de la 17:00 pana la 21:00". */
+export type Interval = { de_la: string; pana_la: string }
+
+/**
+ * Orarul unei zile anume, care bate regula saptamanala.
+ *
+ * Exista ca sa poata fi apasata orice zi din an, nu doar „luni" la modul
+ * general. Daca ziua are un rand aici, conteaza NUMAI ce scrie in el; un rand
+ * cu `intervale` gol inseamna zi inchisa dinadins, nu zi neatinsa. Zilele fara
+ * rand cad inapoi pe orarul saptamanal.
+ */
+export type OrarZi = {
+  /** Ziua, ca 'YYYY-MM-DD'. */
+  data: string
+  intervale: Interval[]
+}
+
 /** Un interval blocat (scoala, vacanta, orice): nu se pot face programari in el. */
 export type Blocaj = {
   id: string

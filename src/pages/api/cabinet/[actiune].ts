@@ -13,6 +13,7 @@
  *  GET    clienti
  *  PATCH  client           { id, ...campuri }
  *  GET    disponibilitate  / PUT { reguli: [...] }
+ *  GET    orar-zi         ?deLa=&panaLa= / PUT { data, intervale: [...] | null }
  *  GET    blocaje          / POST { de_la, pana_la, motiv } / DELETE ?id=
  *  GET    setari           / PATCH { ...campuri }
  *  GET    export           CSV cu programarile (se deschide in Excel)
@@ -23,10 +24,10 @@
  * =============================================================================
  */
 import type { APIRoute } from 'astro'
-import type { ArticolSchimbari, Blocaj, Disponibilitate, Programare, Setari, StareProgramare, TipProgramare } from '../../../lib/tipuri'
+import type { ArticolSchimbari, Blocaj, Disponibilitate, Interval, Programare, Setari, StareProgramare, TipProgramare } from '../../../lib/tipuri'
 import { TIPURI } from '../../../lib/tipuri'
 import { oraNeocupata } from '../../../lib/sloturi'
-import { cheieLuna, dataOraRo, localDin, minuteDin } from '../../../lib/timp'
+import { cheieLuna, dataOraRo, desfaZi, localDin, minuteDin } from '../../../lib/timp'
 import { adminDin } from '../../../server/autentificare'
 import { depozit, modDepozit, type SchimbariClient, type SchimbariProgramare } from '../../../server/depozit'
 import { emailLinkZoom, emailPropunere, trimite } from '../../../server/email'
@@ -255,6 +256,43 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
         reguli.push({ zi, de_la: deLa, pana_la: panaLa })
       }
       return raspunde(200, { ok: true, reguli: await d.salveazaDisponibilitate(reguli) })
+    }
+
+    /*
+     * Orarul unei zile anume. Trimis ca lista de intervale, nu ca randuri cu
+     * id: ziua se salveaza intreaga, dintr-o data, ca sa nu existe stari
+     * jumatate salvate daca pica reteaua intre doua cereri.
+     *
+     * `intervale: null` sterge ziua, deci ea revine la orarul saptamanal. O
+     * lista goala e altceva: zi inchisa dinadins.
+     */
+    if (actiune === 'orar-zi' && metoda === 'GET') {
+      const deLa = text(url.searchParams.get('deLa'), 10)
+      const panaLa = text(url.searchParams.get('panaLa'), 10)
+      return raspunde(200, { ok: true, zile: await d.orarZi(deLa || undefined, panaLa || undefined) })
+    }
+    if (actiune === 'orar-zi' && metoda === 'PUT') {
+      const b = (await corpJson(request)) ?? {}
+      const zi = text(b.data, 10)
+      if (!desfaZi(zi)) return eroare(400, 'Zi nevalidă')
+
+      let intervale: Interval[] | null = null
+      if (b.intervale !== null) {
+        const brute = Array.isArray(b.intervale) ? (b.intervale as unknown[]) : []
+        intervale = []
+        for (const i of brute.slice(0, 12)) {
+          const o = (i ?? {}) as Record<string, unknown>
+          const deLa = text(o.de_la, 5)
+          const panaLa = text(o.pana_la, 5)
+          if (!Number.isFinite(minuteDin(deLa)) || !Number.isFinite(minuteDin(panaLa))) continue
+          if (minuteDin(deLa) >= minuteDin(panaLa)) continue
+          intervale.push({ de_la: deLa, pana_la: panaLa })
+        }
+        intervale.sort((x, y) => minuteDin(x.de_la) - minuteDin(y.de_la))
+      }
+
+      await d.salveazaOrarZi(zi, intervale)
+      return raspunde(200, { ok: true, zile: await d.orarZi(zi, zi) })
     }
 
     if (actiune === 'blocaje' && metoda === 'GET') return raspunde(200, { ok: true, blocaje: await d.blocaje() })

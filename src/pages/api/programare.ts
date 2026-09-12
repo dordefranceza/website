@@ -2,6 +2,7 @@
 import type { APIRoute } from 'astro'
 import { slotEsteLiber } from '../../lib/sloturi'
 import { NIVELURI, SCOPURI, TIPURI, type CerereProgramare, type TipProgramare } from '../../lib/tipuri'
+import { localDin, ziUrmatoare } from '../../lib/timp'
 import { depozit } from '../../server/depozit'
 import { emailConfirmare, emailNotificare, trimite } from '../../server/email'
 import { verificaEmail } from '../../server/posta'
@@ -69,7 +70,11 @@ export const POST: APIRoute = async ({ request }) => {
     if (tip === 'cunoastere' && !setari.cunoastere_activa) return eroare(400, 'Discuția de cunoaștere nu este disponibilă acum')
 
     const programari = await d.programari({ deLa: new Date().toISOString(), stare: 'active' })
-    if (!slotEsteLiber(cerere.incepe, { tip, reguli, blocaje, programari, setari })) {
+    /* Ziua cu orar propriu conteaza si la verificarea de la rezervare, nu doar
+       la afisare: altfel o ora deschisa special ar fi aratata si apoi refuzata. */
+    const ziCeruta = localDin(cerere.incepe).data
+    const orarZi = await d.orarZi(ziUrmatoare(ziCeruta, -1), ziUrmatoare(ziCeruta, 1))
+    if (!slotEsteLiber(cerere.incepe, { tip, reguli, orarZi, blocaje, programari, setari })) {
       return eroare(409, 'Ora aleasă tocmai s-a ocupat. Alege alta, te rog.')
     }
 

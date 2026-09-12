@@ -16,7 +16,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import type { Articol, ArticolSchimbari, Blocaj, CerereProgramare, Client, Disponibilitate, Programare, Setari, StareProgramare } from '../lib/tipuri'
+import type { Articol, ArticolSchimbari, Blocaj, CerereProgramare, Client, Disponibilitate, Interval, OrarZi, Programare, Setari, StareProgramare } from '../lib/tipuri'
 import { SETARI_IMPLICITE } from '../lib/tipuri'
 import { inDezvoltare, supabaseLegat, variabila } from './mediu'
 
@@ -41,6 +41,10 @@ export interface Depozit {
   salveazaSetari(s: Partial<Setari>): Promise<Setari>
   disponibilitate(): Promise<Disponibilitate[]>
   salveazaDisponibilitate(reguli: Omit<Disponibilitate, 'id'>[]): Promise<Disponibilitate[]>
+  /** Zilele cu orar propriu, optional doar dintr-un interval de date. */
+  orarZi(deLa?: string, panaLa?: string): Promise<OrarZi[]>
+  /** Pune orarul unei zile. `null` sterge randul, deci ziua revine la orarul saptamanal. */
+  salveazaOrarZi(data: string, intervale: Interval[] | null): Promise<void>
   blocaje(): Promise<Blocaj[]>
   adaugaBlocaj(b: Omit<Blocaj, 'id'>): Promise<Blocaj>
   stergeBlocaj(id: string): Promise<void>
@@ -77,6 +81,7 @@ type Fisier = {
   articole: Articol[]
   setari: Setari
   disponibilitate: Disponibilitate[]
+  orarZi: OrarZi[]
   blocaje: Blocaj[]
   clienti: Client[]
   programari: Programare[]
@@ -94,6 +99,7 @@ const GOL: Fisier = {
     { id: 'd5', zi: 5, de_la: '17:00', pana_la: '21:00' },
     { id: 'd6', zi: 6, de_la: '10:00', pana_la: '14:00' },
   ],
+  orarZi: [],
   blocaje: [],
   clienti: [],
   programari: [],
@@ -110,6 +116,7 @@ class DepozitLocal implements Depozit {
         articole: d.articole ?? [],
         setari: { ...SETARI_IMPLICITE, ...(d.setari ?? {}) },
         disponibilitate: d.disponibilitate ?? GOL.disponibilitate,
+        orarZi: d.orarZi ?? [],
         blocaje: d.blocaje ?? [],
         clienti: d.clienti ?? [],
         programari: d.programari ?? [],
@@ -141,6 +148,16 @@ class DepozitLocal implements Depozit {
     f.disponibilitate = reguli.map((r) => ({ ...r, id: id() }))
     this.scrie(f)
     return f.disponibilitate
+  }
+  async orarZi(deLa?: string, panaLa?: string) {
+    const toate = this.citeste().orarZi
+    return toate.filter((z) => (!deLa || z.data >= deLa) && (!panaLa || z.data <= panaLa)).sort((a, b) => a.data.localeCompare(b.data))
+  }
+  async salveazaOrarZi(data: string, intervale: Interval[] | null) {
+    const f = this.citeste()
+    f.orarZi = f.orarZi.filter((z) => z.data !== data)
+    if (intervale) f.orarZi.push({ data, intervale })
+    this.scrie(f)
   }
   async blocaje() { return this.citeste().blocaje }
   async adaugaBlocaj(b: Omit<Blocaj, 'id'>) {
@@ -323,6 +340,42 @@ class DepozitSupabase implements Depozit {
     }
     return this.disponibilitate()
   }
+  /*
+   * Tabelul `orar_zi` a venit dupa restul schemei. Daca inca nu e creat sau
+   * nu e expus Data API-ului, site-ul NU trebuie sa cada: fara el ramane
+   * orarul saptamanal, adica exact ce era inainte. De asta lipsa lui se
+   * inghite la citire si se spune pe sleau doar la salvare, in cabinet.
+   */
+  private lipseste(eroare: { code?: string; message: string } | null): boolean {
+    return !!eroare && (eroare.code === '42P01' || eroare.code === 'PGRST205' || /orar_zi/.test(eroare.message) && /does not exist|not find/i.test(eroare.message))
+  }
+
+  async orarZi(deLa?: string, panaLa?: string) {
+    let q = this.sb.from('orar_zi').select('data, intervale').order('data')
+    if (deLa) q = q.gte('data', deLa)
+    if (panaLa) q = q.lte('data', panaLa)
+    const { data, error } = await q
+    if (this.lipseste(error)) return []
+    this.arunca(error, 'orar pe zile')
+    return ((data ?? []) as { data: string; intervale: Interval[] }[]).map((z) => ({
+      // Postgres da `date` ca 'YYYY-MM-DD', dar taiem oricum, sa nu treaca un timestamp.
+      data: String(z.data).slice(0, 10),
+      intervale: Array.isArray(z.intervale) ? z.intervale : [],
+    }))
+  }
+
+  async salveazaOrarZi(data: string, intervale: Interval[] | null) {
+    if (intervale === null) {
+      const { error } = await this.sb.from('orar_zi').delete().eq('data', data)
+      if (this.lipseste(error)) throw new Error('Orarul pe zile nu e pornit inca in baza de date')
+      this.arunca(error, 'stergere orar pe zi')
+      return
+    }
+    const { error } = await this.sb.from('orar_zi').upsert({ data, intervale }, { onConflict: 'data' })
+    if (this.lipseste(error)) throw new Error('Orarul pe zile nu e pornit inca in baza de date')
+    this.arunca(error, 'salvare orar pe zi')
+  }
+
   async blocaje() {
     const { data, error } = await this.sb.from('blocaje').select('*').order('de_la')
     this.arunca(error, 'blocaje')
