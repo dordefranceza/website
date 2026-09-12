@@ -37,8 +37,47 @@ export type Programare = {
   token_confirmare?: string | null
   /** Pana cand mai poate fi confirmata propunerea. */
   token_expira?: string | null
+  /** Grupa din care face parte lectia, daca e o lectie de grup. */
+  grupa_id?: string | null
   /** Completat de server la citire, pentru cabinet. */
   client?: Client
+}
+
+/**
+ * O grupa: aceiasi oameni, aceeasi ora, in fiecare saptamana, un numar stiut de
+ * lectii.
+ *
+ * Grupa nu tine ea lectiile. Lectiile stau tot in `programari`, cate un rand
+ * pentru fiecare cursant, toate legate de grupa prin `grupa_id`. Asa, tot ce e
+ * deja construit merge mai departe fara sa fie atins: fiecare om isi primeste
+ * emailul lui, fisierul lui de calendar si plata lui se numara separat, iar
+ * grupa se vede intreaga intr-un singur loc.
+ */
+export type Grupa = {
+  id: string
+  nume: string
+  nivel: string
+  scop: string
+  /** Ziua saptamanii, 1 = luni ... 7 = duminica. */
+  zi: number
+  /** 'HH:MM', ora Romaniei. */
+  ora: string
+  /** Ziua primei lectii, 'YYYY-MM-DD'. */
+  prima: string
+  /** Cate lectii tine cursul. */
+  lectii: number
+  /** Cati incap. */
+  locuri: number
+  /** Pretul unei lectii, pe cursant. */
+  pret: number
+  activ: boolean
+  creat: string
+  /** Completate de server la citire, pentru cabinet. */
+  cursanti?: Client[]
+  /** Prima lectie care nu a trecut inca, ISO. */
+  urmatoarea?: string | null
+  /** Cate lectii au fost tinute deja din curs. */
+  tinute?: number
 }
 
 /** O regula saptamanala: in ziua `zi` (1 = luni ... 7 = duminica), de la ora `de_la` la `pana_la`. */

@@ -16,7 +16,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import type { Articol, ArticolSchimbari, Blocaj, CerereProgramare, Client, Disponibilitate, Interval, OrarZi, Programare, Setari, StareProgramare } from '../lib/tipuri'
+import type { Articol, ArticolSchimbari, Blocaj, CerereProgramare, Client, Disponibilitate, Grupa, Interval, OrarZi, Programare, Setari, StareProgramare } from '../lib/tipuri'
 import { SETARI_IMPLICITE } from '../lib/tipuri'
 import { inDezvoltare, supabaseLegat, variabila } from './mediu'
 
@@ -32,9 +32,13 @@ export type ExtraProgramare = {
   stare?: StareProgramare
   token?: string
   tokenExpira?: string
+  /** Lectie dintr-o grupa. */
+  grupaId?: string
 }
 
 export type SchimbariClient = Partial<Pick<Client, 'nume' | 'email' | 'telefon' | 'nivel' | 'scop' | 'note'>>
+
+export type SchimbariGrupa = Partial<Pick<Grupa, 'nume' | 'nivel' | 'scop' | 'zi' | 'ora' | 'prima' | 'lectii' | 'locuri' | 'pret' | 'activ'>>
 
 export interface Depozit {
   setari(): Promise<Setari>
@@ -56,6 +60,10 @@ export interface Depozit {
   actualizeazaProgramare(id: string, s: SchimbariProgramare): Promise<Programare>
   clienti(): Promise<Client[]>
   actualizeazaClient(id: string, s: SchimbariClient): Promise<Client>
+  grupe(): Promise<Grupa[]>
+  /** Creeaza (id null) sau salveaza o grupa. */
+  salveazaGrupa(id: string | null, g: SchimbariGrupa): Promise<Grupa>
+  stergeGrupa(id: string): Promise<void>
   esteAdmin(email: string): Promise<boolean>
   /** Toate articolele (cabinet) sau doar cele publicate (site). */
   articole(doarPublicate: boolean): Promise<Articol[]>
@@ -82,6 +90,7 @@ type Fisier = {
   setari: Setari
   disponibilitate: Disponibilitate[]
   orarZi: OrarZi[]
+  grupe: Grupa[]
   blocaje: Blocaj[]
   clienti: Client[]
   programari: Programare[]
@@ -100,6 +109,7 @@ const GOL: Fisier = {
     { id: 'd6', zi: 6, de_la: '10:00', pana_la: '14:00' },
   ],
   orarZi: [],
+  grupe: [],
   blocaje: [],
   clienti: [],
   programari: [],
@@ -117,6 +127,7 @@ class DepozitLocal implements Depozit {
         setari: { ...SETARI_IMPLICITE, ...(d.setari ?? {}) },
         disponibilitate: d.disponibilitate ?? GOL.disponibilitate,
         orarZi: d.orarZi ?? [],
+        grupe: d.grupe ?? [],
         blocaje: d.blocaje ?? [],
         clienti: d.clienti ?? [],
         programari: d.programari ?? [],
@@ -217,6 +228,7 @@ class DepozitLocal implements Depozit {
       mesaj: c.mesaj,
       link_zoom: extra.link_zoom,
       note: '',
+      grupa_id: extra.grupaId ?? null,
       creat: acum(),
     }
     f.programari.push(p)
@@ -233,6 +245,32 @@ class DepozitLocal implements Depozit {
   }
   async clienti() {
     return this.citeste().clienti.sort((a, b) => b.creat.localeCompare(a.creat))
+  }
+  async grupe() {
+    return this.citeste().grupe.sort((a, b) => b.creat.localeCompare(a.creat))
+  }
+  async salveazaGrupa(idG: string | null, g: SchimbariGrupa) {
+    const f = this.citeste()
+    if (idG) {
+      const gasita = f.grupe.find((x) => x.id === idG)
+      if (!gasita) throw new Error('Grupa nu există')
+      Object.assign(gasita, g)
+      this.scrie(f)
+      return gasita
+    }
+    const noua: Grupa = {
+      id: id(), nume: '', nivel: '', scop: '', zi: 1, ora: '18:00', prima: '', lectii: 15, locuri: 4, pret: 20,
+      activ: true, creat: acum(), ...g,
+    }
+    f.grupe.push(noua)
+    this.scrie(f)
+    return noua
+  }
+  async stergeGrupa(idG: string) {
+    const f = this.citeste()
+    f.grupe = f.grupe.filter((x) => x.id !== idG)
+    for (const p of f.programari) if (p.grupa_id === idG) p.grupa_id = null
+    this.scrie(f)
   }
   async actualizeazaClient(idC: string, s: SchimbariClient) {
     const f = this.citeste()
@@ -450,6 +488,7 @@ class DepozitSupabase implements Depozit {
         mesaj: c.mesaj,
         link_zoom: extra.link_zoom,
         note: '',
+        grupa_id: extra.grupaId ?? null,
       })
       .select()
       .single()
@@ -460,6 +499,24 @@ class DepozitSupabase implements Depozit {
     const { data, error } = await this.sb.from('programari').update(s).eq('id', idP).select('*, client:clienti(*)').single()
     this.arunca(error, 'actualizare programare')
     return normProgramare(data as Programare)
+  }
+  async grupe() {
+    const { data, error } = await this.sb.from('grupe').select('*').order('creat', { ascending: false })
+    this.arunca(error, 'grupe')
+    return ((data ?? []) as Grupa[]).map((g) => ({ ...g, prima: String(g.prima ?? '').slice(0, 10), pret: Number(g.pret) || 0 }))
+  }
+  async salveazaGrupa(idG: string | null, g: SchimbariGrupa) {
+    const q = idG
+      ? this.sb.from('grupe').update(g).eq('id', idG).select().single()
+      : this.sb.from('grupe').insert(g).select().single()
+    const { data, error } = await q
+    this.arunca(error, idG ? 'salvare grupa' : 'creare grupa')
+    const gr = data as Grupa
+    return { ...gr, prima: String(gr.prima ?? '').slice(0, 10), pret: Number(gr.pret) || 0 }
+  }
+  async stergeGrupa(idG: string) {
+    const { error } = await this.sb.from('grupe').delete().eq('id', idG)
+    this.arunca(error, 'stergere grupa')
   }
   async clienti() {
     const { data, error } = await this.sb.from('clienti').select('*').order('creat', { ascending: false })

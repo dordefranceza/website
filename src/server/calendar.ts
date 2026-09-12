@@ -94,14 +94,9 @@ function scapaIcs(valoare: string): string {
   return valoare.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n')
 }
 
-/** Fisierul .ics al lectiei, gata de atasat la email. */
-export function fisierIcs(p: Programare, c: Client, setari: Setari, pentruDorina = false): string {
-  const randuri = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//DorDeFranceza//Programari//RO',
-    'CALSCALE:GREGORIAN',
-    'METHOD:PUBLISH',
+/** Un singur eveniment, randurile lui. */
+function eveniment(p: Programare, c: Client, setari: Setari, pentruDorina: boolean): string[] {
+  return [
     'BEGIN:VEVENT',
     `UID:${p.id}@dordefranceza.com`,
     `DTSTAMP:${campUtc(new Date())}`,
@@ -119,13 +114,26 @@ export function fisierIcs(p: Programare, c: Client, setari: Setari, pentruDorina
     `DESCRIPTION:${scapaIcs(`Peste 30 de minute: ${titlul(p, c, pentruDorina)} (${dataOraRo(p.incepe)})`)}`,
     'END:VALARM',
     'END:VEVENT',
+  ]
+}
+
+/** Fisierul .ics al uneia sau al mai multor lectii, gata de atasat la email. */
+export function fisierIcs(p: Programare | Programare[], c: Client, setari: Setari, pentruDorina = false): string {
+  const lista = Array.isArray(p) ? p : [p]
+  const randuri = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//DorDeFranceza//Programari//RO',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    ...lista.flatMap((x) => eveniment(x, c, setari, pentruDorina)),
     'END:VCALENDAR',
   ]
   return randuri.map(pliaza).join('\r\n') + '\r\n'
 }
 
 /** Fisierul .ics in forma ceruta de Resend pentru atasamente. */
-export function atasamentIcs(p: Programare, c: Client, setari: Setari, pentruDorina = false) {
+export function atasamentIcs(p: Programare | Programare[], c: Client, setari: Setari, pentruDorina = false) {
   return {
     nume: 'lectie.ics',
     continut: Buffer.from(fisierIcs(p, c, setari, pentruDorina), 'utf8').toString('base64'),

@@ -1,7 +1,7 @@
 import { PersonajCerc } from './PersonajCerc'
 /**
  * Cabinetul Dorinei: o aplicatie mica in browser, cu rute in hash
- * (#/, #/programari, #/calendar, #/cursanti, #/disponibilitate, #/setari).
+ * (#/, #/programari, #/calendar, #/cursanti, #/grupe, #/disponibilitate, #/setari).
  */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
@@ -12,6 +12,7 @@ import Tablou from './pagini/Tablou'
 import Programari from './pagini/Programari'
 import Calendar from './pagini/Calendar'
 import Clienti from './pagini/Clienti'
+import Grupe from './pagini/Grupe'
 import Disponibilitate from './pagini/Disponibilitate'
 import Setari from './pagini/Setari'
 import Blog from './pagini/Blog'
@@ -19,6 +20,7 @@ import IconTablou from '~icons/solar/widget-4-bold'
 import IconProgramari from '~icons/solar/calendar-mark-bold'
 import IconCalendar from '~icons/solar/calendar-bold'
 import IconCursanti from '~icons/solar/users-group-rounded-bold'
+import IconGrupe from '~icons/solar/users-group-two-rounded-bold'
 import IconOrar from '~icons/solar/clock-circle-bold'
 import IconSetari from '~icons/solar/settings-bold'
 import IconBlog from '~icons/solar/document-text-bold'
@@ -29,6 +31,7 @@ const RUTE = [
   { cale: '/programari', nume: 'Programări', Icon: IconProgramari, Pagina: Programari },
   { cale: '/calendar', nume: 'Calendar', Icon: IconCalendar, Pagina: Calendar },
   { cale: '/cursanti', nume: 'Cursanți', Icon: IconCursanti, Pagina: Clienti },
+  { cale: '/grupe', nume: 'Grupe', Icon: IconGrupe, Pagina: Grupe },
   { cale: '/disponibilitate', nume: 'Orar', Icon: IconOrar, Pagina: Disponibilitate },
   { cale: '/blog', nume: 'Blog', Icon: IconBlog, Pagina: Blog },
   { cale: '/setari', nume: 'Setări', Icon: IconSetari, Pagina: Setari },

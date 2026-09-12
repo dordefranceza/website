@@ -10,9 +10,9 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import type { Client, Programare, Setari } from '../lib/tipuri'
+import type { Client, Grupa, Programare, Setari } from '../lib/tipuri'
 import { TIPURI } from '../lib/tipuri'
-import { dataOraRo, dataRo, oraRo } from '../lib/timp'
+import { dataOraRo, dataRo, numeZi, oraRo } from '../lib/timp'
 import { adresaSite, inDezvoltare, variabila } from './mediu'
 import { atasamentIcs, linkGoogleCalendar } from './calendar'
 
@@ -149,7 +149,15 @@ function sablon(o: {
     <tr><td style="background:${NAVY};border-radius:24px 24px 0 0;padding:34px 32px 30px">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse"><tr>
         <td style="vertical-align:top">
-          <img src="${adresaSite()}/images/semne/nume-alb.png" alt="DorDeFranceza" width="164" height="20" style="display:block;margin:0 0 26px;border:0;width:164px;height:auto">
+          <!--
+            Numele scris cu litere, nu pus ca imagine.
+            Gmail, Outlook si Apple Mail nu incarca pozele din emailuri pana
+            cand omul nu apasa „afiseaza imaginile", iar pana atunci in capul
+            mesajului statea o iconita de imagine rupta cu textul alternativ
+            langa ea. Artiom a primit exact asta si a crezut ca e bug. Scris cu
+            litere, numele se vede intotdeauna, oricare ar fi setarea.
+          -->
+          <p style="margin:0 0 26px;font-family:Georgia,'Times New Roman',serif;font-size:21px;line-height:1;color:#ffffff">D&rsquo;or <i>de</i> Franceza</p>
           <p style="margin:0 0 10px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#aab4ff;font-weight:700">${scapa(o.eticheta)}</p>
           <h1 class="titlu-email" style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:400;color:#ffffff;line-height:1.25">${scapa(o.titlu)}</h1>
         </td>
@@ -219,6 +227,68 @@ export function emailNotificare(p: Programare, c: Client, setari: Setari): Email
       corp: randuri(lista),
       butoane,
       subsol: 'Lecția e atașată ca fișier de calendar: pe telefon se deschide singură în Calendar, cu amintire cu o oră și cu zece minute înainte. Răspunzând la acest email scrii direct cursantului.',
+    }),
+  }
+}
+
+/**
+ * Emailul primit de cineva intrat intr-o grupa.
+ *
+ * Nu trimite un email pe lectie, ar fi cincisprezece mesaje deodata. Trimite
+ * unul singur, cu toata seria scrisa in el, iar fisierul de calendar atasat le
+ * contine pe toate: o apasare si tot cursul intra in telefon, fiecare lectie cu
+ * amintirea ei.
+ */
+export function emailGrupa(g: Grupa, c: Client, lectii: Programare[], setari: Setari): Email {
+  const prenume = c.nume.split(' ')[0]
+  const link = setari.link_zoom
+  const prima = lectii[0]
+  const listaZile = lectii
+    .map((p, i) => `<tr><td style="padding:6px 16px 6px 0;font-size:13px;color:${GRI};white-space:nowrap">${i + 1}</td><td style="padding:6px 0;font-size:15px;color:${CERNEALA}">${scapa(dataOraRo(p.incepe))}</td></tr>`)
+    .join('')
+
+  const lista = [
+    { eticheta: 'Grupa', valoare: g.nume },
+    { eticheta: 'Nivel', valoare: g.nivel },
+    { eticheta: 'Când', valoare: `în fiecare ${numeZi(g.zi)}, ora ${g.ora} (ora României)` },
+    { eticheta: 'Lecții', valoare: `${lectii.length} din ${g.lectii}` },
+    { eticheta: 'Preț', valoare: g.pret ? `${g.pret} € pe lecție` : 'gratuit' },
+    { eticheta: 'Unde', valoare: link ? 'Pe Zoom, linkul e în butonul de mai jos' : 'Pe Zoom. Linkul vine pe email înainte de prima lecție.' },
+  ]
+
+  const butoane = [
+    link ? buton(link, 'Intră pe Zoom') : '',
+    prima ? buton(linkGoogleCalendar(prima, c, setari), 'Pune în calendar', '#0b8043') : '',
+  ].join('')
+
+  return {
+    catre: [c.email],
+    raspundeLa: setari.email_notificari || variabila('EMAIL_DORINA') || undefined,
+    subiect: `Ești în grupa ${g.nume}: ${numeZi(g.zi)}, ora ${g.ora}`,
+    atasamente: lectii.length ? [atasamentIcs(lectii, c, setari)] : undefined,
+    text: [
+      `Bună, ${prenume}!`,
+      '',
+      `Ești în grupa ${g.nume}. Ne vedem în fiecare ${numeZi(g.zi)}, la ora ${g.ora} (ora României).`,
+      '',
+      'Lecțiile tale:',
+      ...lectii.map((p, i) => `${i + 1}. ${dataOraRo(p.incepe)}`),
+      '',
+      link ? `Link Zoom: ${link}` : 'Linkul de Zoom vine pe email înainte de prima lecție.',
+      '',
+      'Toate lecțiile sunt în fișierul atașat: îl deschizi pe telefon și intră singure în calendar.',
+      '',
+      'Pe curând,',
+      'Dorina, DorDeFranceza',
+    ].filter(Boolean).join('\n'),
+    html: sablon({
+      figura: 'saluta',
+      eticheta: 'Grupa ta',
+      titlu: 'Bine ai venit!',
+      intro: `Bună, ${scapa(prenume)}! Ești în grupa <strong>${scapa(g.nume)}</strong>. Ne vedem în fiecare ${scapa(numeZi(g.zi))}, la ora ${scapa(g.ora)}, ora României.`,
+      corp: randuri(lista) + `<tr><td colspan="2" style="padding:18px 0 4px;font-size:12px;letter-spacing:0.02em;color:${GRI}">Lecțiile tale</td></tr>` + listaZile,
+      butoane,
+      subsol: 'Toate lecțiile sunt în fișierul atașat: îl deschizi pe telefon și intră singure în calendar, fiecare cu amintire cu 30 de minute înainte.',
     }),
   }
 }

@@ -11,6 +11,11 @@
  *  PATCH  programare       { id, stare?, platit?, suma?, note?, link_zoom?, incepe? }
  *  POST   trimite-link     { id, link? }  trimite linkul de Zoom cursantului
  *  GET    clienti
+ *  GET    grupe            grupele cu cursantii si urmatoarea lectie
+ *  POST   grupa            { id?, nume, nivel, scop, zi, ora, prima, lectii, locuri, pret, activ }
+ *  DELETE grupa            ?id=
+ *  POST   grupa-cursant    { grupa_id, nume, email } genereaza lectiile ramase
+ *  DELETE grupa-cursant    ?grupa=&client=
  *  PATCH  client           { id, ...campuri }
  *  GET    disponibilitate  / PUT { reguli: [...] }
  *  GET    orar-zi         ?deLa=&panaLa= / PUT { data, intervale: [...] | null }
@@ -27,12 +32,12 @@ import type { APIRoute } from 'astro'
 import type { ArticolSchimbari, Blocaj, Disponibilitate, Interval, Programare, Setari, StareProgramare, TipProgramare } from '../../../lib/tipuri'
 import { TIPURI } from '../../../lib/tipuri'
 import { oraNeocupata } from '../../../lib/sloturi'
-import { cheieLuna, dataOraRo, desfaZi, localDin, minuteDin } from '../../../lib/timp'
+import { cheieLuna, dataOraRo, desfaZi, localDin, localLaUtc, minuteDin, ziUrmatoare } from '../../../lib/timp'
 import { adminDin } from '../../../server/autentificare'
 import { depozit, modDepozit, type SchimbariClient, type SchimbariProgramare } from '../../../server/depozit'
-import { emailLinkZoom, emailPropunere, trimite } from '../../../server/email'
+import { emailGrupa, emailLinkZoom, emailPropunere, trimite } from '../../../server/email'
 import { slugDin, textSimplu } from '../../../server/markdown'
-import { corpJson, eroare, origineOk, raspunde, text, textLung } from '../../../server/http'
+import { corpJson, daNu, eroare, origineOk, raspunde, text, textLung } from '../../../server/http'
 import { formaEmail } from '../../../server/posta'
 
 export const prerender = false
@@ -243,6 +248,125 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
       for (const camp of ['nume', 'email', 'telefon', 'nivel', 'scop'] as const) if (typeof b[camp] === 'string') s[camp] = text(b[camp], 160)
       if (typeof b.note === 'string') s.note = textLung(b.note, 4000)
       return raspunde(200, { ok: true, client: await d.actualizeazaClient(id, s) })
+    }
+
+    /* =======================================================================
+     *  GRUPE
+     * =======================================================================
+     * Grupa nu tine lectiile. Lectiile stau tot in `programari`, cate un rand
+     * pentru fiecare cursant, toate legate prin `grupa_id`. Asa, emailurile,
+     * calendarul, plata si anularile merg exact ca la lectiile individuale.
+     */
+    if (actiune === 'grupe' && metoda === 'GET') {
+      const [grupe, toate, clienti] = await Promise.all([d.grupe(), d.programari(), d.clienti()])
+      const acum = new Date().toISOString()
+      const cu = grupe.map((g) => {
+        const ale = toate.filter((p) => p.grupa_id === g.id && p.stare !== 'anulata')
+        const idClienti = [...new Set(ale.map((p) => p.client_id))]
+        const viitoare = ale.filter((p) => p.incepe >= acum).sort((a, b) => a.incepe.localeCompare(b.incepe))
+        const dateTinute = new Set(ale.filter((p) => p.incepe < acum).map((p) => p.incepe))
+        return {
+          ...g,
+          cursanti: idClienti.map((i) => clienti.find((c) => c.id === i)).filter(Boolean),
+          urmatoarea: viitoare[0]?.incepe ?? null,
+          tinute: dateTinute.size,
+        }
+      })
+      return raspunde(200, { ok: true, grupe: cu })
+    }
+
+    if (actiune === 'grupa' && metoda === 'POST') {
+      const b = (await corpJson(request)) ?? {}
+      const idG = text(b.id, 60)
+      const nume = text(b.nume, 120)
+      if (nume.length < 2) return eroare(400, 'Scrie un nume pentru grupă')
+      const zi = Number(b.zi)
+      if (!Number.isInteger(zi) || zi < 1 || zi > 7) return eroare(400, 'Alege ziua')
+      const ora = text(b.ora, 5)
+      if (!Number.isFinite(minuteDin(ora))) return eroare(400, 'Alege ora')
+      const prima = text(b.prima, 10)
+      if (!desfaZi(prima)) return eroare(400, 'Alege ziua primei lecții')
+
+      const g = await d.salveazaGrupa(idG || null, {
+        nume,
+        nivel: text(b.nivel, 60),
+        scop: text(b.scop, 120),
+        zi,
+        ora,
+        prima,
+        lectii: Math.min(60, Math.max(1, Number(b.lectii) || 15)),
+        locuri: Math.min(12, Math.max(2, Number(b.locuri) || 4)),
+        pret: Math.max(0, Number(b.pret) || 0),
+        activ: b.activ === undefined ? true : daNu(b.activ),
+      })
+      return raspunde(200, { ok: true, grupa: g })
+    }
+
+    if (actiune === 'grupa' && metoda === 'DELETE') {
+      const idG = text(url.searchParams.get('id'), 60)
+      if (!idG) return eroare(400, 'Lipsește grupa')
+      /* Lectiile viitoare ale grupei se anuleaza, cele trecute raman in
+         istoric: sunt lectii tinute si platite, nu se sterg cu grupa. */
+      const acum = new Date().toISOString()
+      const ale = (await d.programari()).filter((p) => p.grupa_id === idG && p.incepe >= acum && p.stare !== 'anulata')
+      for (const p of ale) await d.actualizeazaProgramare(p.id, { stare: 'anulata' })
+      await d.stergeGrupa(idG)
+      return raspunde(200, { ok: true, anulate: ale.length })
+    }
+
+    /* Adaugarea unui cursant intr-o grupa ii genereaza lectiile RAMASE, nu pe
+       cele trecute: cine intra la a cincea lectie plateste de la a cincea. */
+    if (actiune === 'grupa-cursant' && metoda === 'POST') {
+      const b = (await corpJson(request)) ?? {}
+      const grupa = (await d.grupe()).find((g) => g.id === text(b.grupa_id, 60))
+      if (!grupa) return eroare(404, 'Grupa nu există')
+
+      const nume = text(b.nume, 120)
+      const email = text(b.email, 160).toLowerCase()
+      if (nume.length < 2) return eroare(400, 'Scrie numele cursantului')
+      const forma = formaEmail(email)
+      if (!forma.ok) return eroare(400, forma.motiv ?? 'Adresa de email nu pare corectă')
+
+      const toate = await d.programari()
+      const aleGrupei = toate.filter((p) => p.grupa_id === grupa.id && p.stare !== 'anulata')
+      const cursanti = new Set(aleGrupei.map((p) => p.client_id))
+      if (cursanti.size >= grupa.locuri) return eroare(409, `Grupa e plină: ${grupa.locuri} locuri.`)
+
+      const setari = await d.setari()
+      const acum = Date.now()
+      const create: Programare[] = []
+      for (let i = 0; i < grupa.lectii; i++) {
+        const zi = ziUrmatoare(grupa.prima, i * 7)
+        const parti = desfaZi(zi)
+        if (!parti) continue
+        const start = localLaUtc(parti.an, parti.luna, parti.zi, Math.floor(minuteDin(grupa.ora) / 60), minuteDin(grupa.ora) % 60)
+        if (start.getTime() < acum) continue
+        const p = await d.creeazaProgramare(
+          {
+            tip: 'grup', incepe: start.toISOString(), nume, email,
+            telefon: text(b.telefon, 40), nivel: grupa.nivel, scop: grupa.scop,
+            mesaj: '', sursa: 'grupa', pagina: '/admin/', gdpr: true,
+          },
+          { durata_min: TIPURI.grup.durata, suma: grupa.pret, link_zoom: setari.link_zoom, stare: 'confirmata', grupaId: grupa.id },
+        )
+        create.push(p)
+      }
+      if (!create.length) return eroare(400, 'Grupa nu mai are nicio lecție în viitor.')
+
+      const client = create[0].client
+      if (client) await trimite(emailGrupa(grupa, client, create, setari))
+      return raspunde(200, { ok: true, lectii: create.length, client })
+    }
+
+    /* Scoaterea din grupa anuleaza doar lectiile care nu au fost tinute. */
+    if (actiune === 'grupa-cursant' && metoda === 'DELETE') {
+      const idG = text(url.searchParams.get('grupa'), 60)
+      const idC = text(url.searchParams.get('client'), 60)
+      if (!idG || !idC) return eroare(400, 'Lipsește grupa sau cursantul')
+      const acum = new Date().toISOString()
+      const ale = (await d.programari()).filter((p) => p.grupa_id === idG && p.client_id === idC && p.incepe >= acum && p.stare !== 'anulata')
+      for (const p of ale) await d.actualizeazaProgramare(p.id, { stare: 'anulata' })
+      return raspunde(200, { ok: true, anulate: ale.length })
     }
 
     if (actiune === 'disponibilitate' && metoda === 'GET') return raspunde(200, { ok: true, reguli: await d.disponibilitate() })
