@@ -106,7 +106,20 @@ export default function Disponibilitate() {
             <h2 className="font-sans text-lg font-medium">Orarul săptămânal</h2>
             <button type="button" onClick={salveazaReguli} disabled={asteapta || !reguli} className="pastila pastila-albastra !py-2.5 text-sm disabled:opacity-60">Salvează orarul</button>
           </div>
-          <p className="mt-1 text-sm text-gri">Ora României. Lecțiile se așază din oră în oră (50 de minute plus 10 pauză).</p>
+          {/*
+            Artiom a citit „Orarul saptamanal" ca „orarul pentru saptamana asta"
+            si a intrebat de ce nu poate pune si mai departe. Nu e vina lui:
+            ecranul nu spunea nicaieri ca intervalele se repeta. Acum o spune
+            din primul rand.
+          */}
+          <p className="mt-1 text-sm leading-relaxed text-gri">
+            Se repetă în <strong className="font-medium text-cerneala">fiecare săptămână</strong>, la nesfârșit. Pui o dată
+            intervalele și rămân așa până le schimbi tu. Pentru zilele în care nu poți, folosește blocările din dreapta.
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-gri">
+            Ora României. Lecțiile se așază din oră în oră (50 de minute plus 10 pauză). Cât de departe văd cursanții
+            orele libere se alege la <a href="#/setari" className="text-albastru-text underline underline-offset-2">Setări</a>.
+          </p>
           <div className="mt-5 space-y-3">
             {[1, 2, 3, 4, 5, 6, 7].map((zi) => {
               const ale = (reguli ?? []).map((r, i) => ({ ...r, i })).filter((r) => r.zi === zi)
