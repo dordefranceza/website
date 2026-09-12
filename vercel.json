@@ -65,8 +65,13 @@
       "permanent": true
     },
     {
-      "source": "/cabinet/:path*",
-      "destination": "/admin/:path*",
+      "source": "/cabinet/",
+      "destination": "/admin/",
+      "permanent": true
+    },
+    {
+      "source": "/cabinet/:path+",
+      "destination": "/admin/:path+",
       "permanent": true
     }
   ]
