@@ -36,17 +36,26 @@ const an = new Date().getFullYear()
       </div>
     </div>
 
-    <nav aria-label="Pagini">
+    {/*
+      Pe telefon coloanele se aseaza una sub alta, iar lista de pagini e ingusta:
+      ramane un gol cat toata jumatatea din dreapta. Figura din coltul de sus se
+      vede doar de la 1280px, deci acolo golul ramanea gol. Acum il umple ea,
+      mai mica si asezata langa lista.
+    */}
+    <nav aria-label="Pagini" class="flex items-center justify-between gap-6 md:block">
+      <div>
       <p class="mb-4 text-sm font-bold uppercase tracking-wider text-alb/60">Pagini</p>
       <ul class="space-y-2.5 text-[0.98rem]">
-        <li><a class="text-alb/80 hover:text-alb" href="/#pentru-ce">Pentru ce înveți</a></li>
-        <li><a class="text-alb/80 hover:text-alb" href="/#cum-decurge">Cum decurge</a></li>
+        <li><a class="text-alb/80 hover:text-alb" href="/pentru-ce/">Pentru ce înveți</a></li>
+        <li><a class="text-alb/80 hover:text-alb" href="/cum-decurge/">Cum decurge</a></li>
         <li><a class="text-alb/80 hover:text-alb" href="/preturi/">Prețuri</a></li>
         <li><a class="text-alb/80 hover:text-alb" href="/despre/">Despre Dorina</a></li>
         <li><a class="text-alb/80 hover:text-alb" href="/blog/">Blog</a></li>
         <li><a class="text-alb/80 hover:text-alb" href="/contact/">Contact</a></li>
         <li><a class="text-alb/80 hover:text-alb" href="/programare/">Programare</a></li>
       </ul>
+      </div>
+      <PersonajCerc nume="asezata" inel="crem-inchis" disc="crem" marime={148} class="pointer-events-none shrink-0 md:hidden" />
     </nav>
 
     <div>

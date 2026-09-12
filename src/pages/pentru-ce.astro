@@ -49,10 +49,22 @@ const schema = {
       </div>
 
       {/* Cuprins scurt: șase blocuri lungi cer o hartă la început, altfel omul
-          nu știe cât are de derulat ca să ajungă la al lui. */}
-      <nav class="dezvaluie mt-12 flex flex-wrap gap-2.5" aria-label="Sari la situația ta">
+          nu știe cât are de derulat ca să ajungă la al lui.
+
+          Pe telefon, șase pastile una sub alta mâncau un ecran întreg înainte
+          să înceapă conținutul. Acum stau pe un singur rând care se trage cu
+          degetul. Marginile negative scot fâșia până la marginea ecranului, ca
+          să se vadă că mai e ceva dincolo de ea. De la 640px se așază normal,
+          pe două rânduri. */}
+      <nav
+        class="dezvaluie fara-bara -mx-5 mt-12 flex gap-2.5 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+        aria-label="Sari la situația ta"
+      >
         {pentruCe.cazuri.map((c) => (
-          <a href={`#${c.scop.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} class="rounded-full bg-alb px-5 py-2.5 text-[0.95rem] transition hover:-translate-y-0.5">
+          <a
+            href={`#${c.scop.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+            class="shrink-0 whitespace-nowrap rounded-full bg-alb px-5 py-2.5 text-[0.95rem] transition hover:-translate-y-0.5 sm:whitespace-normal"
+          >
             {c.titlu}
           </a>
         ))}

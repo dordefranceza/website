@@ -244,10 +244,17 @@ const { titlu = 'Prețuri cinstite, fără alte taxe', compact = false } = Astro
       </div>
     )}
 
-    <p class="dezvaluie mt-6 text-center text-sm text-gri lg:mt-14">
-      Prețurile sunt în euro. Suma în lei e trecută dedesubt, la cursul BNR, și se poate schimba puțin de la o zi la alta.
-      Plata se face înainte de lecție, prin transfer bancar sau Revolut.
-    </p>
+    {/*
+      Aici era o nota de trei randuri: „Preturile sunt in euro, suma in lei e la
+      cursul BNR, plata se face inainte de lectie". Artiom a cerut sa iasa, ocupa
+      prea mult loc si pe calculator si pe telefon.
+
+      Nu se pierde nimic. Suma in lei sta oricum sub fiecare pret, pe card, deci
+      afisarea in lei e acoperita. Cand se plateste scrie pe cardul „O lectie",
+      in intrebarile frecvente, pe pagina de preturi, pe „cum decurge" si in
+      termeni. Iar ca leul e orientativ, la cursul zilei, scrie in termeni, unde
+      conteaza daca se ajunge vreodata la discutie.
+    */}
   </div>
 </section>
 

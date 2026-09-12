@@ -120,6 +120,11 @@
      echilibrare peste sase randuri. */
   .echilibrat { text-wrap: balance; }
 
+  /* Fâșie care se trage cu degetul, fără bara de derulare la vedere. Se scoate
+     doar bara, nu si derularea: cu tastatura si cu degetul merge la fel. */
+  .fara-bara { scrollbar-width: none; -ms-overflow-style: none; }
+  .fara-bara::-webkit-scrollbar { display: none; }
+
 
   :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
     outline: 2px solid var(--color-albastru);

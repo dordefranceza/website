@@ -27,6 +27,16 @@ import Semn from '../Semn.astro'
             <Icon name="whatsapp" class="size-5" /> Scrie pe WhatsApp
           </a>
         </div>
+
+        {/*
+          Pe telefon, figura de mai sus nu incape in coltul din stanga jos: ar
+          cadea peste butoane, care acolo stau unul sub altul si ocupa toata
+          latimea. Asa ca pe telefon sta in rand, sub butoane, intreaga si
+          centrata. De la 768px in sus dispare asta si revine cea din colt.
+        */}
+        <div class="mx-auto mt-10 size-[150px] overflow-hidden rounded-full bg-crem md:hidden" aria-hidden="true">
+          <img src="/images/personaj/saluta.webp" alt="" width="257" height="640" class="relative left-1/2 top-5 h-[168px] w-auto -translate-x-1/2" />
+        </div>
       </div>
     </div>
   </div>
