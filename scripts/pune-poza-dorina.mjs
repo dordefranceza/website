@@ -43,3 +43,21 @@ for (const [nume, px, calitate] of [
 
 console.log(`\nPoza originală: ${meta.width}x${meta.height}. Pătratul luat: ${latura}px, de la ${sus}px de sus.`)
 console.log('Gata. Reîncarcă pagina.')
+
+/**
+ * Pentru secțiunea „Despre” rama e 4:5, mai înaltă decât un pătrat. Dacă îi
+ * dăm pătratul, browserul taie din el și ajunge prea aproape de față. Aici
+ * scoatem o variantă 4:5 luată din poza întreagă.
+ */
+const inaltimeCeruta = Math.round(meta.width * 1.25)
+if (meta.height >= inaltimeCeruta) {
+  await sharp(sursa)
+    .extract({ left: 0, top: Math.round((meta.height - inaltimeCeruta) * 0.1), width: meta.width, height: inaltimeCeruta })
+    .resize(720, 900, { fit: 'cover', kernel: 'lanczos3' })
+    .webp({ quality: 84 })
+    .toFile(join(dest, 'dorina-portret.webp'))
+} else {
+  // Poza e prea lată pentru 4:5: o lăsăm întreagă și o încadrăm cu object-cover.
+  await sharp(sursa).resize(720, 900, { fit: 'cover', position: 'top', kernel: 'lanczos3' }).webp({ quality: 84 }).toFile(join(dest, 'dorina-portret.webp'))
+}
+console.log('dorina-portret.webp gata (4:5, pentru secțiunea Despre)')

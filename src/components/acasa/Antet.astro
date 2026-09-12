@@ -11,7 +11,7 @@ import { site, linkWhatsApp } from '../../config/site'
 
 /** Cercurile din jurul textului. Inelul colorat ramane vizibil in jurul pozei, ca in referinta. */
 const cercuri = [
-  { poza: '/images/dorina-placeholder.svg', alt: 'Dorina, profesoară de franceză', culoare: 'bg-roz', pozitie: 'left-[1%] top-[24%] size-[270px] xl:size-[320px]', anim: 'plutitor', intarziere: '0s' },
+  { poza: '/images/dorina-800.webp', alt: 'Dorina, profesoară de franceză', culoare: 'bg-roz', pozitie: 'left-[1%] top-[24%] size-[270px] xl:size-[320px]', anim: 'plutitor', intarziere: '0s' },
   { poza: '/images/antet-paris.webp', alt: '', culoare: 'bg-verde', pozitie: 'right-[2%] top-[9%] size-[220px] xl:size-[250px]', anim: 'plutitor-lent', intarziere: '-3s' },
   { poza: '/images/antet-cafenea.webp', alt: '', culoare: 'bg-albastru', pozitie: 'left-[5%] top-[64%] size-[240px] xl:size-[260px]', anim: 'plutitor', intarziere: '-2s' },
   { poza: '/images/antet-birou.webp', alt: '', culoare: 'bg-portocaliu', pozitie: 'right-[4%] top-[52%] size-[270px] xl:size-[300px]', anim: 'plutitor-lent', intarziere: '-5s' },
@@ -56,7 +56,7 @@ const cercuri = [
     {
       cercuri.map((c) => (
         <div class:list={['absolute rounded-full p-3.5', c.culoare, c.pozitie, c.anim]} style={`animation-delay:${c.intarziere}`}>
-          <img src={c.poza} alt={c.alt} class="size-full rounded-full object-cover" width="340" height="340" loading="lazy" decoding="async" />
+          <img src={c.poza} alt={c.alt} class="size-full rounded-full object-cover" width="340" height="340" loading={c.alt ? 'eager' : 'lazy'} decoding="async" />
         </div>
       ))
     }
@@ -65,7 +65,7 @@ const cercuri = [
   {/* Pe telefon si tableta: cercul cu Dorina sub text */}
   <div class="container-site relative z-10 mt-12 flex justify-center lg:hidden">
     <div class="rounded-full bg-roz p-3">
-      <img src="/images/dorina-placeholder.svg" alt="Dorina, profesoară de franceză" class="size-52 rounded-full object-cover sm:size-64" width="288" height="288" loading="eager" />
+      <img src="/images/dorina-480.webp" alt="Dorina, profesoară de franceză" class="size-52 rounded-full object-cover sm:size-64" width="288" height="288" loading="eager" fetchpriority="high" decoding="async" />
     </div>
   </div>
 
