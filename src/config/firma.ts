@@ -18,7 +18,16 @@ export const firma = {
   anspdcp: 'https://www.dataprotection.ro',
   anpc: 'https://anpc.ro',
   anpcSal: 'https://anpc.ro/ce-este-sal/',
-  sol: 'https://ec.europa.eu/consumers/odr',
+  /*
+   * Aici era platforma europeana SOL (ODR), `ec.europa.eu/consumers/odr`.
+   * **S-a inchis pe 20 iulie 2025**, prin Regulamentul (UE) 2024/3228: adresa
+   * duce acum la un anunt al Comisiei, nu la un formular. Un link catre o
+   * platforma care nu mai exista nu e doar inutil, e o trimitere gresita
+   * intr-un text legal, deci a fost scos de peste tot.
+   *
+   * Ce ramane valabil pentru un consumator: intai direct cu noi, apoi ANPC
+   * si entitatile SAL de mai sus.
+   */
 } as const
 
 /** true cat timp mai exista un camp necompletat. */
