@@ -53,7 +53,9 @@ import PersonajCerc from '../PersonajCerc.astro'
             <div class="shrink-0 sm:w-44">
               <p class="font-sans text-sm font-bold uppercase tracking-wider text-albastru-text">{pas.parte}</p>
               <p class="mt-1 text-sm text-gri">
-                {minutele(pas.cota, site.durataLectie)} min <span class="text-gri/70">· {minutele(pas.cota, site.durataGrup)} la grup</span>
+                {/* Era `text-gri/70`, adica 3,30 la 1 pe alb. Sub pragul de
+                    4,5 cerut de WCAG pentru text mic. `text-gri` intreg da 6,64. */}
+                {minutele(pas.cota, site.durataLectie)} min <span>· {minutele(pas.cota, site.durataGrup)} la grup</span>
               </p>
             </div>
             <p class="leading-relaxed text-cerneala/85">{pas.ce}</p>

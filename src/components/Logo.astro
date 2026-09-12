@@ -16,13 +16,22 @@ interface Props {
 }
 const { pe = 'deschis', class: clasa = '', inaltime = 21 } = Astro.props
 const alb = pe === 'inchis' ? 'filter:brightness(0) invert(1)' : ''
+/**
+ * Fisierul e 566x70. Fara `width` declarat, `height` singur spunea browserului
+ * ca imaginea e patrata: Lighthouse taia un punct la „bune practici" pentru
+ * raport gresit, iar pagina rezerva alt loc decat ii trebuie si sare la
+ * incarcare. Latimea se socoteste din inaltime, ca sa nu existe doua adevaruri.
+ */
+const RAPORT = 566 / 70
+const latime = Math.round(inaltime * RAPORT)
 ---
 
 <span class:list={['inline-flex items-center', clasa]}>
   <img
     src="/images/semne/nume.webp"
     alt="Dór de Franceza"
-    style={`height:${inaltime}px;width:auto;${alb}`}
+    style={`height:${inaltime}px;width:${latime}px;${alb}`}
+    width={latime}
     height={inaltime}
     loading="eager"
     decoding="async"

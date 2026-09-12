@@ -40,8 +40,8 @@ import PersonajCerc from '../components/PersonajCerc.astro'
         {/* Capul de tabel apare doar de la 640px. Mai jos, fiecare cifra isi
             poarta eticheta ei, altfel numerele raman fara nume pe telefon. */}
         <div class="mt-10 hidden justify-end gap-8 px-7 pb-2 sm:flex">
-          <span class="w-16 text-center text-xs font-bold uppercase tracking-wider text-gri/70">individual</span>
-          <span class="w-16 text-center text-xs font-bold uppercase tracking-wider text-gri/70">la grup</span>
+          <span class="w-16 text-center text-xs font-bold uppercase tracking-wider text-gri">individual</span>
+          <span class="w-16 text-center text-xs font-bold uppercase tracking-wider text-gri">la grup</span>
         </div>
         <ol class="mt-4 space-y-3 sm:mt-0">
           {anatomiaLectiei.map((pas) => (
@@ -53,11 +53,11 @@ import PersonajCerc from '../components/PersonajCerc.astro'
               <div class="flex shrink-0 gap-8">
                 <p class="w-16 text-center">
                   <span class="block font-display text-3xl leading-none text-albastru">{minutele(pas.cota, site.durataLectie)}</span>
-                  <span class="mt-1 block text-xs uppercase tracking-wider text-gri/70 sm:hidden">individual</span>
+                  <span class="mt-1 block text-xs uppercase tracking-wider text-gri sm:hidden">individual</span>
                 </p>
                 <p class="w-16 text-center">
-                  <span class="block font-display text-3xl leading-none text-cerneala/55">{minutele(pas.cota, site.durataGrup)}</span>
-                  <span class="mt-1 block text-xs uppercase tracking-wider text-gri/70 sm:hidden">la grup</span>
+                  <span class="block font-display text-3xl leading-none text-gri">{minutele(pas.cota, site.durataGrup)}</span>
+                  <span class="mt-1 block text-xs uppercase tracking-wider text-gri sm:hidden">la grup</span>
                 </p>
               </div>
             </li>
