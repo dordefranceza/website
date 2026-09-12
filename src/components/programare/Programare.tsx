@@ -194,6 +194,24 @@ export default function Programare({ whatsapp }: Props) {
     setEroare('')
   }
 
+  /*
+   * Mesajul catre Dorina se scrie singur cu ce a ales omul pana in clipa aia.
+   * Artiom: „cand a ales data si ora, cand apasa pe gmail sau pe whatsapp,
+   * acolo sa fie mesajul pregatit deja cu ora si ziua". Altfel cursantul isi
+   * rescrie de mana ce tocmai a apasat, iar Dorina primeste „vreau o lectie"
+   * si trebuie sa intrebe inapoi cand.
+   */
+  const mesajDirect = (() => {
+    const ce = TIPURI[tip].nume.toLowerCase()
+    if (slot) return `Bună, Dorina! Aș vrea ${ce} pe ${dataRo(slot)}, ora ${oraRo(slot)} (ora României).`
+    if (zi) return `Bună, Dorina! Aș vrea ${ce} pe ${dataRo(`${zi}T12:00:00Z`)}.`
+    return `Bună, Dorina! Aș vrea să programez ${ce}.`
+  })()
+
+  const subiectDirect = slot
+    ? `Programare: ${TIPURI[tip].nume.toLowerCase()}, ${dataRo(slot)}, ora ${oraRo(slot)}`
+    : `Programare: ${TIPURI[tip].nume.toLowerCase()}`
+
   const rezumat = (
     <aside className="rounded-[1.5rem] bg-navy p-6 text-alb sm:p-7">
       <p className="text-xs font-bold uppercase tracking-wider text-alb/60">Alegerea ta</p>
@@ -216,7 +234,7 @@ export default function Programare({ whatsapp }: Props) {
           sa dea numarul de telefon ca sa puna o intrebare. */}
       <div className="mt-2 flex flex-wrap gap-2">
         <a
-          href={`https://wa.me/${whatsapp}?text=${encodeURIComponent('Bună, Dorina! Aș vrea să programez o lecție.')}`}
+          href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(mesajDirect)}`}
           target="_blank"
           rel="noopener"
           className="inline-flex items-center gap-2 rounded-full bg-alb/10 px-4 py-2.5 text-sm font-medium hover:bg-alb/15"
@@ -224,7 +242,7 @@ export default function Programare({ whatsapp }: Props) {
           <IconWhatsApp className="size-4 text-verde-10" /> Scrie pe WhatsApp
         </a>
         <a
-          href={`mailto:${site.email}?subject=${encodeURIComponent('Programare lecție de franceză')}&body=${encodeURIComponent('Bună, Dorina! Aș vrea să programez o lecție.')}`}
+          href={`mailto:${site.email}?subject=${encodeURIComponent(subiectDirect)}&body=${encodeURIComponent(mesajDirect)}`}
           className="inline-flex items-center gap-2 rounded-full bg-alb/10 px-4 py-2.5 text-sm font-medium hover:bg-alb/15"
         >
           <IconMail className="size-4 text-roz" /> Scrie pe email
