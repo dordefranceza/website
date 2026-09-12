@@ -22,6 +22,13 @@ export type Sesiune = { email: string; cereCod: boolean }
 export async function sesiune(): Promise<Sesiune | null> {
   if (!sb) {
     try {
+      /**
+       * In dezvoltare, fara baza de date legata, cabinetul se deschide singur.
+       * Nu e o gaura de securitate: conditia cere si `import.meta.env.DEV`, si
+       * lipsa lui Supabase. In productie `sb` exista, deci ramura asta nici nu
+       * se atinge, iar serverul refuza oricum orice cerere fara token valid.
+       */
+      if (import.meta.env.DEV && !localStorage.getItem(CHEIE_LOCAL)) localStorage.setItem(CHEIE_LOCAL, '1')
       return localStorage.getItem(CHEIE_LOCAL) ? { email: 'local@dezvoltare', cereCod: false } : null
     } catch {
       return null
