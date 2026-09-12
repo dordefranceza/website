@@ -8,13 +8,16 @@
  * Apoi se taie marginile goale, se redimensioneaza la 640px inaltime si se
  * salveaza webp cu alphaQuality 100.
  *
- * Folosire: node scripts/decupa-personaj.mjs <intrare.png> <nume-iesire>
+ * Folosire: node scripts/decupa-personaj.mjs <intrare.png> <nume-iesire> [inaltime]
  *   pune rezultatul in public/images/personaj/<nume-iesire>.webp
+ *   inaltimea implicita e 640px, dublul marimii la care se afiseaza in
+ *   sectiuni. Pentru figuri mari, de antet, da 1200 sau mai mult.
  */
 import sharp from 'sharp'
 import path from 'node:path'
 
-const [intrare, nume] = process.argv.slice(2)
+const [intrare, nume, inaltimeCeruta] = process.argv.slice(2)
+const INALTIME = Number(inaltimeCeruta) || 640
 if (!intrare || !nume) {
   console.error('folosire: node scripts/decupa-personaj.mjs <intrare> <nume-iesire>')
   process.exit(1)
@@ -80,7 +83,7 @@ const inaltimeTaiata = maxY - minY + 1
 
 await sharp(data, { raw: { width: W, height: H, channels: C } })
   .extract({ left: minX, top: minY, width: latimeTaiata, height: inaltimeTaiata })
-  .resize({ height: 640, fit: 'inside', withoutEnlargement: false })
+  .resize({ height: INALTIME, fit: 'inside', withoutEnlargement: false })
   .webp({ quality: 88, alphaQuality: 100 })
   .toFile(iesire)
 

@@ -1,86 +1,72 @@
 ---
 /**
- * Antetul paginii de start: titlu serif mare, centrat, pe alb.
+ * Antetul paginii de start: personajul marcii cu placarda „Bienvenue" in
+ * stanga, titlul si butonul in dreapta.
  *
- * Nu mai are nicio fotografie. Cele trei poze generate de dinainte (strada din
- * Paris, masa de cafenea, biroul cu laptopul) i se pareau lui Artiom false, si
- * aveau dreptate sa i se para: erau imagini de stoc facute de un model, puse sa
- * treaca drept realitate. In locul lor sta personajul desenat al marcii, in doua
- * ipostaze, plus cuvantul „Bienvenue" foarte palid in golul de jos.
+ * De ce arata asa. Artiom a cerut intai o pagina complet goala, doar cu figura
+ * si un buton. Am construit-o si a respins-o el insusi: „pare saraca". Avea
+ * dreptate, golul functioneaza doar cand ce ramane e mare si asezat cu curaj,
+ * altfel citesti o pagina neterminata. Asa ca jumatatea dreapta a primit
+ * greutate inapoi, dar scurt: un titlu, o propozitie, un buton. Atat.
  *
- * Fotografia adevarata a Dorinei nu a disparut de pe site, sta la /despre/ si in
- * sectiunea Despre de pe pagina de start. Artiom a ales dinadins sa nu fie in
- * antet.
+ * Ce a iesit si nu se pune la loc fara sa intrebi: pastila „Prima discutie e
+ * gratuita", lista de trei puncte si al doilea buton, cel de WhatsApp. WhatsApp
+ * ramane in antetul de sus, in bara fixa de pe telefon, pe contact si pe cardul
+ * albastru de la finalul paginii.
+ *
+ * Discul albastru pal din spatele figurii nu e decor intamplator: fara el,
+ * figura pluteste pe un camp alb. Are `-z-10` fiindca un element pozitionat
+ * picteaza peste unul nepozitionat oricare ar fi ordinea in cod, si acoperea
+ * butonul.
+ *
+ * Placarda e generata, nu desenata in cod, din caietul de referinta. Cuvantul
+ * e scris de model: a fost verificat litera cu litera la marire inainte sa
+ * intre in pagina. Vezi docs/PREDARE-PERSONAJ.md.
  */
-import { Icon } from 'astro-icon/components'
-import { site, linkWhatsApp } from '../../config/site'
+import { site } from '../../config/site'
 import Val from '../Val.astro'
-
 ---
 
-<section class="relative overflow-hidden bg-alb pt-32 sm:pt-40 lg:pt-44" aria-labelledby="titlu-antet">
-  <div class="container-site relative z-10 flex flex-col items-center text-center">
-    <a href="/#cum-decurge" class="intrare inline-flex items-center gap-2 rounded-full bg-albastru-5 px-4 py-2 text-sm font-medium text-navy transition hover:bg-albastru-10">
-      Prima discuție e gratuită
-      <Icon name="solar:arrow-right-linear" class="size-4" />
-    </a>
-
-    <h1 id="titlu-antet" class="intrare mt-7 max-w-3xl text-[2.7rem] leading-[1.02] sm:text-6xl lg:text-[4.25rem]" style="--intarziere:80ms">
-      Franceza explicată simplu, <em class="not-italic text-albastru">pe înțelesul tău</em>
-    </h1>
-
-    <p class="intrare mt-6 max-w-2xl text-lg leading-relaxed text-gri sm:text-xl" style="--intarziere:160ms">
-      Lecții individuale online cu Dorina, pentru adulți care au nevoie de franceză pentru ceva anume: un job, o mutare, un examen. Fără gramatică tocită, fără ore în care doar asculți. Vorbești din prima lecție.
-    </p>
-
-    <div class="intrare mt-9 flex flex-col items-center gap-3 sm:flex-row" style="--intarziere:240ms">
-      <a href="/programare/" class="pastila pastila-albastra !px-7 !py-4 text-[1.05rem]">Programează o discuție gratuită</a>
-      <a href={linkWhatsApp} target="_blank" rel="noopener" class="pastila pastila-crem !px-6 !py-4 text-[1.05rem]">
-        <Icon name="whatsapp" class="size-5 text-verde" /> Scrie pe WhatsApp
-      </a>
+<section class="relative overflow-hidden bg-alb pt-24 sm:pt-28 lg:pt-32" aria-labelledby="titlu-antet">
+  <div class="container-site relative z-10 grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+    <div class="relative order-2 flex justify-center lg:order-1">
+      <div
+        class="absolute left-1/2 top-[10%] -z-10 size-[380px] -translate-x-1/2 rounded-full bg-albastru-5 sm:size-[460px] lg:size-[560px]"
+        aria-hidden="true"
+      >
+      </div>
+      <img
+        src="/images/personaj/bienvenue-sus.webp"
+        alt="Personajul DorDeFranceza ține o placardă pe care scrie Bienvenue"
+        width="626"
+        height="1300"
+        class="intrare relative h-[360px] w-auto sm:h-[460px] lg:h-[560px] 2xl:h-[620px]"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
     </div>
 
-    <p class="intrare mt-4 text-sm text-gri" style="--intarziere:280ms">
-      {site.durataCunoastere} de minute, pe Zoom. Fără plată și fără să te angajezi la nimic.
-    </p>
-
-    <ul class="intrare mt-9 flex max-w-3xl flex-wrap items-center justify-center gap-x-7 gap-y-2 text-sm font-medium text-gri" style="--intarziere:340ms">
-      <li class="flex items-center gap-2"><Icon name="solar:user-check-rounded-bold" class="size-4 text-albastru" /> Același profesor, de fiecare dată</li>
-      <li class="flex items-center gap-2"><Icon name="solar:clock-circle-bold" class="size-4 text-albastru" /> {site.durataLectie} de minute, pe Zoom</li>
-      <li class="flex items-center gap-2"><Icon name="solar:chat-round-check-bold" class="size-4 text-albastru" /> Corectură pe WhatsApp între lecții</li>
-    </ul>
-  </div>
-
-  {/*
-    Cele doua figuri, doar de la 1280px in sus. Sub pragul asta textul ocupa
-    aproape toata latimea si figurile ar cadea peste el.
-    Cea care saluta e oglindita, ca mana ridicata sa cada spre text, nu spre
-    marginea paginii. Cea care prezinta e desenata aratand spre stanga ei, deci
-    sta in dreapta si palma ei deschisa duce tot spre text.
-  */}
-  <div class="pointer-events-none absolute inset-0 hidden xl:block" aria-hidden="true">
-    <img src="/images/personaj/saluta.webp" alt="" width="257" height="640"
-         class="absolute left-[4%] top-[14%] h-[440px] w-auto -scale-x-100 2xl:left-[8%] 2xl:h-[520px]" />
-    <img src="/images/personaj/prezinta.webp" alt="" width="340" height="640"
-         class="absolute right-[3%] top-[17%] h-[430px] w-auto 2xl:right-[7%] 2xl:h-[500px]" />
-  </div>
-
-  {/* Pana la 1280px, o singura figura, cea care saluta, asezata sub text */}
-  <div class="container-site relative z-10 mt-10 flex justify-center xl:hidden">
-    <img src="/images/personaj/saluta.webp" alt="" aria-hidden="true" width="257" height="640"
-         class="h-[260px] w-auto sm:h-[320px]" loading="eager" fetchpriority="high" decoding="async" />
-  </div>
-
-  {/*
-    „Bienvenue", cu fontul serif al site-ului, inclinat, la 6% opacitate. Sta in
-    golul dintre lista de puncte si val, deci nu se bate cu titlul. E text, nu
-    poza: se citeste de cititoarele de ecran? nu, are aria-hidden, e decor.
-    Doar de la 1024px in sus, pe telefon nu incape.
-  */}
-  <div class="pointer-events-none absolute inset-x-0 bottom-[14%] hidden select-none justify-center lg:flex" aria-hidden="true">
-    <span class="font-display text-[9rem] italic leading-none text-albastru/[0.06] 2xl:text-[12rem]">Bienvenue</span>
+    <div class="order-1 text-center lg:order-2 lg:text-left">
+      <h1 id="titlu-antet" class="intrare text-[2.6rem] leading-[1.04] sm:text-5xl lg:text-[3.6rem]">
+        Franceza explicată simplu, <em class="not-italic text-albastru">pe înțelesul tău</em>
+      </h1>
+      <p class="intrare mt-5 text-lg leading-relaxed text-gri" style="--intarziere:120ms">
+        Lecții individuale online cu Dorina. {site.durataLectie} de minute, pe Zoom. Vorbești din prima lecție.
+      </p>
+      <a
+        href="/programare/"
+        class="intrare pastila pastila-albastra mt-8 !px-7 !py-4 text-[1.05rem]"
+        style="--intarziere:200ms"
+      >
+        Programează o discuție gratuită
+      </a>
+      <p class="intrare mt-4 text-sm text-gri" style="--intarziere:260ms">
+        {site.durataCunoastere} de minute. Fără plată și fără să te angajezi la nimic.
+      </p>
+    </div>
   </div>
 
   {/* Banda crem ondulata, trecerea spre panza crem a paginii */}
-  <Val class="mt-16 h-24 lg:mt-40 lg:h-32" />
+  <Val class="mt-10 h-24 lg:mt-16 lg:h-32" />
 </section>

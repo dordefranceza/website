@@ -141,6 +141,8 @@ după aceea că bluza și pantofii nu s-au găurit: pune poza pe un fundal magen
 | `incurajeaza.webp` | pagina de start, pe cardul negru „De ce merge", cerc roz cu disc crem |
 | `inima.webp` | pagina de start și `/preturi/`, lângă garanția de bani înapoi, cerc verde |
 | `se-uita-jos-a.webp` | pagina de start și `/preturi/`, deasupra titlului de la prețuri, cerc portocaliu. A luat locul semnului cu sămânța, care nu spunea nimic despre preț |
+| `bienvenue-sus.webp` | antetul paginii de start, in stanga, pe un disc albastru pal. Tine placarda cu ambele maini deasupra capului |
+| `bienvenue-lateral.webp` | NEFOLOSIT. Aceeasi idee, cu placarda ridicata intr-o mana. Generata in aceeasi runda, pastrata ca rezerva |
 | `se-uita-jos-b.webp` | NEFOLOSIT. Varianta cealaltă, stă dreaptă și arată cu degetul în jos. Generată în aceeași rundă și păstrată ca să nu se mai plătească 3 credite dacă Artiom se răzgândește |
 
 Cele patru de jos sunt generate pe 12 septembrie 2026, seara, cu `media_id`-ul
@@ -181,6 +183,31 @@ numeri șapte, nu opt, exact din motivul ăsta.
 Semnele mici au rămas toate. Nu se bat cap în cap fiindcă personajul stă în
 cerc, la altă scară, și nu în locul semnului.
 
+## Cuvântul din poză: cum s-a făcut și ce să verifici
+
+Pe 12 septembrie, seara, Artiom a cerut ca personajul să țină o placardă pe care
+scrie „Bienvenue", generată cu tot cu text.
+
+**I-am spus dinainte că e riscant** și tot riscant rămâne: modelele strică des
+literele, mai ales cuvintele franțuzești. De data asta au ieșit corect toate
+trei încercările, dar asta e noroc, nu regulă.
+
+**Nu publica niciodată un cuvânt generat fără să-l mărești și să-l citești
+literă cu literă.** Mie mi s-a părut prima dată că ultima literă e F în loc de
+E: era tot E, doar că tăietura mea îi ascundea bara de jos. Deci nici panica
+grăbită nu ajută, se verifică pe imaginea întreagă, mărită.
+
+Alternativa fără risc, dacă va fi nevoie de alt cuvânt: se generează placarda
+**goală** și cuvântul se pune peste, ca text adevărat, cu fontul site-ului.
+Artiom a ales varianta cu text generat știind compromisul.
+
+Decuparea pentru antet se face la rezoluție mai mare, fiindcă figura se afișează
+la 560px înălțime, nu la 190:
+
+```bash
+node scripts/decupa-personaj.mjs poza.png bienvenue-sus 1300
+```
+
 **În antet intră acum, și fără cerc.** Tot pe 12 septembrie, seara, Artiom a
 spus că fotografiile generate din antet par false. Au ieșit toate trei, iar în
 locul lor stau două figuri mari, libere, nu în cercuri: cea care salută în
@@ -191,6 +218,20 @@ site-ului.
 A ales varianta asta dintre trei pe care le-a văzut construite: una cu Dorina
 într-o formă moale plus o figură, una hibridă cu Dorina și „Bienvenue", și asta,
 fără nicio fotografie. A luat-o pe ultima.
+
+**Apoi a mai schimbat o dată, în aceeași seară.** A cerut o pagină complet
+goală: o singură figură mare, cu placarda „Bienvenue", un buton, și nimic
+altceva, nici titlu. Am construit-o exact așa și a respins-o el însuși: „pare
+săracă". Avea dreptate. Golul ține doar când ce rămâne e mare și așezat cu
+curaj; o figură singură pe un câmp alb se citește ca pagină neterminată.
+
+**Forma finală:** figura cu placarda în stânga, pe un disc albastru pal, iar în
+dreapta un titlu scurt, o propoziție și un buton. Au rămas afară pastila „Prima
+discuție e gratuită", lista de trei puncte și al doilea buton, cel de WhatsApp.
+
+Capcană din construcția asta: discul pal are nevoie de `-z-10`. Fără el acoperea
+butonul, fiindcă un element poziționat pictează peste unul nepoziționat, oricare
+ar fi ordinea în cod.
 
 Aceeași curățenie s-a făcut și pe `/programare/`, unde aceeași poză cu biroul
 stătea în cercul portocaliu din antet. Acolo e acum figura care prezintă, pe o
