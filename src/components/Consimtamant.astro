@@ -25,14 +25,14 @@ const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
     aria-labelledby="ddf-cookie-titlu"
     class="fixed inset-x-3 bottom-24 z-[95] mx-auto max-w-lg rounded-[1.5rem] bg-alb p-5 shadow-[0_10px_40px_rgba(8,3,49,0.18)] sm:inset-x-auto sm:right-4 sm:p-6 lg:bottom-4"
   >
-    <p id="ddf-cookie-titlu" class="font-sans text-[1.05rem] font-medium">Ne dai voie să numărăm vizitele?</p>
+    <p id="ddf-cookie-titlu" class="font-sans text-[1.05rem] font-medium">Cookie-uri pe acest site</p>
     <p class="mt-2 text-sm leading-relaxed text-gri">
-      Folosim Google Analytics ca să vedem câți oameni ajung aici și de unde vin. Nu te urmărim pe alte site-uri. Dacă spui nu, în browserul tău nu se scrie nimic.
-      <a href="/cookies/" class="text-albastru-text underline-offset-4 hover:underline">Pe larg</a>.
+      Folosim cookie-uri de analiză, prin Google Analytics, numai dacă ești de acord. Fără acordul tău nu se salvează nimic în browser, iar site-ul merge la fel. Alegerea o schimbi oricând din
+      <a href="/cookies/" class="text-albastru-text underline-offset-4 hover:underline">politica de cookie-uri</a>.
     </p>
     <div class="mt-5 flex flex-wrap gap-3">
-      <button type="button" data-ddf-cookie="da" class="pastila pastila-albastra !py-2.5 text-sm">Sunt de acord</button>
-      <button type="button" data-ddf-cookie="nu" class="pastila pastila-alba !py-2.5 text-sm">Nu, mulțumesc</button>
+      <button type="button" data-ddf-cookie="da" class="pastila pastila-albastra !py-2.5 text-sm">Accept</button>
+      <button type="button" data-ddf-cookie="nu" class="pastila pastila-alba !py-2.5 text-sm">Refuz</button>
     </div>
   </div>
 

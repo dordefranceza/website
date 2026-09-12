@@ -10,11 +10,17 @@ import { Icon } from 'astro-icon/components'
 import { site, linkWhatsApp } from '../../config/site'
 
 /** Cercurile din jurul textului. Inelul colorat ramane vizibil in jurul pozei, ca in referinta. */
+/**
+ * Marimile si pozitiile sunt calculate ca cercurile sa NU intre peste text.
+ * Titlul are max-w-3xl (768px) centrat, deci la 1280px latime incepe la 256px:
+ * un cerc de 200px lipit de margine se opreste la 200px si ramane afara.
+ * De la 1536px e loc pentru cercuri mari, asa ca abia acolo cresc.
+ */
 const cercuri = [
-  { poza: '/images/dorina-800.webp', alt: 'Dorina, profesoară de franceză', culoare: 'bg-roz', pozitie: 'left-[1%] top-[24%] size-[270px] xl:size-[320px]', anim: 'plutitor', intarziere: '0s' },
-  { poza: '/images/antet-paris.webp', alt: '', culoare: 'bg-verde', pozitie: 'right-[2%] top-[9%] size-[220px] xl:size-[250px]', anim: 'plutitor-lent', intarziere: '-3s' },
-  { poza: '/images/antet-cafenea.webp', alt: '', culoare: 'bg-albastru', pozitie: 'left-[5%] top-[64%] size-[240px] xl:size-[260px]', anim: 'plutitor', intarziere: '-2s' },
-  { poza: '/images/antet-birou.webp', alt: '', culoare: 'bg-portocaliu', pozitie: 'right-[4%] top-[52%] size-[270px] xl:size-[300px]', anim: 'plutitor-lent', intarziere: '-5s' },
+  { poza: '/images/dorina-800.webp', alt: 'Dorina, profesoară de franceză', culoare: 'bg-roz', pozitie: 'left-0 top-[26%] size-[200px] 2xl:left-[2%] 2xl:size-[280px]', anim: 'plutitor', intarziere: '0s' },
+  { poza: '/images/antet-paris.webp', alt: '', culoare: 'bg-verde', pozitie: 'right-0 top-[10%] size-[170px] 2xl:right-[3%] 2xl:size-[230px]', anim: 'plutitor-lent', intarziere: '-3s' },
+  { poza: '/images/antet-cafenea.webp', alt: '', culoare: 'bg-albastru', pozitie: 'left-[1%] top-[66%] size-[180px] 2xl:left-[5%] 2xl:size-[240px]', anim: 'plutitor', intarziere: '-2s' },
+  { poza: '/images/antet-birou.webp', alt: '', culoare: 'bg-portocaliu', pozitie: 'right-[1%] top-[54%] size-[200px] 2xl:right-[4%] 2xl:size-[280px]', anim: 'plutitor-lent', intarziere: '-5s' },
 ]
 ---
 
@@ -44,15 +50,20 @@ const cercuri = [
       {site.durataCunoastere} de minute, pe Zoom. Fără plată și fără să te angajezi la nimic.
     </p>
 
-    <ul class="intrare mt-9 flex flex-wrap items-center justify-center gap-x-7 gap-y-2 text-sm font-medium text-gri" style="--intarziere:340ms">
+    <ul class="intrare mt-9 flex max-w-3xl flex-wrap items-center justify-center gap-x-7 gap-y-2 text-sm font-medium text-gri" style="--intarziere:340ms">
       <li class="flex items-center gap-2"><Icon name="solar:user-check-rounded-bold" class="size-4 text-albastru" /> Același profesor, de fiecare dată</li>
       <li class="flex items-center gap-2"><Icon name="solar:clock-circle-bold" class="size-4 text-albastru" /> {site.durataLectie} de minute, pe Zoom</li>
       <li class="flex items-center gap-2"><Icon name="solar:chat-round-check-bold" class="size-4 text-albastru" /> Corectură pe WhatsApp între lecții</li>
     </ul>
   </div>
 
-  {/* Cercurile cu fotografii, doar pe ecrane mari. Inelul colorat e de 14px. */}
-  <div class="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden="true">
+  {/*
+    Cercurile cu fotografii, doar de la 1280px in sus. Intre 1024 si 1280,
+    textul ocupa aproape toata latimea si cercurile cadeau peste el: „simplu"
+    intra sub poza Dorinei, iar randul cu WhatsApp sub cea cu biroul.
+    Inelul colorat e de 14px.
+  */}
+  <div class="pointer-events-none absolute inset-0 hidden xl:block" aria-hidden="true">
     {
       cercuri.map((c) => (
         <div class:list={['absolute rounded-full p-3.5', c.culoare, c.pozitie, c.anim]} style={`animation-delay:${c.intarziere}`}>
@@ -62,8 +73,8 @@ const cercuri = [
     }
   </div>
 
-  {/* Pe telefon si tableta: cercul cu Dorina sub text */}
-  <div class="container-site relative z-10 mt-12 flex justify-center lg:hidden">
+  {/* Pana la 1280px, un singur cerc, cu Dorina, asezat sub text */}
+  <div class="container-site relative z-10 mt-12 flex justify-center xl:hidden">
     <div class="rounded-full bg-roz p-3">
       <img src="/images/dorina-480.webp" alt="Dorina, profesoară de franceză" class="size-52 rounded-full object-cover sm:size-64" width="288" height="288" loading="eager" fetchpriority="high" decoding="async" />
     </div>
