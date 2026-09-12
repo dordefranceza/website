@@ -8,10 +8,14 @@ import PersonajCerc from '../components/PersonajCerc.astro'
 
 <Base title="Contact · DorDeFranceza" description="Scrie-i Dorinei pe WhatsApp, pe email sau prin formular. Răspunde în aceeași zi.">
   <main id="continut" class="bg-crem pt-32 pb-20 sm:pt-40 sm:pb-28">
-    <div class="container-site grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
+    <div class="container-site grid gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
       <div>
         <p class="eticheta">Contact</p>
-        <h1 class="mt-3 text-4xl sm:text-5xl">Cel mai rapid: WhatsApp</h1>
+        {/* Titlul se rupea in doua, cu „WhatsApp" singur pe randul al doilea.
+            Masurat: la 48px cere 548 de pixeli, iar coloana avea 487. Nu
+            titlul a fost micsorat, ci coloana largita: formularul din dreapta
+            incape si asa. */}
+        <h1 class="mt-3 text-4xl sm:text-5xl lg:text-[2.6rem] xl:text-5xl">Cel mai rapid: WhatsApp</h1>
         <p class="echilibrat mt-5 text-lg text-gri">De obicei răspund în aceeași zi. Dacă preferi, îmi scrii pe email sau îți alegi direct o zi din calendar.</p>
         <div class="mt-8 space-y-3">
           <a href={linkWhatsApp} target="_blank" rel="noopener" class="flex items-center gap-4 rounded-[1.25rem] bg-alb p-5 transition hover:-translate-y-0.5">

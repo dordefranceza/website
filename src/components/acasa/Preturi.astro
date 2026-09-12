@@ -85,35 +85,27 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
     </div>
 
     {/*
-      Banda verde e stramta dinadins si figura iese din ea, in sus si in dreapta.
-      Asa blocul nu mai e un dreptunghi verde mare si plat: cercul care sare
-      peste margine ii da miscare. De aia are si `mt-14`, ca sa incapa partea
-      care iese, si `pr` mare pe text, ca sa nu treaca pe sub ea.
+      Banda verde si figura sunt asezate una langa alta, nu figura peste banda.
+      Asa nu mai ramane verde nici sub ea, nici in dreapta ei: Artiom a hasurat
+      de doua ori exact fasiile alea. `items-end` le aliniaza pe marginea de jos,
+      deci figura pare ca sta pe acelasi rand cu banda, fara sa o atinga.
+      `lg:mt-24` fiindca figura e mai inalta decat banda si iese in sus.
     */}
     {site.garantie.activa && (
-      <div class="dezvaluie relative mt-6 flex flex-col items-start gap-5 rounded-[1.5rem] bg-verde-5 px-8 py-7 sm:flex-row sm:items-center sm:px-10 lg:mt-24 lg:pr-64 2xl:pr-72">
-        {/* Sigiliul marcii, nu scutul din setul Solar pe care il are toata lumea.
-            E singurul semn desenat in verde, fiindca sta in blocul verde. */}
-        <span class="flex size-16 shrink-0 items-center justify-center rounded-full bg-alb">
-          <Semn nume="garantie" inaltime={38} />
-        </span>
-        <div>
-          <h3 class="font-sans text-xl font-medium">Nu rămâi cu banii dați degeaba</h3>
-          <p class="mt-2 leading-relaxed text-cerneala/85">{site.garantie.text}</p>
+      <div class="dezvaluie mt-6 lg:mt-24 lg:flex lg:items-end lg:gap-6">
+        <div class="flex flex-col items-start gap-5 rounded-[1.5rem] bg-verde-5 px-8 py-7 sm:flex-row sm:items-center sm:px-10 lg:flex-1">
+          {/* Sigiliul marcii, nu scutul din setul Solar pe care il are toata lumea.
+              E singurul semn desenat in verde, fiindca sta in blocul verde. */}
+          <span class="flex size-16 shrink-0 items-center justify-center rounded-full bg-alb">
+            <Semn nume="garantie" inaltime={38} />
+          </span>
+          <div>
+            <h3 class="font-sans text-xl font-medium">Nu rămâi cu banii dați degeaba</h3>
+            <p class="echilibrat mt-2 leading-relaxed text-cerneala/85">{site.garantie.text}</p>
+          </div>
         </div>
-        {/*
-          Promisiunea e personala, deci o tine cineva, nu doar o iconita.
-          Figura iese din banda DOAR in sus, cu talpa la nivelul marginii de jos:
-          asa pare ca sta pe banda, si mai ales nu mai intra peste randul de
-          dedesubt. Inainte iesea si in jos cu 36 de pixeli si acoperea textul.
-          Iese si peste marginea din dreapta, ca sa nu mai ramana o fasie de
-          verde dupa ea: Artiom a hasurat exact fasia aia.
-          Blocul are `lg:mt-24` fiindca figura iese in sus cu vreo 60 de pixeli
-          si, cu marginea de dinainte, se lipea de cardul de deasupra.
-          Inelul e verdele deschis, nu cel inchis: pe fundal verde pal, unul
-          inchis taia ca o rama. Asa trece dintr-o nuanta in alta.
-        */}
-        <PersonajCerc nume="inima" inel="verde-10" disc="alb" marime={160} marimeMare={176} class="absolute -right-5 bottom-0 hidden lg:block" />
+        {/* Promisiunea e personala, deci o tine cineva, nu doar o iconita. */}
+        <PersonajCerc nume="inima" inel="verde-10" disc="alb" marime={160} marimeMare={184} class="hidden shrink-0 lg:block" />
       </div>
     )}
 
