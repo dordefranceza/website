@@ -7,15 +7,33 @@ import { Eroare, EtichetaStare, EtichetaTip, Gol, Titlu, Toast, bani } from '../
 import DialogProgramare from '../DialogProgramare'
 import DialogPropunere from '../DialogPropunere'
 
-type Filtru = 'noi' | 'propuse' | 'viitoare' | 'trecute' | 'anulate' | 'toate'
+type Filtru = 'noi' | 'debifat' | 'propuse' | 'viitoare' | 'trecute' | 'anulate' | 'toate'
 const FILTRE: { cheie: Filtru; nume: string }[] = [
   { cheie: 'noi', nume: 'Noi' },
+  { cheie: 'debifat', nume: 'De bifat' },
   { cheie: 'propuse', nume: 'Așteaptă răspuns' },
   { cheie: 'viitoare', nume: 'Viitoare' },
   { cheie: 'trecute', nume: 'Trecute' },
   { cheie: 'anulate', nume: 'Anulate' },
   { cheie: 'toate', nume: 'Toate' },
 ]
+
+/**
+ * Lectia a trecut de ora ei si nimeni nu a spus daca s-a tinut.
+ *
+ * Artiom: „dupa fiecare lectie sa apara acolo cand trece timpul, sa pot pune
+ * a trecut sau nu a trecut". Fara asta, o lectie ramane „confirmata" la
+ * nesfarsit, banii nu se stie daca se cer, iar statisticile de mai tarziu se
+ * fac pe nisip.
+ *
+ * Se lasa un ceas de la ora de inceput inainte sa fie cerut raspunsul: nu are
+ * rost sa intrebi „a avut loc?" in timp ce lectia inca se tine.
+ */
+function deBifat(p: Programare, acum: string): boolean {
+  if (p.stare !== 'confirmata' && p.stare !== 'noua') return false
+  const sfarsit = new Date(Date.parse(p.incepe) + p.durata_min * 60_000 + 3_600_000).toISOString()
+  return sfarsit < acum
+}
 
 export default function Programari() {
   const [lista, setLista] = useState<Programare[] | null>(null)
@@ -51,6 +69,11 @@ export default function Programari() {
     window.setTimeout(() => setToast(''), 2500)
   }
 
+  const nebifate = useMemo(() => {
+    const acum = new Date().toISOString()
+    return (lista ?? []).filter((p) => deBifat(p, acum))
+  }, [lista])
+
   const filtrate = useMemo(() => {
     if (!lista) return []
     const acum = new Date().toISOString()
@@ -58,6 +81,7 @@ export default function Programari() {
     return lista
       .filter((p) => {
         if (filtru === 'noi') return p.stare === 'noua'
+        if (filtru === 'debifat') return deBifat(p, acum)
         if (filtru === 'propuse') return p.stare === 'propusa'
         if (filtru === 'viitoare') return p.incepe >= acum && p.stare !== 'anulata'
         if (filtru === 'trecute') return p.incepe < acum && p.stare !== 'anulata'
@@ -73,6 +97,20 @@ export default function Programari() {
       const r = await apel<{ programare: Programare }>('programare', { metoda: 'PATCH', corp: { id: p.id, platit } })
       setLista((l) => (l ?? []).map((x) => (x.id === p.id ? r.programare : x)))
       anunta(platit ? 'Marcată ca plătită' : 'Marcată ca neplătită')
+    } catch (e) {
+      anunta(e instanceof Error ? e.message : 'Nu s-a salvat')
+    }
+  }
+
+  /** „A avut loc" o face facuta, „nu a avut loc" o scoate din socoteala. */
+  async function bifeaza(p: Programare, aAvutLoc: boolean) {
+    try {
+      const r = await apel<{ programare: Programare }>('programare', {
+        metoda: 'PATCH',
+        corp: { id: p.id, stare: aAvutLoc ? 'finalizata' : 'anulata' },
+      })
+      setLista((l) => (l ?? []).map((x) => (x.id === p.id ? r.programare : x)))
+      anunta(aAvutLoc ? 'Bifată ca făcută' : 'Bifată ca neținută')
     } catch (e) {
       anunta(e instanceof Error ? e.message : 'Nu s-a salvat')
     }
@@ -102,14 +140,29 @@ export default function Programari() {
         Programări
       </Titlu>
 
+      {nebifate.length > 0 && filtru !== 'debifat' && (
+        <button
+          type="button"
+          onClick={() => setFiltru('debifat')}
+          className="mb-4 block w-full rounded-2xl bg-portocaliu-5 px-5 py-3.5 text-left text-sm leading-relaxed text-cerneala"
+        >
+          <strong className="font-medium">
+            {nebifate.length === 1 ? 'O lecție a trecut' : `${nebifate.length} lecții au trecut`} și nu ai spus dacă s-au ținut.
+          </strong>{' '}
+          Apasă aici ca să le bifezi, altfel nu se știe ce s-a făcut și ce bani mai ai de luat.
+        </button>
+      )}
+
       <div className="flex flex-wrap items-center gap-2">
         {FILTRE.map((f) => {
           const n =
             f.cheie === 'noi'
               ? (lista ?? []).filter((p) => p.stare === 'noua').length
-              : f.cheie === 'propuse'
-                ? (lista ?? []).filter((p) => p.stare === 'propusa').length
-                : 0
+              : f.cheie === 'debifat'
+                ? nebifate.length
+                : f.cheie === 'propuse'
+                  ? (lista ?? []).filter((p) => p.stare === 'propusa').length
+                  : 0
           return (
             <button
               key={f.cheie}
@@ -158,7 +211,17 @@ export default function Programari() {
                 )}
               </div>
               <div className="flex justify-end gap-2">
-                {p.stare === 'noua' && (
+                {deBifat(p, new Date().toISOString()) && (
+                  <>
+                    <button type="button" onClick={() => bifeaza(p, true)} className="rounded-full bg-verde px-3 py-1.5 text-xs font-bold text-alb">
+                      A avut loc
+                    </button>
+                    <button type="button" onClick={() => bifeaza(p, false)} className="rounded-full bg-crem px-3 py-1.5 text-xs font-medium hover:text-rosu">
+                      Nu a avut loc
+                    </button>
+                  </>
+                )}
+                {p.stare === 'noua' && !deBifat(p, new Date().toISOString()) && (
                   <button type="button" onClick={() => confirma(p)} className="rounded-full bg-albastru px-3 py-1.5 text-xs font-bold text-alb hover:bg-albastru-inchis">
                     Confirmă
                   </button>

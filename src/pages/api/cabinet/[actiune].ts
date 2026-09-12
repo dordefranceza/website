@@ -231,11 +231,36 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
       return raspunde(200, { ok: true, programare: p })
     }
 
+    /*
+     * Cursantii, cu ce fel de lectii fac.
+     *
+     * Artiom: „sa fie aparte cursanti individuali, in grup si acest de test 20
+     * min". Nu e un camp pe care sa-l completeze cineva, se vede din lectiile
+     * lui: cine are lectii de grup e in grupa, cine are individuale e
+     * individual, cine are doar discutia gratuita n-a inceput inca.
+     */
     if (actiune === 'clienti' && metoda === 'GET') {
-      const [clienti, programari] = await Promise.all([d.clienti(), d.programari()])
+      const [clienti, programari, grupe] = await Promise.all([d.clienti(), d.programari(), d.grupe()])
       const cu = clienti.map((c) => {
         const ale = programari.filter((p) => p.client_id === c.id && p.stare !== 'anulata')
-        return { ...c, lectii: ale.length, platit: ale.filter((p) => p.platit).reduce((s, p) => s + p.suma, 0), ultima: ale.at(-1)?.incepe ?? null }
+        const individuale = ale.filter((p) => p.tip === 'individual').length
+        const laGrup = ale.filter((p) => p.tip === 'grup')
+        const probe = ale.filter((p) => p.tip === 'cunoastere').length
+        const numeGrupe = [...new Set(laGrup.map((p) => p.grupa_id).filter(Boolean))]
+          .map((idG) => grupe.find((g) => g.id === idG)?.nume)
+          .filter(Boolean) as string[]
+        return {
+          ...c,
+          lectii: ale.length,
+          individuale,
+          grup: laGrup.length,
+          probe,
+          grupe: numeGrupe,
+          categorie: laGrup.length ? 'grup' : individuale ? 'individual' : 'proba',
+          platit: ale.filter((p) => p.platit).reduce((s, p) => s + p.suma, 0),
+          deIncasat: ale.filter((p) => !p.platit && p.stare === 'finalizata').reduce((s, p) => s + p.suma, 0),
+          ultima: ale.map((p) => p.incepe).sort().at(-1) ?? null,
+        }
       })
       return raspunde(200, { ok: true, clienti: cu })
     }

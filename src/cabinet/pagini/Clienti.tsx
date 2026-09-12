@@ -6,12 +6,43 @@ import { dataRo } from '@/lib/timp'
 import { apel } from '../api'
 import { Camp, Eroare, Gol, Titlu, Toast, bani, clasaInput, clasaSelect, clasaTextarea } from '../comune'
 
-type ClientCuCifre = Client & { lectii: number; platit: number; ultima: string | null }
+type Categorie = 'individual' | 'grup' | 'proba'
+
+type ClientCuCifre = Client & {
+  lectii: number
+  individuale: number
+  grup: number
+  probe: number
+  grupe: string[]
+  categorie: Categorie
+  platit: number
+  deIncasat: number
+  ultima: string | null
+}
+
+/*
+ * Artiom: „sa fie aparte cursanti individuali, in grup si acest de test 20
+ * min". Categoria nu se completeaza de mana, se vede din lectiile omului, deci
+ * nu poate ramane in urma realitatii.
+ */
+const GRUPARI: { cheie: 'toti' | Categorie; nume: string }[] = [
+  { cheie: 'toti', nume: 'Toți' },
+  { cheie: 'individual', nume: 'Individuali' },
+  { cheie: 'grup', nume: 'În grupe' },
+  { cheie: 'proba', nume: 'Doar proba de 20 min' },
+]
+
+const ETICHETA: Record<Categorie, { text: string; clasa: string }> = {
+  individual: { text: 'individual', clasa: 'bg-albastru-5 text-navy' },
+  grup: { text: 'în grupă', clasa: 'bg-verde-5 text-verde' },
+  proba: { text: 'doar proba', clasa: 'bg-roz-5 text-[#a8358a]' },
+}
 
 export default function Clienti() {
   const [lista, setLista] = useState<ClientCuCifre[] | null>(null)
   const [eroare, setEroare] = useState('')
   const [cauta, setCauta] = useState('')
+  const [grup, setGrup] = useState<'toti' | Categorie>('toti')
   const [deschis, setDeschis] = useState<ClientCuCifre | null>(null)
   const [toast, setToast] = useState('')
 
@@ -23,13 +54,66 @@ export default function Clienti() {
 
   const filtrati = useMemo(() => {
     const q = cauta.trim().toLowerCase()
-    return (lista ?? []).filter((c) => !q || `${c.nume} ${c.email} ${c.telefon} ${c.scop}`.toLowerCase().includes(q))
-  }, [lista, cauta])
+    return (lista ?? [])
+      .filter((c) => grup === 'toti' || c.categorie === grup)
+      .filter((c) => !q || `${c.nume} ${c.email} ${c.telefon} ${c.scop} ${c.grupe.join(' ')}`.toLowerCase().includes(q))
+  }, [lista, cauta, grup])
+
+  /* Cati au facut proba gratuita si au ramas. E cifra care spune daca discutia
+     de 20 de minute isi merita locul pe site. */
+  const cifre = useMemo(() => {
+    const toti = lista ?? []
+    const cuProba = toti.filter((c) => c.probe > 0)
+    const ramasi = cuProba.filter((c) => c.individuale + c.grup > 0)
+    return {
+      total: toti.length,
+      individuali: toti.filter((c) => c.categorie === 'individual').length,
+      inGrupe: toti.filter((c) => c.categorie === 'grup').length,
+      doarProba: toti.filter((c) => c.categorie === 'proba').length,
+      probe: cuProba.length,
+      ramasi: ramasi.length,
+      deIncasat: toti.reduce((s, c) => s + c.deIncasat, 0),
+    }
+  }, [lista])
 
   return (
     <>
       <Titlu sub="Toți cei care au făcut măcar o programare.">Cursanți</Titlu>
-      <input value={cauta} onChange={(e) => setCauta(e.target.value)} placeholder="Caută" className="h-10 w-full rounded-full bg-alb px-4 text-sm outline-none focus:ring-2 focus:ring-albastru sm:w-72" />
+
+      {lista && lista.length > 0 && (
+        <div className="mb-5 grid gap-3 sm:grid-cols-3">
+          <p className="rounded-2xl bg-alb px-5 py-4 text-sm">
+            <span className="block text-2xl font-medium">{cifre.ramasi} din {cifre.probe}</span>
+            <span className="text-gri">au rămas după discuția gratuită</span>
+          </p>
+          <p className="rounded-2xl bg-alb px-5 py-4 text-sm">
+            <span className="block text-2xl font-medium">{cifre.individuali} · {cifre.inGrupe}</span>
+            <span className="text-gri">individuali · în grupe</span>
+          </p>
+          <p className={`rounded-2xl px-5 py-4 text-sm ${cifre.deIncasat > 0 ? 'bg-portocaliu-5' : 'bg-alb'}`}>
+            <span className="block text-2xl font-medium">{bani(cifre.deIncasat)}</span>
+            <span className="text-gri">de încasat pe lecții făcute</span>
+          </p>
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-center gap-2">
+        {GRUPARI.map((g) => {
+          const n = g.cheie === 'toti' ? cifre.total : g.cheie === 'individual' ? cifre.individuali : g.cheie === 'grup' ? cifre.inGrupe : cifre.doarProba
+          return (
+            <button
+              key={g.cheie}
+              type="button"
+              onClick={() => setGrup(g.cheie)}
+              className={`rounded-full px-4 py-2 text-sm font-medium transition ${grup === g.cheie ? 'bg-cerneala text-alb' : 'bg-alb hover:bg-crem-inchis'}`}
+            >
+              {g.nume}
+              {n > 0 && <span className={`ml-1.5 text-xs ${grup === g.cheie ? 'text-alb/60' : 'text-gri'}`}>{n}</span>}
+            </button>
+          )
+        })}
+        <input value={cauta} onChange={(e) => setCauta(e.target.value)} placeholder="Caută" className="ml-auto h-10 w-full rounded-full bg-alb px-4 text-sm outline-none focus:ring-2 focus:ring-albastru sm:w-72" />
+      </div>
 
       <div className="mt-6">
         {eroare && <Eroare mesaj={eroare} reincearca={incarca} />}
@@ -42,13 +126,17 @@ export default function Clienti() {
                 <p className="truncate text-sm text-gri">{c.email}</p>
                 <p className="text-sm text-gri">{c.telefon}</p>
                 <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                  {c.nivel && <span className="rounded-full bg-albastru-5 px-2.5 py-1 font-bold text-navy">{c.nivel}</span>}
+                  <span className={`rounded-full px-2.5 py-1 font-bold ${ETICHETA[c.categorie].clasa}`}>{ETICHETA[c.categorie].text}</span>
+                  {c.grupe.map((g) => (
+                    <span key={g} className="rounded-full bg-crem px-2.5 py-1">{g}</span>
+                  ))}
+                  {c.nivel && <span className="rounded-full bg-crem px-2.5 py-1">{c.nivel}</span>}
                   {c.scop && <span className="rounded-full bg-crem px-2.5 py-1">{c.scop}</span>}
-                  {c.sursa && <span className="rounded-full bg-crem px-2.5 py-1">din {c.sursa}</span>}
                 </div>
                 <p className="mt-3 text-xs text-gri">
                   {c.lectii} {c.lectii === 1 ? 'lecție' : 'lecții'} · {bani(c.platit)} plătit{c.ultima ? ` · ultima: ${dataRo(c.ultima)}` : ''}
                 </p>
+                {c.deIncasat > 0 && <p className="mt-1 text-xs font-medium text-[#b8431a]">{bani(c.deIncasat)} de încasat</p>}
               </button>
             </li>
           ))}
