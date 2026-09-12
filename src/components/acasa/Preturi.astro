@@ -35,19 +35,37 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
       <PersonajCerc nume="se-uita-jos-a" inel="portocaliu" disc="alb" marime={150} marimeMare={165} class="mx-auto mb-6" />
       <p class="eticheta">Prețuri</p>
       <h2 id="titlu-preturi" class="mt-3 text-4xl sm:text-5xl">{titlu}</h2>
+      {/*
+        Scria „plătești lecțiile pe care le faci, fără taxă de înscriere, fără
+        abonament". Artiom: „nu îmi place, și de ce ai scris fără abonament dacă
+        noi avem pachete?" Avea dreptate, se bat cap în cap: un pachet de 24 de
+        lecții plătit dinainte e chiar lucrul pe care rândul îl nega.
+
+        Randul nou spune ce e de fapt oferta, si raspunde la cele doua temeri
+        pe care nu le zice nimeni cu voce tare: ma leg de ceva? pierd banii daca
+        ma opresc?
+      */}
       <p class="echilibrat mt-5 text-lg text-gri">
-        Plătești lecțiile pe care le faci. Fără taxă de înscriere, fără abonament, fără manuale de cumpărat.
+        Plătești lecție cu lecție, sau iei un pachet și scade prețul pe lecție. Nimic nu se reînnoiește singur, iar lecțiile pe care nu le faci ți se întorc.
       </p>
     </div>
 
     {/* Discutia gratuita sta deasupra comutatorului: e valabila pentru amandoua. */}
     <div class="dezvaluie mt-12 flex flex-col items-start gap-6 rounded-[1.5rem] bg-alb p-7 sm:flex-row sm:items-center sm:p-9">
       {/* Aici era o bifă verde într-un cerc verde. Artiom: „e folosită de toate
-          website-urile din lume". Acum stă ușa din familia noastră de semne,
-          desenată o dată cu celelalte: discuția de cunoaștere chiar e ușa pe
-          care intri, si e singura gratuită. Semnele noastre stau libere, fără
-          rondea sub ele, ca în antet și la întrebări. */}
-      <Semn nume="usa" inaltime={72} class="shrink-0" />
+          website-urile din lume".
+
+          Prima încercare a fost ușa, ca metaforă pentru intrare. Artiom:
+          „nu prea se potrivește". Avea dreptate, ușa spune „intri undeva", nu
+          „vorbim".
+
+          Puse toate patru în bandă și privite una sub alta, balonul e singurul
+          care spune din prima privire despre ce e vorba. Cafeaua spune cafea,
+          cornul spune corn, sămânța nu se citește la mărimea asta.
+
+          Semnele noastre stau libere, fără rondea sub ele, ca în antet și la
+          întrebări. */}
+      <Semn nume="balon" inaltime={72} class="shrink-0" />
       <div class="flex-1">
         <p class="font-sans text-xl font-medium">{discutie.nume} <span class="text-verde">gratuită</span></p>
         <p class="echilibrat mt-1.5 text-gri">{discutie.detaliu}. {discutie.beneficii[2]}.</p>
