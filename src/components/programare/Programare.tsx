@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 import { NIVELURI, SCOPURI, TIPURI, type TipProgramare } from '@/lib/tipuri'
-import { cursGrup, site } from '@/config/site'
+import { cursGrup, pachete, site } from '@/config/site'
 import { dataRo, desfaZi, localDin, numeLuna, oraRo } from '@/lib/timp'
 import { sursaVizitei } from '@/lib/sursa'
 import IconArrow from '~icons/solar/arrow-right-linear'
@@ -57,6 +57,8 @@ export default function Programare({ whatsapp }: Props) {
   const [pas, setPas] = useState<1 | 2 | 3 | 4>(1)
   const [tip, setTip] = useState<TipProgramare>('cunoastere')
   const [scopInitial, setScopInitial] = useState('')
+  /** Pachetul ales pe pagina de preturi, daca a venit de acolo. */
+  const [mesajInitial, setMesajInitial] = useState('')
   const [sloturi, setSloturi] = useState<Sloturi>({})
   const [incarca, setIncarca] = useState(false)
   const [eroareSloturi, setEroareSloturi] = useState('')
@@ -71,7 +73,12 @@ export default function Programare({ whatsapp }: Props) {
   const [eroare, setEroare] = useState('')
   const [rezultat, setRezultat] = useState<{ incepe: string } | null>(null)
 
-  // Parametrii din link: ?tip=individual&scop=...
+  // Parametrii din link: ?tip=individual&scop=...&pachet=cinci
+  //
+  // Pachetul nu e retinut nicaieri in baza de date: site-ul arata preturile,
+  // iar numaratoarea lectiilor ramane intre Dorina si cursant, ca si plata,
+  // care se face prin transfer. Ca sa nu se piarda totusi intentia omului,
+  // pachetul ales pe pagina de preturi intra scris in mesajul care ajunge la ea.
   useEffect(() => {
     const t = parametru('tip') as TipProgramare
     if (t in TIPURI) {
@@ -79,6 +86,8 @@ export default function Programare({ whatsapp }: Props) {
       setPas(2)
     }
     setScopInitial(parametru('scop'))
+    const p = pachete.find((x) => x.id === parametru('pachet'))
+    if (p) setMesajInitial(`Vreau ${p.nume.toLowerCase()}, ${p.pretLectie} € pe lecție.`)
   }, [])
 
   // Sloturile se cer o data pe tip.
@@ -406,7 +415,7 @@ export default function Programare({ whatsapp }: Props) {
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="p-mesaj">Ceva ce ar trebui să știe Dorina? (opțional)</Label>
-                <Textarea id="p-mesaj" name="mesaj" rows={3} className="rounded-xl bg-crem" placeholder="Termen, situație, ce ai încercat până acum…" />
+                <Textarea id="p-mesaj" name="mesaj" rows={3} defaultValue={mesajInitial} className="rounded-xl bg-crem" placeholder="Termen, situație, ce ai încercat până acum…" />
               </div>
             </div>
 
