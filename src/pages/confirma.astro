@@ -18,7 +18,7 @@ import { oraNeocupata } from '../lib/sloturi'
 import { TIPURI } from '../lib/tipuri'
 import { dataRo, oraRo } from '../lib/timp'
 import { depozit } from '../server/depozit'
-import { emailConfirmare, emailNotificare, trimite } from '../server/email'
+import { emailConfirmare, emailNotificare, emailRefuz, trimite } from '../server/email'
 import { origineOk } from '../server/http'
 
 export const prerender = false
@@ -67,7 +67,21 @@ try {
       else if (p.token_expira && Date.parse(p.token_expira) < Date.now()) stare = 'expirat'
       else if (Astro.request.method !== 'POST') stare = 'intreaba'
       else if (raspuns === 'nu') {
-        await d.actualizeazaProgramare(p.id, { stare: 'anulata', token_confirmare: null, token_expira: null })
+        /*
+         * Refuzul nu e o anulare oarecare. Fara nota si fara email, ar cadea
+         * in „Anulate" printre cele scoase chiar de Dorina si ar afla de el
+         * abia daca s-ar uita. Artiom: „daca clientul refuza, sa-mi vina pe
+         * cabinet, sa pot apasa si sa retrimit".
+         */
+        const anulata = await d.actualizeazaProgramare(p.id, {
+          stare: 'anulata',
+          token_confirmare: null,
+          token_expira: null,
+          note: [p.note, `Cursantul a răspuns „nu pot atunci" la ora propusă (${dataRo(p.incepe)}, ora ${oraRo(p.incepe)}).`].filter(Boolean).join('\n'),
+        })
+        const setari = await d.setari()
+        const r = await trimite(emailRefuz(anulata, anulata.client ?? p.client, setari))
+        if (!r.ok) console.error('Emailul de refuz nu a plecat', r.motiv)
         stare = 'refuzat'
       } else {
         const [setari, blocaje, active] = await Promise.all([d.setari(), d.blocaje(), d.programari({ deLa: new Date().toISOString(), stare: 'active' })])
@@ -126,15 +140,26 @@ const titluri: Record<Stare, string> = {
 
       {stare === 'confirmat' && (
         <>
-          <p class="echilibrat mt-2 text-gri">{ceva}, {cand}. Ți-am trimis pe email confirmarea, cu tot ce trebuie.</p>
+          {/* Artiom: „pune acolo ceva, mulțumim sau felicitări, și o față de pe
+              website". Ecranul asta e ultimul lucru pe care il vede omul dupa
+              ce a apasat, deci merita sa fie cald, nu o insiruire de campuri. */}
+          <p class="echilibrat mt-2 text-lg text-cerneala">Mulțumim, {prenume}! Te-am trecut în calendar.</p>
           <PersonajCerc nume="saluta" inel="verde-10" disc="crem" marime={150} marimeMare={165} class="mt-7" />
+          <dl class="mt-7 space-y-3">
+            <div><dt class="text-xs text-gri">Ce</dt><dd class="text-[1.05rem]">{ceva}</dd></div>
+            <div><dt class="text-xs text-gri">Când</dt><dd class="text-[1.05rem]">{cand} <span class="text-gri">(ora României)</span></dd></div>
+          </dl>
+          <p class="echilibrat mt-6 leading-relaxed text-gri">
+            Ți-a plecat pe email confirmarea, cu linkul de Zoom și cu lecția gata de pus în calendarul telefonului.
+            Dacă nu o vezi în câteva minute, uită-te și în Spam.
+          </p>
           <a href="/" class="pastila pastila-albastra mt-8 inline-block !py-3">Înapoi la site</a>
         </>
       )}
 
       {stare === 'refuzat' && (
         <>
-          <p class="echilibrat mt-2 text-gri">Nicio problemă. Dorina vede răspunsul tău și îți propune altă oră. Sau alegi tu una acum.</p>
+          <p class="echilibrat mt-2 text-gri">Nicio problemă, ora s-a eliberat. Dorina a primit deja răspunsul tău și îți propune alta. Dacă vrei să nu mai aștepți, alege tu chiar acum ora care îți convine.</p>
           <a href="/programare/" class="pastila pastila-albastra mt-8 inline-block !py-3">Aleg eu ora</a>
         </>
       )}

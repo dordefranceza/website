@@ -55,6 +55,26 @@ export default defineConfig({
     // pachet arunca ReferenceError pe fiecare ruta care trece prin markdown.
     ssr: LA_BUILD ? { noExternal: ['sanitize-html', 'htmlparser2', 'is-plain-object'] } : {},
   },
+  /*
+   * Paza de CSRF a lui Astro, OPRITA dinadins, fiindca o facem noi.
+   *
+   * `checkOrigin` compara antetul `origin` cu originea din `request.url`. In
+   * spatele proxy-ului de pe Vercel cele doua nu ies mereu la fel, iar Astro
+   * respinge cererea INAINTE sa ajunga la pagina, cu „Cross-site POST form
+   * submissions are forbidden". Artiom a apasat „Confirm" din emailul primit
+   * pe telefon si exact asta a primit: o pagina neagra cu textul ala, iar
+   * lectia n-a fost confirmata niciodata.
+   *
+   * Se observa doar la formularele HTML adevarate: restul site-ului trimite
+   * JSON prin fetch, iar paza lui Astro nu se uita la JSON. De aceea programarea
+   * de pe site mergea si numai confirmarea din email cadea.
+   *
+   * Ce ramane in loc: `origineOk` din src/server/http.ts, care verifica acelasi
+   * antet dar fata de o lista scrisa de noi, si care respinge orice POST fara
+   * `origin`. Vezi si src/pages/confirma.astro, care il cheama.
+   */
+  security: { checkOrigin: false },
+
   // Tot CSS-ul intra in HTML: o cerere blocanta mai putin inainte de primul pixel.
   build: { inlineStylesheets: 'always' },
   compressHTML: true,

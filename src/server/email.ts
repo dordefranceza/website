@@ -301,6 +301,49 @@ export function emailGrupa(g: Grupa, c: Client, lectii: Programare[], setari: Se
   }
 }
 
+/**
+ * Cursantul a apasat „Nu pot atunci".
+ *
+ * Fara emailul asta, refuzul ar fi doar o lectie anulata printre altele in
+ * cabinet, iar Dorina ar afla despre el abia cand s-ar uita. Artiom: „daca
+ * clientul refuza, sa-mi vina pe cabinet, sa pot apasa si sa retrimit".
+ */
+export function emailRefuz(p: Programare, c: Client, setari: Setari): Email {
+  const cand = dataOraRo(p.incepe)
+  const cifre = cifreTelefon(c.telefon)
+  const catre = [setari.email_notificari || variabila('EMAIL_DORINA')].filter(Boolean)
+
+  const lista = [
+    { eticheta: 'Cine', valoare: c.nume },
+    { eticheta: 'Ora propusă', valoare: cand },
+    { eticheta: 'Ce', valoare: TIPURI[p.tip].nume },
+    { eticheta: 'Email', valoare: c.email },
+    { eticheta: 'Telefon', valoare: c.telefon },
+  ]
+
+  const butoane = [
+    buton(`${adresaSite()}/admin/#/programari`, 'Propune altă oră'),
+    cifre ? buton(`https://wa.me/${cifre}?text=${encodeURIComponent(`Bună, ${c.nume.split(' ')[0]}! Am văzut că ora de ${cand} nu îți convine. Când ți-ar fi bine?`)}`, 'Întreabă pe WhatsApp', '#25d366') : '',
+    buton(`mailto:${c.email}`, 'Răspunde pe email', '#ffffff', CERNEALA),
+  ].join('')
+
+  return {
+    catre,
+    raspundeLa: c.email,
+    subiect: `${c.nume} nu poate la ${cand}`,
+    text: [`${c.nume} a răspuns că nu poate la ${cand}.`, '', ...lista.filter((r) => r.valoare).map((r) => `${r.eticheta}: ${r.valoare}`), '', `Propune-i altă oră din cabinet: ${adresaSite()}/admin/#/programari`].join('\n'),
+    html: sablon({
+      figura: 'telefon',
+      eticheta: 'Ora nu convine',
+      titlu: `${c.nume} nu poate atunci`,
+      intro: `Ora a fost eliberată, deci o poate lua altcineva. Propune-i alta din cabinet, sau întreabă-l direct când i-ar fi bine.`,
+      corp: randuri(lista),
+      butoane,
+      subsol: 'Trimis automat de site-ul DorDeFranceza. Răspunzând la acest email scrii direct cursantului.',
+    }),
+  }
+}
+
 /** Confirmarea pe care o primeste cursantul imediat dupa programare. */
 export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email {
   const tip = TIPURI[p.tip]
