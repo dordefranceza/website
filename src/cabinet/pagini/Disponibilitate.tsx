@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Blocaj, Disponibilitate as Regula } from '@/lib/tipuri'
 import { dataOraRo, dataRo, numeZi, oraRo } from '@/lib/timp'
 import { apel } from '../api'
@@ -19,11 +19,19 @@ export default function Disponibilitate() {
   const [nou, setNou] = useState({ de_la: '', pana_la: '', motiv: '' })
   const [ziIntreagaCheie, setZiIntreagaCheie] = useState('')
 
+  /*
+   * Amprenta orarului asa cum e salvat pe server. Artiom a adaugat intervale,
+   * a plecat de pe pagina si nu s-a intamplat nimic pe site: „nu apare nimic,
+   * nu inteleg nimic". Nimic nu-i spunea ca mai are de apasat Salveaza.
+   */
+  const salvat = useRef('[]')
   const incarca = () => {
     setEroare('')
     Promise.all([apel<{ reguli: Regula[] }>('disponibilitate'), apel<{ blocaje: Blocaj[] }>('blocaje')])
       .then(([r, b]) => {
-        setReguli(r.reguli.map(({ zi, de_la, pana_la }) => ({ zi, de_la, pana_la })))
+        const curate = r.reguli.map(({ zi, de_la, pana_la }) => ({ zi, de_la, pana_la }))
+        salvat.current = JSON.stringify(curate)
+        setReguli(curate)
         setBlocaje(b.blocaje)
       })
       .catch((e: Error) => setEroare(e.message))
@@ -35,13 +43,17 @@ export default function Disponibilitate() {
     window.setTimeout(() => setToast(''), 2500)
   }
 
+  const nesalvat = reguli !== null && JSON.stringify(reguli) !== salvat.current
+
   async function salveazaReguli() {
     if (!reguli) return
     setAsteapta(true)
     try {
       const r = await apel<{ reguli: Regula[] }>('disponibilitate', { metoda: 'PUT', corp: { reguli } })
-      setReguli(r.reguli.map(({ zi, de_la, pana_la }) => ({ zi, de_la, pana_la })))
-      anunta('Orarul a fost salvat')
+      const curate = r.reguli.map(({ zi, de_la, pana_la }) => ({ zi, de_la, pana_la }))
+      salvat.current = JSON.stringify(curate)
+      setReguli(curate)
+      anunta('Orarul a fost salvat. Orele apar pe site imediat.')
     } catch (e) {
       anunta(e instanceof Error ? e.message : 'Nu s-a salvat')
     } finally {
@@ -100,11 +112,26 @@ export default function Disponibilitate() {
         </div>
       )}
 
+      {/* Randul asta apare doar cat timp exista modificari neduse la capat. */}
+      {nesalvat && (
+        <p className="mb-4 rounded-2xl bg-albastru-5 px-5 py-3.5 text-sm leading-relaxed text-cerneala">
+          Ai schimbat orarul dar nu l-ai salvat încă. Apasă <strong className="font-medium">Salvează orarul</strong>,
+          altfel nu se schimbă nimic pe site.
+        </p>
+      )}
+
       <div className="grid gap-6 xl:grid-cols-2">
         <Card>
           <div className="flex items-center justify-between gap-4">
             <h2 className="font-sans text-lg font-medium">Orarul săptămânal</h2>
-            <button type="button" onClick={salveazaReguli} disabled={asteapta || !reguli} className="pastila pastila-albastra !py-2.5 text-sm disabled:opacity-60">Salvează orarul</button>
+            <button
+              type="button"
+              onClick={salveazaReguli}
+              disabled={asteapta || !reguli}
+              className={`pastila !py-2.5 text-sm disabled:opacity-60 ${nesalvat ? 'pastila-albastra motion-safe:animate-pulse' : 'bg-crem-inchis text-cerneala'}`}
+            >
+              {nesalvat ? 'Salvează orarul' : 'Orarul e salvat'}
+            </button>
           </div>
           {/*
             Artiom a citit „Orarul saptamanal" ca „orarul pentru saptamana asta"
