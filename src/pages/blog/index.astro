@@ -35,7 +35,7 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-r
         <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {articole.map((a) => (
             <li>
-              <a href={`/blog/${a.slug}/`} class="group flex h-full flex-col overflow-hidden rounded-[1.5rem] bg-alb transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-30px_rgba(8,3,49,0.35)]">
+              <a href={`/blog/${a.slug}/`} class="group flex h-full flex-col overflow-hidden rounded-[1.5rem] bg-alb transition duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-cald-lg)]">
                 {a.imagine ? (
                   <img src={a.imagine} alt={a.imagine_alt} class="aspect-[16/10] w-full object-cover" width="640" height="400" loading="lazy" decoding="async" />
                 ) : (

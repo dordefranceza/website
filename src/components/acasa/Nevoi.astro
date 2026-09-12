@@ -15,7 +15,7 @@ const fundal = { albastru: 'bg-albastru-5 text-albastru', verde: 'bg-verde-5 tex
 
     <div class="dezvaluie-rand mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {nevoi.map((n) => (
-        <a href={`/programare/?scop=${encodeURIComponent(n.scop)}`} class="group flex flex-col rounded-[1.5rem] bg-alb p-7 transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-30px_rgba(8,3,49,0.35)]">
+        <a href={`/programare/?scop=${encodeURIComponent(n.scop)}`} class="group flex flex-col rounded-[1.5rem] bg-alb p-7 transition duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-cald-lg)]">
           <span class:list={['flex size-12 items-center justify-center rounded-2xl', fundal[n.culoare]]}>
             <Icon name={n.icon} class="size-6" />
           </span>

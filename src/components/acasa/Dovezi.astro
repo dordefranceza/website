@@ -9,7 +9,7 @@ import { dovezi } from '../../config/continut'
 
 {
   dovezi.length > 0 && (
-    <section class="bg-alb py-20 sm:py-28" aria-labelledby="titlu-dovezi">
+    <section class="bg-crem py-20 sm:py-28" aria-labelledby="titlu-dovezi">
       <div class="container-site">
         <div class="dezvaluie max-w-2xl">
           <p class="eticheta">Ce spun cursanții</p>
@@ -17,7 +17,7 @@ import { dovezi } from '../../config/continut'
         </div>
         <div class="dezvaluie-rand mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {dovezi.map((d) => (
-            <figure class="flex flex-col rounded-[1.5rem] bg-crem p-7">
+            <figure class="flex flex-col rounded-[1.5rem] bg-alb p-7">
               <Icon name="solar:chat-square-like-bold" class="size-7 text-roz" />
               <blockquote class="mt-5 flex-1 text-[1.02rem] leading-relaxed text-cerneala/90">{d.text}</blockquote>
               <figcaption class="mt-6">

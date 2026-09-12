@@ -27,7 +27,8 @@ const ogImage = new URL(image, Astro.site).href
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="preload" href="/fonts/erode-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/source-serif-4-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/source-serif-4-latin-ext-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/satoshi-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/satoshi-500.woff2" as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
@@ -44,7 +45,7 @@ const ogImage = new URL(image, Astro.site).href
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#f8f3eb" />
     <slot name="head" />
     <script is:inline>document.documentElement.classList.add('js')</script>
   </head>
@@ -55,9 +56,9 @@ const ogImage = new URL(image, Astro.site).href
     {!faraFooter && <Footer />}
     {!faraHeader && !faraFooter && <BaraMobila />}
     {import.meta.env.DEV && firmaIncompleta && (
-      <p class="fixed bottom-3 left-3 z-[90] max-w-xs rounded-2xl bg-portocaliu px-4 py-3 text-xs font-medium text-alb shadow-lg">
-        Datele firmei din src/config/firma.ts sunt necompletate. Se vede doar în dezvoltare.
-      </p>
+      <button type="button" onclick="this.remove()" class="fixed bottom-3 left-3 z-[90] max-w-xs rounded-2xl bg-portocaliu px-4 py-3 text-left text-xs font-medium text-alb shadow-lg">
+        Datele firmei din src/config/firma.ts sunt necompletate. Se vede doar în dezvoltare. Apasă ca să ascunzi.
+      </button>
     )}
 
     <script>

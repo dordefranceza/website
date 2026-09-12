@@ -3,12 +3,16 @@
 
 /* ===========================================================================
  *  FONTURI
- *  Gazduite local, de pe Fontshare (licenta ITF Free Font License).
- *  Erode pentru titluri, Satoshi pentru text si interfata.
+ *  Gazduite local. Source Serif 4 pentru titluri (inlocuitorul liber al lui
+ *  Reckless Neue din referinta August Health, folosit DOAR la 400, ca acolo),
+ *  Satoshi de pe Fontshare pentru text si interfata (locul lui Saans).
+ *  Subsetul latin-ext acopera diacriticele romanesti si se incarca doar cand
+ *  pagina le foloseste, adica mereu, dar separat de cel de baza.
  * ======================================================================== */
-@font-face { font-family: 'Erode'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/erode-400.woff2') format('woff2'); }
-@font-face { font-family: 'Erode'; font-style: italic; font-weight: 400; font-display: swap; src: url('/fonts/erode-400-italic.woff2') format('woff2'); }
-@font-face { font-family: 'Erode'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/erode-500.woff2') format('woff2'); }
+@font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/source-serif-4-latin-400-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/source-serif-4-latin-ext-400-normal.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Source Serif 4'; font-style: italic; font-weight: 400; font-display: swap; src: url('/fonts/source-serif-4-latin-400-italic.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Source Serif 4'; font-style: italic; font-weight: 400; font-display: swap; src: url('/fonts/source-serif-4-latin-ext-400-italic.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: 'Satoshi'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/satoshi-400.woff2') format('woff2'); }
 @font-face { font-family: 'Satoshi'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/satoshi-500.woff2') format('woff2'); }
 @font-face { font-family: 'Satoshi'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/satoshi-700.woff2') format('woff2'); }
@@ -41,10 +45,15 @@
   --color-whatsapp: #25d366;
   --color-rosu: #c52f54;
 
-  --font-display: 'Erode', Georgia, 'Times New Roman', serif;
+  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
   --font-sans: 'Satoshi', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   --ease-afara: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Umbre calde, cu tenta de maro (rgba 75,68,57), nu gri rece: fac parte din identitate. */
+  --shadow-cald-sm: 0 4px 4px rgb(75 68 57 / 0.05), 0 12px 16px -8px rgb(75 68 57 / 0.08);
+  --shadow-cald-md: 0 8px 16px rgb(99 91 79 / 0.08), 0 32px 32px -16px rgb(99 91 79 / 0.06);
+  --shadow-cald-lg: 0 12px 24px rgb(75 68 57 / 0.1), 0 48px 48px -24px rgb(75 68 57 / 0.12);
 
   /* Variabilele shadcn, legate de paleta de mai sus. */
   --color-background: var(--color-alb);
@@ -83,7 +92,8 @@
   }
 
   body {
-    background-color: var(--color-alb);
+    /* Panza e crem, nu alba: albul e pentru cardurile de deasupra (referinta August). */
+    background-color: var(--color-crem);
     color: var(--color-cerneala);
     font-family: var(--font-sans);
     font-synthesis-weight: none;
@@ -94,8 +104,8 @@
   h1, h2, h3 {
     font-family: var(--font-display);
     font-weight: 400;
-    letter-spacing: -0.01em;
-    line-height: 1.08;
+    letter-spacing: -0.015em;
+    line-height: 1.06;
     text-wrap: balance;
   }
 
@@ -146,13 +156,14 @@
 @utility pastila-albastra {
   background: var(--color-albastru);
   color: var(--color-alb);
+  box-shadow: var(--shadow-cald-md);
   &:hover { background: var(--color-albastru-inchis); transform: translateY(-1px); }
 }
 
 @utility pastila-alba {
   background: var(--color-alb);
   color: var(--color-cerneala);
-  box-shadow: 0 1px 2px rgb(8 3 49 / 0.06), 0 8px 24px -12px rgb(8 3 49 / 0.25);
+  box-shadow: var(--shadow-cald-md);
   &:hover { transform: translateY(-1px); }
 }
 

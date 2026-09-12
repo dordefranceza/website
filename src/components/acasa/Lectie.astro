@@ -9,7 +9,7 @@ import { anatomiaLectiei } from '../../config/continut'
 import { site } from '../../config/site'
 ---
 
-<section id="cum-arata" class="bg-alb py-20 sm:py-28" aria-labelledby="titlu-lectie">
+<section id="cum-arata" class="bg-crem py-20 sm:py-28" aria-labelledby="titlu-lectie">
   <div class="container-site grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-20">
     <div class="dezvaluie lg:sticky lg:top-32 lg:self-start">
       <p class="eticheta">Cum arată o lecție</p>
@@ -17,7 +17,7 @@ import { site } from '../../config/site'
       <p class="mt-5 text-lg text-gri">
         Nu te uiți la o prezentare și nu asculți o oră de gramatică. Lecția are aceeași structură de fiecare dată, ca să știi mereu unde ești.
       </p>
-      <div class="mt-8 flex flex-col gap-3 rounded-[1.5rem] bg-crem p-6">
+      <div class="mt-8 flex flex-col gap-3 rounded-[1.5rem] bg-alb p-6">
         <p class="flex items-start gap-3 text-[0.98rem]">
           <Icon name="solar:videocamera-record-bold" class="mt-0.5 size-5 shrink-0 text-albastru" />
           <span>Pe Zoom, cu ecranul partajat. Nu ai nevoie de cont, intri dintr-un link.</span>
@@ -36,7 +36,7 @@ import { site } from '../../config/site'
     <ol class="dezvaluie-rand space-y-3">
       {
         anatomiaLectiei.map((pas, i) => (
-          <li class:list={['flex flex-col gap-2 rounded-[1.5rem] p-6 sm:flex-row sm:gap-8 sm:p-7', i % 2 === 0 ? 'bg-crem' : 'bg-albastru-5']}>
+          <li class:list={['flex flex-col gap-2 rounded-[1.5rem] p-6 sm:flex-row sm:gap-8 sm:p-7', i % 2 === 0 ? 'bg-alb' : 'bg-albastru-5']}>
             <span class="w-32 shrink-0 font-sans text-sm font-bold uppercase tracking-wider text-albastru-text">{pas.cand}</span>
             <p class="leading-relaxed text-cerneala/85">{pas.ce}</p>
           </li>

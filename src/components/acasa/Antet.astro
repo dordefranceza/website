@@ -1,11 +1,21 @@
 ---
 /**
- * Antetul paginii de start, in spiritul August Health: titlu serif mare pe
- * alb, cercuri colorate cu fotografii si carduri plutitoare in jur, banda
- * crem ondulata jos. Pe telefon ramane un singur cerc cu Dorina.
+ * Antetul paginii de start, dupa referinta August Health: titlu serif mare,
+ * centrat, pe alb; in jur, cercuri colorate cu FOTOGRAFII, nu carduri de
+ * interfata. Cardurile de dinainte imitau un produs software care aici nu
+ * exista si nu spuneau nimic. Pozele spun: Paris, o masa de cafenea, un
+ * birou cu laptopul deschis, si Dorina. Pe telefon ramane un singur cerc.
  */
 import { Icon } from 'astro-icon/components'
 import { site, linkWhatsApp } from '../../config/site'
+
+/** Cercurile din jurul textului. Inelul colorat ramane vizibil in jurul pozei, ca in referinta. */
+const cercuri = [
+  { poza: '/images/dorina-placeholder.svg', alt: 'Dorina, profesoară de franceză', culoare: 'bg-roz', pozitie: 'left-[1%] top-[24%] size-[270px] xl:size-[320px]', anim: 'plutitor', intarziere: '0s' },
+  { poza: '/images/antet-paris.webp', alt: '', culoare: 'bg-verde', pozitie: 'right-[2%] top-[9%] size-[220px] xl:size-[250px]', anim: 'plutitor-lent', intarziere: '-3s' },
+  { poza: '/images/antet-cafenea.webp', alt: '', culoare: 'bg-albastru', pozitie: 'left-[5%] top-[64%] size-[240px] xl:size-[260px]', anim: 'plutitor', intarziere: '-2s' },
+  { poza: '/images/antet-birou.webp', alt: '', culoare: 'bg-portocaliu', pozitie: 'right-[4%] top-[52%] size-[270px] xl:size-[300px]', anim: 'plutitor-lent', intarziere: '-5s' },
+]
 ---
 
 <section class="relative overflow-hidden bg-alb pt-32 sm:pt-40 lg:pt-44" aria-labelledby="titlu-antet">
@@ -15,12 +25,12 @@ import { site, linkWhatsApp } from '../../config/site'
       <Icon name="solar:arrow-right-linear" class="size-4" />
     </a>
 
-    <h1 id="titlu-antet" class="intrare mt-7 max-w-4xl text-[2.7rem] leading-[1.02] sm:text-6xl lg:text-[4.75rem]" style="--intarziere:80ms">
-      Franceza pe care <em class="not-italic text-albastru">ajungi</em> să o vorbești
+    <h1 id="titlu-antet" class="intrare mt-7 max-w-3xl text-[2.7rem] leading-[1.02] sm:text-6xl lg:text-[4.25rem]" style="--intarziere:80ms">
+      Franceza explicată simplu, <em class="not-italic text-albastru">pe înțelesul tău</em>
     </h1>
 
     <p class="intrare mt-6 max-w-2xl text-lg leading-relaxed text-gri sm:text-xl" style="--intarziere:160ms">
-      Lecții individuale cu Dorina, pentru adulți care au nevoie de franceză pentru ceva anume: un job, o mutare, un examen. Pleci de la prima discuție cu un plan, nu cu o listă de prețuri.
+      Lecții individuale online cu Dorina, pentru adulți care au nevoie de franceză pentru ceva anume: un job, o mutare, un examen. Fără gramatică tocită, fără ore în care doar asculți. Vorbești din prima lecție.
     </p>
 
     <div class="intrare mt-9 flex flex-col items-center gap-3 sm:flex-row" style="--intarziere:240ms">
@@ -41,50 +51,25 @@ import { site, linkWhatsApp } from '../../config/site'
     </ul>
   </div>
 
-  {/* Cercurile din jurul textului, doar pe ecrane mari */}
+  {/* Cercurile cu fotografii, doar pe ecrane mari. Inelul colorat e de 14px. */}
   <div class="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden="true">
-    <div class="plutitor absolute left-[2%] top-[22%] size-[300px] overflow-hidden rounded-full bg-roz xl:size-[340px]">
-      <img src="/images/dorina-placeholder.svg" alt="" class="absolute inset-0 size-full object-cover" width="340" height="340" loading="eager" />
-    </div>
-    <div class="plutitor-lent absolute right-[3%] top-[10%] size-[240px] rounded-full bg-verde xl:size-[280px]">
-      <div class="absolute inset-x-6 bottom-8 rounded-2xl bg-alb/95 p-4 shadow-lg">
-        <p class="text-xs font-bold uppercase tracking-wider text-verde">Următoarea lecție</p>
-        <p class="mt-1 font-medium">marți, 18:00 · Zoom</p>
-        <p class="text-sm text-gri">Interviul de angajare, partea a 2-a</p>
-      </div>
-    </div>
-    <div class="plutitor absolute left-[4%] top-[64%] size-[260px] rounded-full bg-albastru" style="animation-delay:-2s">
-      <div class="absolute left-10 top-12 w-[280px] rounded-2xl bg-alb/95 p-4 shadow-lg">
-        <p class="text-sm font-medium">Planul tău</p>
-        <div class="mt-2 flex items-center gap-2">
-          <span class="rounded-full bg-albastru-5 px-2.5 py-1 text-xs font-bold text-navy">Interviu</span>
-          <span class="rounded-full bg-verde-5 px-2.5 py-1 text-xs font-bold text-verde">12 lecții</span>
-          <span class="ml-auto text-xs text-gri">obiective la 4, 8, 12</span>
+    {
+      cercuri.map((c) => (
+        <div class:list={['absolute rounded-full p-3.5', c.culoare, c.pozitie, c.anim]} style={`animation-delay:${c.intarziere}`}>
+          <img src={c.poza} alt={c.alt} class="size-full rounded-full object-cover" width="340" height="340" loading="lazy" decoding="async" />
         </div>
-      </div>
-    </div>
-    <div class="plutitor-lent absolute right-[5%] top-[50%] size-[300px] rounded-full bg-portocaliu xl:size-[330px]" style="animation-delay:-5s">
-      <div class="absolute left-[-40px] top-14 w-[300px] rounded-2xl bg-alb/95 p-4 shadow-lg">
-        <div class="flex items-center gap-3">
-          <span class="flex size-9 items-center justify-center rounded-full bg-crem"><Icon name="solar:chat-round-dots-bold" class="size-5 text-portocaliu" /></span>
-          <div>
-            <p class="text-sm font-medium">Dorina, pe WhatsApp</p>
-            <p class="text-xs text-gri">acum 5 minute</p>
-          </div>
-        </div>
-        <p class="mt-3 rounded-xl bg-crem px-3 py-2 text-sm">Bravo, «je voudrais» e perfect. Data viitoare trecem la condițional.</p>
-      </div>
-    </div>
+      ))
+    }
   </div>
 
   {/* Pe telefon si tableta: cercul cu Dorina sub text */}
   <div class="container-site relative z-10 mt-12 flex justify-center lg:hidden">
-    <div class="relative size-56 overflow-hidden rounded-full bg-roz sm:size-72">
-      <img src="/images/dorina-placeholder.svg" alt="Dorina, profesoară de franceză" class="absolute inset-0 size-full object-cover" width="288" height="288" loading="eager" />
+    <div class="rounded-full bg-roz p-3">
+      <img src="/images/dorina-placeholder.svg" alt="Dorina, profesoară de franceză" class="size-52 rounded-full object-cover sm:size-64" width="288" height="288" loading="eager" />
     </div>
   </div>
 
-  {/* Banda crem ondulata */}
+  {/* Banda crem ondulata, trecerea spre panza crem a paginii */}
   <div class="relative mt-16 h-24 lg:mt-40 lg:h-32" aria-hidden="true">
     <svg class="absolute inset-x-0 bottom-0 h-full w-full" viewBox="0 0 1440 120" preserveAspectRatio="none">
       <path d="M0,60 C240,110 480,0 720,40 C960,80 1200,120 1440,50 L1440,120 L0,120 Z" fill="#f8f3eb" />

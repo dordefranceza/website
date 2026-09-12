@@ -51,7 +51,7 @@ const schema = gasit
 
 <Base title={titlu} description={descriere} image={gasit?.imagine || undefined} noindex={!gasit}>
   {schema && <script slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} />}
-  <main id="continut" class="bg-alb pt-32 pb-8 sm:pt-40">
+  <main id="continut" class="bg-crem pt-32 pb-8 sm:pt-40">
     {
       !gasit ? (
         <div class="container-site text-center">
@@ -61,7 +61,7 @@ const schema = gasit
           <a href="/blog/" class="pastila pastila-albastra mt-8">Toate articolele</a>
         </div>
       ) : (
-        <article class="container-site max-w-3xl">
+        <article class="container-site max-w-3xl rounded-[2rem] bg-alb px-6 py-10 sm:px-12 sm:py-14">
           <a href="/blog/" class="text-sm font-medium text-albastru-text">Toate articolele</a>
           <h1 class="mt-5 text-4xl sm:text-5xl">{gasit.titlu}</h1>
           <p class="mt-4 text-sm text-gri">

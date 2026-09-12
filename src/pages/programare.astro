@@ -1,17 +1,42 @@
 ---
 import Base from '../layouts/Base.astro'
 import Programare from '../components/programare/Programare'
+import { Icon } from 'astro-icon/components'
 import { site } from '../config/site'
 ---
 
-<Base title="Programează o lecție · DorDeFranceza" description="Alege ziua și ora din calendarul Dorinei. Prima discuție de 20 de minute e gratuită. Confirmarea vine pe email imediat.">
+<Base
+  title="Programează o lecție · DorDeFranceza"
+  description={`Alege ziua și ora din calendarul Dorinei. Prima discuție de ${site.durataCunoastere} de minute e gratuită. Confirmarea vine pe email imediat, cu linkul de Zoom.`}
+>
   <main id="continut" class="bg-crem pt-28 pb-20 sm:pt-36 sm:pb-28">
     <div class="container-site">
-      <div class="mx-auto max-w-2xl text-center">
-        <p class="eticheta">Programare</p>
-        <h1 class="mt-3 text-4xl sm:text-5xl">Alege ziua și ora care îți convin</h1>
-        <p class="mt-4 text-lg text-gri">Trei pași, un minut. Confirmarea vine pe email imediat, cu linkul de Zoom.</p>
+      {/* Antetul paginii: textul in stanga, o fotografie in cerc colorat in dreapta,
+          ca in antetul de pe pagina de start. Pe telefon cercul sta deasupra. */}
+      <div class="grid items-center gap-8 lg:grid-cols-[1.3fr_1fr] lg:gap-12">
+        <div class="order-2 text-center lg:order-1 lg:text-left">
+          <p class="eticheta">Programare</p>
+          <h1 class="mt-3 text-4xl sm:text-5xl lg:text-[3.5rem]">Alege ziua și ora care îți convin</h1>
+          <p class="mt-4 max-w-xl text-lg text-gri lg:mx-0 mx-auto">
+            Trei pași, un minut. Confirmarea vine pe email imediat, cu linkul de Zoom. Dacă e prima dată, alege discuția gratuită: {site.durataCunoastere} de minute în care îți evaluez nivelul și pleci cu un plan.
+          </p>
+          <ul class="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-gri lg:justify-start">
+            <li class="flex items-center gap-2"><Icon name="solar:calendar-mark-bold" class="size-4 text-albastru" /> Ora României</li>
+            <li class="flex items-center gap-2"><Icon name="solar:videocamera-record-bold" class="size-4 text-albastru" /> Pe Zoom, fără cont</li>
+            <li class="flex items-center gap-2"><Icon name="solar:shield-check-bold" class="size-4 text-albastru" /> Reprogramare gratuită cu 24 de ore înainte</li>
+          </ul>
+        </div>
+        <div class="order-1 flex justify-center lg:order-2 lg:justify-end">
+          <div class="relative">
+            <div class="absolute -left-6 top-4 size-16 rounded-full bg-roz sm:-left-10 sm:size-24" aria-hidden="true"></div>
+            <div class="absolute -bottom-2 -right-4 size-12 rounded-full bg-albastru sm:-right-8 sm:size-20" aria-hidden="true"></div>
+            <div class="relative rounded-full bg-portocaliu p-3 sm:p-4">
+              <img src="/images/antet-birou.webp" alt="Un birou cu laptopul deschis pentru lecția pe Zoom" class="size-44 rounded-full object-cover sm:size-60 lg:size-72" width="288" height="288" loading="eager" fetchpriority="high" decoding="async" />
+            </div>
+          </div>
+        </div>
       </div>
+
       <Programare client:load whatsapp={site.whatsapp} />
     </div>
   </main>
