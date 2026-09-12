@@ -3,7 +3,7 @@ import { PersonajCerc } from './PersonajCerc'
  * Cabinetul Dorinei: o aplicatie mica in browser, cu rute in hash
  * (#/, #/programari, #/calendar, #/cursanti, #/disponibilitate, #/setari).
  */
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { iesi, legat, sesiune, type Sesiune } from './auth'
 import Autentificare from './pagini/Autentificare'
@@ -75,6 +75,37 @@ export default function App() {
     setStare('afara')
   }
 
+  const bara = useRef<HTMLDivElement | null>(null)
+  const primaAsezare = useRef(true)
+  const [bulina, setBulina] = useState<{ x: number; y: number; w: number; h: number } | null>(null)
+  const [faraTranzitie, setFaraTranzitie] = useState(true)
+
+  /*
+   * Pastila care aluneca pe bara de jos. Ii masuram locul din chiar iconita
+   * paginii curente, nu din socoteli: latimile difera cu cateva zecimi, iar
+   * `flex-1` le imparte cum vrea el.
+   *
+   * `useLayoutEffect`, nu `useEffect`: mutarea se scrie inainte sa se vada
+   * cadrul, altfel pastila apare o clipa in locul vechi. La prima asezare si la
+   * rotirea telefonului se muta pe loc, fara alunecare, ca sa nu porneasca din
+   * coltul din stanga la fiecare incarcare.
+   */
+  useLayoutEffect(() => {
+    const asaza = (peLoc: boolean) => {
+      const el = bara.current?.querySelector<HTMLElement>('[data-activ="true"] [data-pastila]')
+      if (!el) return
+      if (peLoc) setFaraTranzitie(true)
+      setBulina({ x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight })
+      if (peLoc) requestAnimationFrame(() => requestAnimationFrame(() => setFaraTranzitie(false)))
+    }
+    asaza(primaAsezare.current)
+    primaAsezare.current = false
+
+    const laRedimensionare = () => asaza(true)
+    window.addEventListener('resize', laRedimensionare)
+    return () => window.removeEventListener('resize', laRedimensionare)
+  }, [cale])
+
   if (stare === 'incarca') {
     return (
       /* Aici pulsa marca, adica semnul mic al brandului. Artiom: „apare o ușă,
@@ -91,6 +122,7 @@ export default function App() {
   if (stare === 'afara' || stare === 'cod') {
     return <Autentificare cereCod={stare === 'cod'} email={sesiuneCurenta?.email ?? ''} laIntrare={verifica} />
   }
+
 
   const activa = RUTE.find((r) => r.cale === cale) ?? RUTE[0]
   const Pagina = activa.Pagina
@@ -148,26 +180,52 @@ export default function App() {
       </aside>
 
       {/* Bara de jos, doar pe telefon si pe tableta. `pb-[env(safe-area-inset-bottom)]`
-          o tine deasupra barei de gesturi de pe iPhone. */}
+          o tine deasupra barei de gesturi de pe iPhone.
+
+          Pastila albastra e UN singur element care aluneca de la o pagina la
+          alta, nu un fundal care se stinge pe una si se aprinde pe alta.
+          Artiom a cerut acelasi lucru si la comutatorul de preturi, cu aceleasi
+          cuvinte: „nu asa brusc". Fundalul care clipeste nu se citeste ca
+          miscare; unul care se muta, da. */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-40 border-0 bg-cerneala pb-[env(safe-area-inset-bottom)] lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 bg-cerneala pb-[env(safe-area-inset-bottom)] lg:hidden"
         aria-label="Cabinet"
       >
-        <div className="flex">
+        <div ref={bara} className="relative flex">
+          {bulina && (
+            <span
+              aria-hidden="true"
+              className={cn(
+                'pointer-events-none absolute rounded-full bg-albastru',
+                faraTranzitie ? '' : 'motion-safe:transition-[transform,width] motion-safe:duration-[380ms] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]',
+              )}
+              style={{
+                width: bulina.w,
+                height: bulina.h,
+                transform: `translate(${bulina.x}px, ${bulina.y}px)`,
+                left: 0,
+                top: 0,
+              }}
+            />
+          )}
           {RUTE.map(({ cale: c, nume, Icon }) => (
             <a
               key={c}
               href={`#${c}`}
+              data-activ={c === activa.cale ? 'true' : undefined}
               aria-current={c === activa.cale ? 'page' : undefined}
               className={cn(
-                'flex flex-1 flex-col items-center gap-1 px-0.5 pb-2 pt-2.5 text-[10px] font-medium leading-tight transition',
+                'relative flex flex-1 flex-col items-center gap-1 px-0.5 pb-2 pt-2.5 text-[10px] font-medium leading-tight',
+                'motion-safe:transition-colors motion-safe:duration-300',
                 c === activa.cale ? 'text-alb' : 'text-alb/55',
               )}
             >
               <span
+                data-pastila
                 className={cn(
-                  'flex h-7 w-11 items-center justify-center rounded-full transition',
-                  c === activa.cale ? 'bg-albastru text-alb' : 'text-alb/70',
+                  'relative z-10 flex h-7 w-11 items-center justify-center rounded-full',
+                  'motion-safe:transition-colors motion-safe:duration-300',
+                  c === activa.cale ? 'text-alb' : 'text-alb/70',
                 )}
               >
                 <Icon className="size-[18px]" />
