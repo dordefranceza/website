@@ -23,12 +23,12 @@ const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
     role="dialog"
     aria-modal="false"
     aria-labelledby="ddf-cookie-titlu"
-    class="fixed inset-x-3 bottom-3 z-[95] mx-auto max-w-lg rounded-[1.5rem] bg-alb p-5 shadow-[0_10px_40px_rgba(8,3,49,0.18)] sm:inset-x-auto sm:right-4 sm:bottom-4 sm:p-6"
+    class="fixed inset-x-3 bottom-24 z-[95] mx-auto max-w-lg rounded-[1.5rem] bg-alb p-5 shadow-[0_10px_40px_rgba(8,3,49,0.18)] sm:inset-x-auto sm:right-4 sm:p-6 lg:bottom-4"
   >
     <p id="ddf-cookie-titlu" class="font-sans text-[1.05rem] font-medium">Ne dai voie să numărăm vizitele?</p>
     <p class="mt-2 text-sm leading-relaxed text-gri">
-      Folosim Google Analytics ca să vedem câți oameni ajung pe site și de unde vin. Nu vindem nimănui datele și nu te urmărim pe alte site-uri. Dacă spui nu, site-ul merge la fel, iar în browserul tău nu se scrie nimic.
-      <a href="/cookies/" class="text-albastru-text underline-offset-4 hover:underline">Ce se salvează, pe larg</a>.
+      Folosim Google Analytics ca să vedem câți oameni ajung aici și de unde vin. Nu te urmărim pe alte site-uri. Dacă spui nu, în browserul tău nu se scrie nimic.
+      <a href="/cookies/" class="text-albastru-text underline-offset-4 hover:underline">Pe larg</a>.
     </p>
     <div class="mt-5 flex flex-wrap gap-3">
       <button type="button" data-ddf-cookie="da" class="pastila pastila-albastra !py-2.5 text-sm">Sunt de acord</button>
@@ -74,9 +74,15 @@ const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
         document.head.appendChild(s)
       }
 
+      var bara = document.getElementById('bara-mobila')
+      function baraJos(ascunsa) {
+        if (bara) bara.style.visibility = ascunsa ? 'hidden' : ''
+      }
+
       function raspunde(v) {
         scrie(v)
         banner.hidden = true
+        baraJos(false)
         if (v === 'da') porneste()
       }
 
@@ -89,6 +95,7 @@ const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
         stare: citeste,
         redeschide: function () {
           banner.hidden = false
+          baraJos(true)
           var b = banner.querySelector('button')
           if (b) b.focus()
         },
@@ -96,7 +103,10 @@ const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
 
       var ales = citeste()
       if (ales === 'da') porneste()
-      else if (ales !== 'nu') banner.hidden = false
+      else if (ales !== 'nu') {
+        banner.hidden = false
+        baraJos(true)
+      }
     })()
   </script>
 )}

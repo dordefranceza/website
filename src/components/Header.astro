@@ -15,7 +15,13 @@ const linkuri = [
 
 <header class="fixed inset-x-0 top-3 z-50 px-3 sm:top-5 sm:px-5">
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-2 rounded-full bg-alb/85 py-2 pl-3 pr-2 shadow-[var(--shadow-cald-md)] backdrop-blur-xl sm:pl-6">
-    <a href="/" class="shrink-0" aria-label="Dór de Franceza, pagina de start"><Logo inaltime={19} class="sm:hidden" /><Logo inaltime={23} class="hidden sm:inline-flex" /></a>
+    <a href="/" class="shrink-0" aria-label="Dór de Franceza, pagina de start">
+      {/* Cele doua marimi stau in span-uri simple, nu in clasa siglei: `hidden`
+          pierdea in fata lui `inline-flex` din componenta si pe telefon se vedeau
+          amandoua, una langa alta. */}
+      <span class="sm:hidden"><Logo inaltime={19} /></span>
+      <span class="hidden sm:inline"><Logo inaltime={23} /></span>
+    </a>
 
     <nav class="hidden items-center gap-1 lg:flex" aria-label="Meniu principal">
       {linkuri.map((l) => (
