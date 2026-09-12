@@ -184,14 +184,14 @@ export const intrebari = [
 export const despre = {
   titlu: 'Bună, sunt Dorina',
   paragrafe: [
-    'Predau franceză online adulților din România care au nevoie de ea pentru ceva concret: un job, o mutare, un examen sau pur și simplu pentru plăcerea de a o vorbi.',
+    'Predau franceză online, explicată în română, oriunde ai fi: în România, în Moldova, în Franța sau oriunde te-a dus viața. Pentru ceva concret, un job, o mutare, un examen, sau pur și simplu pentru plăcerea de a o vorbi.',
     'Nu cred în lecții în care profesorul vorbește 45 de minute și tu asculți. La mine vorbești tu, greșești liniștit, iar eu te corectez pe loc, cu explicații scurte pe care le ții minte.',
     'Fiecare cursant are un plan al lui. Știi de la început ce vei ști să faci după 4, 8 și 12 lecții, iar între lecții nu ești singur: îmi scrii pe WhatsApp oricând te împiedici de ceva.',
   ],
   puncte: [
     { icon: 'solar:verified-check-bold', text: 'Lecții doar în română și franceză, fără intermediari' },
     { icon: 'solar:users-group-rounded-bold', text: 'Adulți, liceeni și copii' },
-    { icon: 'solar:clock-circle-bold', text: 'Lecții de 50 de minute, online' },
+    { icon: 'solar:clock-circle-bold', text: `Lecții de ${site.durataLectie} de minute, sau ${site.durataGrup} la grup` },
     { icon: 'solar:heart-bold', text: 'Corectare blândă, dar sinceră' },
   ],
 }

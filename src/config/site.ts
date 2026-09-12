@@ -26,8 +26,14 @@ export const site = {
   numeAfisat: 'Dor de Franceză',
   profesoara: 'Dorina',
   slogan: 'Franceza pe care ajungi să o vorbești',
+  /*
+   * Scria „pentru adulti din Romania". Dorina preda vorbitorilor de romana de
+   * oriunde: din Romania, din Moldova, din Franta. Tara nu e criteriul, limba
+   * in care explica e. Limba ramane si semnalul pentru cautari: site-ul e in
+   * romana, deci nu pierdem nimic largind tara.
+   */
   descriere:
-    'Lecții online de franceză pentru adulți din România, cu Dorina. Pentru job, pentru mutare în Franța, pentru BAC sau pur și simplu pentru tine. Lecții de 50 de minute, individuale sau în grup mic.',
+    'Lecții online de franceză cu Dorina, explicate în română, oriunde ai fi: în România, în Moldova sau în Franța. Pentru job, pentru mutare, pentru BAC sau pentru plăcerea de a vorbi.',
   url: 'https://dordefranceza.vercel.app',
   limba: 'ro',
   locale: 'ro_RO',

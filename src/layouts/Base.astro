@@ -77,10 +77,7 @@ const ogImage = new URL(image, Astro.site).href
       // browserele in care observatorul nu emite niciodata.
       const elemente = document.querySelectorAll<HTMLElement>('.dezvaluie, .dezvaluie-rand')
       document.querySelectorAll<HTMLElement>('.dezvaluie-rand').forEach((rand) => {
-        ;[...rand.children].forEach((copil, i) => {
-          copil.classList.add('dezvaluie')
-          ;(copil as HTMLElement).style.setProperty('--intarziere', `${Math.min(i * 90, 540)}ms`)
-        })
+        ;[...rand.children].forEach((copil) => copil.classList.add('dezvaluie'))
       })
       const toate = document.querySelectorAll<HTMLElement>('.dezvaluie')
       const arata = (el: Element) => {
@@ -104,12 +101,32 @@ const ogImage = new URL(image, Astro.site).href
         let aEmis = false
         const obs = new IntersectionObserver(
           (intrari) => {
-            for (const i of intrari) {
-              if (!i.isIntersecting) continue
-              aEmis = true
-              arata(i.target)
-              obs.unobserve(i.target)
-            }
+            const intrate = intrari.filter((i) => i.isIntersecting)
+            if (intrate.length === 0) return
+            aEmis = true
+            // In ordinea din pagina, nu in ordinea in care le raporteaza
+            // observerul, ca decalajul sa curga de sus in jos.
+            intrate.sort((a, b) =>
+              a.target.compareDocumentPosition(b.target) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1,
+            )
+            intrate.forEach((i, k) => {
+              const el = i.target as HTMLElement
+              /*
+               * Decalajul se socoteste pe grupul care intra ACUM, nu pe pozitia
+               * in pagina. Inainte era legat de indice, cu plafon la 540 ms: la
+               * lista de intrebari frecvente asta insemna ca primele sase
+               * curgeau frumos, iar de la a saptea incolo toate asteptau aceeasi
+               * jumatate de secunda si apoi apareau gramada. Artiom: „apar 5,
+               * dupa aia 3, dupa aia cate una, de ce?"
+               *
+               * Acum, cand intra mai multe deodata curg una dupa alta, iar cand
+               * intra una singura apare pe loc, fara nicio asteptare.
+               */
+              if (intrate.length > 1) el.style.setProperty('--intarziere', `${Math.min(k * 90, 450)}ms`)
+              else el.style.removeProperty('--intarziere')
+              arata(el)
+              obs.unobserve(el)
+            })
           },
           { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
         )
