@@ -44,6 +44,27 @@ export type Programare = {
 }
 
 /**
+ * Un pachet cumparat de un cursant: N lectii platite deodata.
+ *
+ * Un rand e o cumparare, nu un abonament. Cine ia doua pachete are doua randuri,
+ * iar lectiile ramase sunt suma lor minus lectiile individuale pe care le-a
+ * facut. Nu legam pachetul de lectii anume: se numara, si atat. Asa nu exista
+ * stare de reparat cand se anuleaza sau se muta o lectie.
+ */
+export type Pachet = {
+  id: string
+  client_id: string
+  /** „Pachet de 10 lectii", asa cum se numeste pe site. */
+  nume: string
+  lectii: number
+  /** Cat a platit pe tot pachetul. */
+  pret: number
+  platit: boolean
+  note: string
+  creat: string
+}
+
+/**
  * O grupa: aceiasi oameni, aceeasi ora, in fiecare saptamana, un numar stiut de
  * lectii.
  *

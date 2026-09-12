@@ -10,7 +10,9 @@
  *  GET    programari       ?deLa=ISO&panaLa=ISO&stare=
  *  PATCH  programare       { id, stare?, platit?, suma?, note?, link_zoom?, incepe? }
  *  POST   trimite-link     { id, link? }  trimite linkul de Zoom cursantului
- *  GET    clienti
+ *  GET    clienti          cu categoria, grupele si lectiile ramase din pachete
+ *  POST   pachet           { client_id, lectii, pret, nume?, platit?, note? }
+ *  DELETE pachet           ?id=
  *  GET    grupe            grupele cu cursantii si urmatoarea lectie
  *  POST   grupa            { id?, nume, nivel, scop, zi, ora, prima, lectii, locuri, pret, activ }
  *  DELETE grupa            ?id=
@@ -119,14 +121,21 @@ function csv(programari: Programare[]): string {
 
 const gestioneaza: APIRoute = async ({ request, params, url }) => {
   if (!origineOk(request)) return eroare(403, 'Origine nepermisă')
-  const admin = await adminDin(request)
-  if (!admin) return eroare(401, 'Neautentificat')
-
+  /*
+   * Verificarea cine esti statea in afara lui try, deci daca ea cadea, cererea
+   * iesea din functie fara raspunsul nostru si cabinetul primea o pagina de
+   * eroare a platformei, din care nu se putea citi nimic. Artiom a vazut doar
+   * „Eroare pe server" si nu avea cum sa afle ca de fapt baza de date nu
+   * raspunsese. Acum e inauntru, si mesajul spune ce s-a intamplat.
+   */
   const actiune = params.actiune ?? ''
   const metoda = request.method
   const d = depozit()
 
   try {
+    const admin = await adminDin(request)
+    if (!admin) return eroare(401, 'Neautentificat')
+
     if (actiune === 'sumar' && metoda === 'GET') return raspunde(200, { ok: true, ...(await sumar()) })
 
     if (actiune === 'programari' && metoda === 'GET') {
@@ -240,7 +249,7 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
      * individual, cine are doar discutia gratuita n-a inceput inca.
      */
     if (actiune === 'clienti' && metoda === 'GET') {
-      const [clienti, programari, grupe] = await Promise.all([d.clienti(), d.programari(), d.grupe()])
+      const [clienti, programari, grupe, pachete] = await Promise.all([d.clienti(), d.programari(), d.grupe(), d.pachete()])
       const cu = clienti.map((c) => {
         const ale = programari.filter((p) => p.client_id === c.id && p.stare !== 'anulata')
         const individuale = ale.filter((p) => p.tip === 'individual').length
@@ -249,8 +258,16 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
         const numeGrupe = [...new Set(laGrup.map((p) => p.grupa_id).filter(Boolean))]
           .map((idG) => grupe.find((g) => g.id === idG)?.nume)
           .filter(Boolean) as string[]
+        /* Lectiile cumparate in avans si cate au mai ramas din ele. Se scad
+           doar lectiile individuale: grupa se plateste separat, pe curs. */
+        const alePachet = pachete.filter((x) => x.client_id === c.id)
+        const cumparate = alePachet.reduce((s2, x) => s2 + x.lectii, 0)
+        const ramase = Math.max(0, cumparate - individuale)
         return {
           ...c,
+          pachete: alePachet,
+          lectiiCumparate: cumparate,
+          lectiiRamase: ramase,
           lectii: ale.length,
           individuale,
           grup: laGrup.length,
@@ -258,7 +275,21 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
           grupe: numeGrupe,
           categorie: laGrup.length ? 'grup' : individuale ? 'individual' : 'proba',
           platit: ale.filter((p) => p.platit).reduce((s, p) => s + p.suma, 0),
-          deIncasat: ale.filter((p) => !p.platit && p.stare === 'finalizata').reduce((s, p) => s + p.suma, 0),
+          /* Lectiile acoperite de un pachet sunt deja platite, deci nu intra
+             la „de incasat", oricat ar scrie pe randul lor. */
+          deIncasat: (() => {
+            const neplatite = ale.filter((p) => !p.platit && p.stare === 'finalizata')
+            let acoperite = Math.max(0, cumparate - (individuale - neplatite.filter((p) => p.tip === 'individual').length))
+            let datorat = 0
+            for (const p of neplatite) {
+              if (p.tip === 'individual' && acoperite > 0) {
+                acoperite--
+                continue
+              }
+              datorat += p.suma
+            }
+            return datorat
+          })(),
           ultima: ale.map((p) => p.incepe).sort().at(-1) ?? null,
         }
       })
@@ -273,6 +304,39 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
       for (const camp of ['nume', 'email', 'telefon', 'nivel', 'scop'] as const) if (typeof b[camp] === 'string') s[camp] = text(b[camp], 160)
       if (typeof b.note === 'string') s.note = textLung(b.note, 4000)
       return raspunde(200, { ok: true, client: await d.actualizeazaClient(id, s) })
+    }
+
+    /* =======================================================================
+     *  PACHETE
+     * =======================================================================
+     * Cursantul cumpara 5, 10 sau 24 de lectii deodata si plateste o data.
+     * Nu legam pachetul de lectii anume: lectiile ramase sunt suma pachetelor
+     * minus lectiile individuale facute. Asa nu ramane nimic de reparat cand o
+     * lectie se muta sau se anuleaza.
+     */
+    if (actiune === 'pachet' && metoda === 'POST') {
+      const b = (await corpJson(request)) ?? {}
+      const idC = text(b.client_id, 60)
+      const clienti = await d.clienti()
+      if (!clienti.some((c) => c.id === idC)) return eroare(404, 'Cursantul nu există')
+      const lectii = Math.min(60, Math.max(1, Number(b.lectii) || 0))
+      if (!lectii) return eroare(400, 'Câte lecții are pachetul?')
+      const pachet = await d.adaugaPachet({
+        client_id: idC,
+        nume: text(b.nume, 80) || `Pachet de ${lectii} lecții`,
+        lectii,
+        pret: Math.max(0, Number(b.pret) || 0),
+        platit: b.platit === undefined ? true : daNu(b.platit),
+        note: textLung(b.note, 500),
+      })
+      return raspunde(200, { ok: true, pachet })
+    }
+
+    if (actiune === 'pachet' && metoda === 'DELETE') {
+      const idP = text(url.searchParams.get('id'), 60)
+      if (!idP) return eroare(400, 'Lipsește pachetul')
+      await d.stergePachet(idP)
+      return raspunde(200, { ok: true })
     }
 
     /* =======================================================================
@@ -539,6 +603,11 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
   } catch (e) {
     console.error('cabinet', actiune, e)
     const mesaj = e instanceof Error ? e.message : 'Eroare pe server'
+    /* Cand baza de date n-a raspuns, omul nu are ce face cu textul ei in
+       engleza. Ii spunem ce s-a intamplat si ce sa faca: sa mai apese o data. */
+    if (/gateway timeout|timed? ?out|fetch failed|network|econnreset|socket hang up|50[234]/i.test(mesaj)) {
+      return eroare(503, 'Baza de date nu a răspuns acum. Mai apasă o dată peste câteva secunde, nu se pierde nimic.')
+    }
     return eroare(/^Există deja/.test(mesaj) ? 409 : 500, mesaj)
   }
 }

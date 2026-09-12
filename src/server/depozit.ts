@@ -16,7 +16,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import type { Articol, ArticolSchimbari, Blocaj, CerereProgramare, Client, Disponibilitate, Grupa, Interval, OrarZi, Programare, Setari, StareProgramare } from '../lib/tipuri'
+import type { Articol, ArticolSchimbari, Blocaj, CerereProgramare, Client, Disponibilitate, Grupa, Interval, OrarZi, Pachet, Programare, Setari, StareProgramare } from '../lib/tipuri'
 import { SETARI_IMPLICITE } from '../lib/tipuri'
 import { inDezvoltare, supabaseLegat, variabila } from './mediu'
 
@@ -60,6 +60,9 @@ export interface Depozit {
   actualizeazaProgramare(id: string, s: SchimbariProgramare): Promise<Programare>
   clienti(): Promise<Client[]>
   actualizeazaClient(id: string, s: SchimbariClient): Promise<Client>
+  pachete(): Promise<Pachet[]>
+  adaugaPachet(p: Omit<Pachet, 'id' | 'creat'>): Promise<Pachet>
+  stergePachet(id: string): Promise<void>
   grupe(): Promise<Grupa[]>
   /** Creeaza (id null) sau salveaza o grupa. */
   salveazaGrupa(id: string | null, g: SchimbariGrupa): Promise<Grupa>
@@ -91,6 +94,7 @@ type Fisier = {
   disponibilitate: Disponibilitate[]
   orarZi: OrarZi[]
   grupe: Grupa[]
+  pachete: Pachet[]
   blocaje: Blocaj[]
   clienti: Client[]
   programari: Programare[]
@@ -110,6 +114,7 @@ const GOL: Fisier = {
   ],
   orarZi: [],
   grupe: [],
+  pachete: [],
   blocaje: [],
   clienti: [],
   programari: [],
@@ -128,6 +133,7 @@ class DepozitLocal implements Depozit {
         disponibilitate: d.disponibilitate ?? GOL.disponibilitate,
         orarZi: d.orarZi ?? [],
         grupe: d.grupe ?? [],
+        pachete: d.pachete ?? [],
         blocaje: d.blocaje ?? [],
         clienti: d.clienti ?? [],
         programari: d.programari ?? [],
@@ -249,6 +255,21 @@ class DepozitLocal implements Depozit {
   async grupe() {
     return this.citeste().grupe.sort((a, b) => b.creat.localeCompare(a.creat))
   }
+  async pachete() {
+    return this.citeste().pachete.sort((a, b) => b.creat.localeCompare(a.creat))
+  }
+  async adaugaPachet(pa: Omit<Pachet, 'id' | 'creat'>) {
+    const f = this.citeste()
+    const nou: Pachet = { ...pa, id: id(), creat: acum() }
+    f.pachete.push(nou)
+    this.scrie(f)
+    return nou
+  }
+  async stergePachet(idP: string) {
+    const f = this.citeste()
+    f.pachete = f.pachete.filter((x) => x.id !== idP)
+    this.scrie(f)
+  }
   async salveazaGrupa(idG: string | null, g: SchimbariGrupa) {
     const f = this.citeste()
     if (idG) {
@@ -348,8 +369,35 @@ class DepozitSupabase implements Depozit {
     })
   }
 
-  private arunca(eroare: { message: string } | null, context: string): void {
-    if (eroare) throw new Error(`${context}: ${eroare.message}`)
+  private arunca(eroare: { message?: string } | null, context: string): void {
+    if (eroare) throw new Error(`${context}: ${eroare.message ?? 'eroare necunoscută'}`)
+  }
+
+  /*
+   * Supabase, pe planul gratuit, mai raspunde din cand in cand „Gateway
+   * Timeout". Nu e o greseala de-a noastra si nu e ceva de reparat in cod: e
+   * baza de date care doarme sau e aglomerata o secunda.
+   *
+   * Artiom a apasat „Trimite propunerea" fix intr-una din secundele alea si a
+   * primit „Eroare pe server". Acum cererea se incearca de trei ori, la 300 si
+   * la 800 de milisecunde, si abia apoi se da batuta. Se reincearca DOAR
+   * caderile trecatoare, nu si un raspuns limpede de „nu ai voie" sau „randul
+   * nu exista", care s-ar repeta la fel de trei ori degeaba.
+   */
+  private trecatoare(eroare: { message?: string; code?: string } | null): boolean {
+    if (!eroare) return false
+    const m = `${eroare.message ?? ''} ${eroare.code ?? ''}`.toLowerCase()
+    return /gateway timeout|timed? ?out|fetch failed|network|econnreset|socket hang up|503|502|504|upstream/.test(m)
+  }
+
+  protected async incearca<T>(cerere: () => PromiseLike<{ data: T; error: { message?: string; code?: string } | null }>) {
+    let ultim = await cerere()
+    for (const pauza of [300, 800]) {
+      if (!this.trecatoare(ultim.error)) return ultim
+      await new Promise((r) => setTimeout(r, pauza))
+      ultim = await cerere()
+    }
+    return ultim
   }
 
   async setari() {
@@ -384,8 +432,10 @@ class DepozitSupabase implements Depozit {
    * orarul saptamanal, adica exact ce era inainte. De asta lipsa lui se
    * inghite la citire si se spune pe sleau doar la salvare, in cabinet.
    */
-  private lipseste(eroare: { code?: string; message: string } | null): boolean {
-    return !!eroare && (eroare.code === '42P01' || eroare.code === 'PGRST205' || /orar_zi/.test(eroare.message) && /does not exist|not find/i.test(eroare.message))
+  private lipseste(eroare: { code?: string; message?: string } | null): boolean {
+    if (!eroare) return false
+    const m = eroare.message ?? ''
+    return eroare.code === '42P01' || eroare.code === 'PGRST205' || (/orar_zi|pachete/.test(m) && /does not exist|not find/i.test(m))
   }
 
   async orarZi(deLa?: string, panaLa?: string) {
@@ -496,9 +546,28 @@ class DepozitSupabase implements Depozit {
     return normProgramare({ ...(data as Programare), client })
   }
   async actualizeazaProgramare(idP: string, s: SchimbariProgramare) {
-    const { data, error } = await this.sb.from('programari').update(s).eq('id', idP).select('*, client:clienti(*)').single()
+    const { data, error } = await this.incearca(() => this.sb.from('programari').update(s).eq('id', idP).select('*, client:clienti(*)').single())
     this.arunca(error, 'actualizare programare')
     return normProgramare(data as Programare)
+  }
+  async pachete() {
+    const { data, error } = await this.sb.from('pachete').select('*').order('creat', { ascending: false })
+    /* Ca si la `orar_zi`: pana nu e creat si expus tabelul, cabinetul trebuie
+       sa mearga mai departe fara pachete, nu sa cada cu totul. */
+    if (this.lipseste(error)) return []
+    this.arunca(error, 'pachete')
+    return ((data ?? []) as Pachet[]).map((p) => ({ ...p, pret: Number(p.pret) || 0 }))
+  }
+  async adaugaPachet(pa: Omit<Pachet, 'id' | 'creat'>) {
+    const { data, error } = await this.sb.from('pachete').insert(pa).select().single()
+    if (this.lipseste(error)) throw new Error('Pachetele nu sunt pornite încă în baza de date')
+    this.arunca(error, 'adaugare pachet')
+    const p = data as Pachet
+    return { ...p, pret: Number(p.pret) || 0 }
+  }
+  async stergePachet(idP: string) {
+    const { error } = await this.sb.from('pachete').delete().eq('id', idP)
+    this.arunca(error, 'stergere pachet')
   }
   async grupe() {
     const { data, error } = await this.sb.from('grupe').select('*').order('creat', { ascending: false })
@@ -534,7 +603,7 @@ class DepozitSupabase implements Depozit {
     return normClient(data as Client)
   }
   async esteAdmin(email: string) {
-    const { data, error } = await this.sb.from('admin_email').select('email').eq('email', normalizeazaEmail(email)).maybeSingle()
+    const { data, error } = await this.incearca(() => this.sb.from('admin_email').select('email').eq('email', normalizeazaEmail(email)).maybeSingle())
     this.arunca(error, 'admin_email')
     return Boolean(data)
   }

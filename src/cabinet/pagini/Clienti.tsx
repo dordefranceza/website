@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import type { Client } from '@/lib/tipuri'
+import type { Client, Pachet } from '@/lib/tipuri'
 import { NIVELURI, SCOPURI } from '@/lib/tipuri'
+import { pachete as PACHETE_SITE } from '@/config/site'
 import { dataRo } from '@/lib/timp'
 import { apel } from '../api'
 import { Camp, Eroare, Gol, Titlu, Toast, bani, clasaInput, clasaSelect, clasaTextarea } from '../comune'
@@ -19,6 +20,9 @@ type ClientCuCifre = Client & {
   platit: number
   deIncasat: number
   ultima: string | null
+  pachete: Pachet[]
+  lectiiCumparate: number
+  lectiiRamase: number
 }
 
 /*
@@ -150,6 +154,11 @@ export default function Clienti() {
                 <p className="mt-3 text-xs text-gri">
                   {c.lectii} {c.lectii === 1 ? 'lecție' : 'lecții'} · {bani(c.platit)} plătit{c.ultima ? ` · ultima: ${dataRo(c.ultima)}` : ''}
                 </p>
+                {c.lectiiRamase > 0 && (
+                  <p className="mt-1 text-xs font-medium text-verde">
+                    mai are {c.lectiiRamase} {c.lectiiRamase === 1 ? 'lecție plătită' : 'lecții plătite'} din pachet
+                  </p>
+                )}
                 {c.deIncasat > 0 && <p className="mt-1 text-xs font-medium text-[#b8431a]">{bani(c.deIncasat)} de încasat</p>}
               </button>
             </li>
@@ -172,6 +181,7 @@ export default function Clienti() {
       {deschis && (
         <DialogClient
           client={deschis}
+          laReincarcare={incarca}
           laPropunere={() => {
             setPropune({ nume: deschis.nume, email: deschis.email })
             setDeschis(null)
@@ -189,11 +199,38 @@ export default function Clienti() {
   )
 }
 
-function DialogClient({ client, inchide, laSalvare, laPropunere }: { client: ClientCuCifre; inchide: () => void; laSalvare: (c: Client) => void; laPropunere: () => void }) {
+function DialogClient({ client, inchide, laSalvare, laPropunere, laReincarcare }: { client: ClientCuCifre; inchide: () => void; laSalvare: (c: Client) => void; laPropunere: () => void; laReincarcare: () => void }) {
   const [d, setD] = useState({ nume: client.nume, email: client.email, telefon: client.telefon, nivel: client.nivel, scop: client.scop, note: client.note })
   const [asteapta, setAsteapta] = useState(false)
   const [eroare, setEroare] = useState('')
   const schimba = (c: keyof typeof d) => (e: { target: { value: string } }) => setD((x) => ({ ...x, [c]: e.target.value }))
+
+  async function adaugaPachet(nume: string, lectii: number, pret: number) {
+    setAsteapta(true)
+    setEroare('')
+    try {
+      await apel('pachet', { metoda: 'POST', corp: { client_id: client.id, nume, lectii, pret, platit: true } })
+      laReincarcare()
+      inchide()
+    } catch (e) {
+      setEroare(e instanceof Error ? e.message : 'Pachetul nu s-a salvat')
+    } finally {
+      setAsteapta(false)
+    }
+  }
+
+  async function stergePachet(idP: string) {
+    setAsteapta(true)
+    try {
+      await apel('pachet', { metoda: 'DELETE', query: { id: idP } })
+      laReincarcare()
+      inchide()
+    } catch (e) {
+      setEroare(e instanceof Error ? e.message : 'Pachetul nu s-a șters')
+    } finally {
+      setAsteapta(false)
+    }
+  }
 
   async function salveaza() {
     setAsteapta(true)
@@ -239,6 +276,54 @@ function DialogClient({ client, inchide, laSalvare, laPropunere }: { client: Cli
           </div>
         </div>
         {eroare && <p role="alert" className="rounded-xl bg-[#fdeaee] px-4 py-3 text-sm text-rosu">{eroare}</p>}
+        {/*
+          Pachetele, acolo unde se vand: pe fisa omului.
+          Artiom: „unde sunt pachetele, cel de 5 lecții, de 10, de 2 luni?".
+          Lectiile cumparate se scad singure din lectiile individuale facute,
+          deci nu trebuie legat nimic de mana si nu ramane nimic de reparat
+          cand o lectie se muta sau se anuleaza.
+        */}
+        <div className="mb-5 rounded-2xl bg-crem p-4">
+          <p className="text-sm font-medium">
+            Pachete
+            {client.lectiiCumparate > 0 && (
+              <span className="ml-2 font-normal text-gri">
+                {client.lectiiRamase} rămase din {client.lectiiCumparate} cumpărate
+              </span>
+            )}
+          </p>
+
+          {client.pachete.length > 0 && (
+            <ul className="mt-3 space-y-1.5">
+              {client.pachete.map((pa) => (
+                <li key={pa.id} className="flex items-center justify-between gap-3 rounded-xl bg-alb px-3.5 py-2 text-sm">
+                  <span>
+                    {pa.nume} <span className="text-gri">· {bani(pa.pret)}{pa.platit ? '' : ', neîncasat'}</span>
+                  </span>
+                  <button type="button" onClick={() => void stergePachet(pa.id)} className="text-xs font-medium text-gri hover:text-rosu">
+                    Șterge
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <p className="mt-3 text-xs text-gri">A cumpărat acum:</p>
+          <div className="mt-1.5 flex flex-wrap gap-2">
+            {PACHETE_SITE.filter((x) => x.lectii > 1).map((x) => (
+              <button
+                key={x.id}
+                type="button"
+                disabled={asteapta}
+                onClick={() => void adaugaPachet(x.nume, x.lectii, x.lectii * x.pretLectie)}
+                className="rounded-full bg-alb px-3.5 py-2 text-sm transition hover:bg-crem-inchis disabled:opacity-60"
+              >
+                {x.lectii} lecții · {x.lectii * x.pretLectie} €
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="flex flex-wrap justify-end gap-2">
           {/* Drumul cel mai scurt de la „am vorbit cu el" la „i-am trimis ora":
               de pe fisa lui, fara sa mai cauti nimic. */}

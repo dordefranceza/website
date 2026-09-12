@@ -33,6 +33,37 @@ type Props = {
   initial?: { nume: string; email: string }
 }
 
+/*
+ * Propozitii gata scrise pentru randul de la Dorina.
+ *
+ * Artiom: „acolo sa fie cateva variante pe care pot sa le aleg eu, propozitii
+ * standard, ceva separat la cursul gratuit sau de cunoastere, sa fie ceva
+ * standard, mai comod mie de trimis". Sunt puse pe tipul lectiei, fiindca alta
+ * vorba se potriveste la o discutie gratuita si alta la a saptea lectie.
+ *
+ * Se apasa si intra in casuta. Se apasa din nou si iese, ca sa nu ramana
+ * lipita o propozitie pusa din greseala.
+ */
+const PROPOZITII: Record<TipProgramare, string[]> = {
+  cunoastere: [
+    'Ne-am înțeles la telefon pentru ora asta.',
+    'Ți-am ținut discuția gratuită de 20 de minute. Nu ai nevoie de nimic, doar de un loc liniștit.',
+    'Vorbim 20 de minute, îți văd nivelul și pleci cu un plan scris, chiar dacă nu continui cu mine.',
+    'Mă bucur că te-ai hotărât. Ne auzim atunci și îmi spui ce vrei să obții.',
+  ],
+  individual: [
+    'Ne-am înțeles la telefon pentru ora asta.',
+    'Continuăm de unde am rămas data trecută.',
+    'Plata se face înainte de lecție, cum am vorbit.',
+    'Dacă nu mai poți, spune-mi cu 24 de ore înainte și mutăm gratuit.',
+  ],
+  grup: [
+    'Te-am trecut în grupă. Ne vedem la ora asta, în fiecare săptămână.',
+    'Ne-am înțeles la telefon pentru ora asta.',
+    'Grupa e la nivelul tău, o să te simți în largul tău de la prima lecție.',
+  ],
+}
+
 /** Ziua de azi si ora rotunda urmatoare, ca sa nu porneasca formularul gol. */
 function ziuaDeAzi(): string {
   const d = new Date()
@@ -170,9 +201,24 @@ export default function DialogPropunere({ inchide, laTrimitere, anunta, initial 
             )}
           </div>
 
-          <Camp eticheta="Un rând de la tine" ajutor="Apare în email, sub detalii. Poate rămâne gol.">
-            <textarea value={mesaj} onChange={(e) => setMesaj(e.target.value)} rows={2} placeholder="Ne-am înțeles la telefon pentru ora asta." className={clasaTextarea} />
-          </Camp>
+          <div>
+            <p className="mb-2 text-sm font-medium">Un rând de la tine</p>
+            <div className="mb-2.5 flex flex-wrap gap-2">
+              {PROPOZITII[tip].map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setMesaj((m) => (m.trim() === t ? '' : t))}
+                  aria-pressed={mesaj.trim() === t}
+                  className={`rounded-full px-3.5 py-2 text-left text-[0.82rem] leading-snug transition ${mesaj.trim() === t ? 'bg-albastru text-alb' : 'bg-crem hover:bg-crem-inchis'}`}
+                >
+                  {t.length > 52 ? `${t.slice(0, 52)}…` : t}
+                </button>
+              ))}
+            </div>
+            <textarea value={mesaj} onChange={(e) => setMesaj(e.target.value)} rows={2} placeholder="Sau scrie tu ceva." className={clasaTextarea} />
+            <p className="mt-1 text-xs text-gri">Apare în email, sub detalii. Poate rămâne gol.</p>
+          </div>
 
           {/* Ce pleaca, scris cu cuvinte. Verificarea se face din citit, nu din
               recitit campurile de mai sus. */}
