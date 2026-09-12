@@ -33,15 +33,26 @@ aceeași față, același păr și aceleași haine.
 | `saluta` | `/confirma/`, dupa ce cursantul apasa Confirm |
 | `telefon` | contact, in golul de sub cele trei carduri, doar de la 1024px |
 | `invita` | apelul final de pe pagina de start, pe cardul albastru |
+| `citeste` | sus pe `/cookies/`, langa titlu: citeste regulile, cu biscuitele in cealalta mana |
 
 `invita` e singura cu contur crem si haine bleumarin: cea obisnuita are contur
 albastru si ar disparea pe cardul albastru.
 
-**Nu se pune in sectiunile paginii de start.** Fiecare are deja semnul ei mic,
-usa, podul, samanta. Doua desene in acelasi loc se bat cap in cap.
+**Regula asta a cazut.** Scria aici ca personajul nu se pune in sectiunile
+paginii de start. Artiom a cerut exact pe dos in aceeasi seara: „cand dai
+scroll sa apara iarasi un personaj la locul potrivit, cu mimica potrivita,
+langa butoane sa arate catre buton". Acum sunt opt aparitii pe pagina de start.
+Semnele mici au ramas toate; nu se bat cap in cap fiindca personajul sta in
+cerc, la alta scara.
 
 Decupajul se face prin inundare din margini, nu prin scoaterea unei culori:
 bluza e crem ca fundalul si s-ar gauri.
 
 Generat pe 12 septembrie 2026. Prima încercare a ieșit bună la amândouă
 caietele, deci 6 credite în total.
+
+Pe 12 septembrie, seara, încă 6 credite pentru `citeste`: două variante ale
+aceleiași idei, biscuite într-o mână și foaia cu reguli în cealaltă. Amândouă
+au ieșit bune din prima; Artiom a ales-o pe cea care citește foaia. Compozițiile
+cu două obiecte diferite, câte unul în fiecare mână, sunt cele mai riscante:
+merită generate în două variante, nu una.

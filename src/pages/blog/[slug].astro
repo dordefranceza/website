@@ -4,6 +4,7 @@
  * cabinet apare fara redeploy. Raspunsul sta 5 minute pe CDN-ul Vercel.
  */
 import Base from '../../layouts/Base.astro'
+import Ratacit from '../../components/Ratacit.astro'
 import Apel from '../../components/acasa/Apel.astro'
 import type { Articol } from '../../lib/tipuri'
 import { dataRo } from '../../lib/timp'
@@ -51,32 +52,40 @@ const schema = gasit
 
 <Base title={titlu} description={descriere} image={gasit?.imagine || undefined} noindex={!gasit}>
   {schema && <script slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} />}
-  <main id="continut" class="bg-crem pt-32 pb-8 sm:pt-40">
-    {
-      !gasit ? (
-        <div class="container-site text-center">
-          <p class="eticheta">404</p>
-          <h1 class="mt-3 text-4xl sm:text-5xl">Articolul ăsta nu există</h1>
-          <p class="mt-4 text-lg text-gri">Poate a fost retras sau adresa e greșită.</p>
-          <a href="/blog/" class="pastila pastila-albastra mt-8">Toate articolele</a>
-        </div>
-      ) : (
-        <article class="container-site max-w-3xl rounded-[2rem] bg-alb px-6 py-10 sm:px-12 sm:py-14">
-          <a href="/blog/" class="text-sm font-medium text-albastru-text">Toate articolele</a>
-          <h1 class="mt-5 text-4xl sm:text-5xl">{gasit.titlu}</h1>
-          <p class="mt-4 text-sm text-gri">
-            {site.profesoara} · {gasit.publicat_la ? dataRo(gasit.publicat_la) : ''} · {minuteCitit(gasit.continut)} min de citit
-          </p>
-          {gasit.imagine && (
-            <img src={gasit.imagine} alt={gasit.imagine_alt} class="mt-8 aspect-[16/9] w-full rounded-[1.5rem] object-cover" width="960" height="540" loading="eager" decoding="async" />
-          )}
-          <div
-            class="articol mt-10 space-y-5 text-[1.08rem] leading-[1.75] text-cerneala/90 [&_a]:text-albastru-text [&_a]:underline [&_blockquote]:rounded-2xl [&_blockquote]:bg-crem [&_blockquote]:px-6 [&_blockquote]:py-4 [&_blockquote]:text-cerneala [&_code]:rounded [&_code]:bg-crem [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[0.95em] [&_h2]:mt-10 [&_h2]:text-3xl [&_h3]:mt-8 [&_h3]:font-sans [&_h3]:text-xl [&_h3]:font-medium [&_img]:rounded-2xl [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_strong]:font-bold [&_ul]:list-disc [&_ul]:pl-6"
-            set:html={html}
-          />
-        </article>
-      )
-    }
-  </main>
-  <div class="bg-crem pt-12"><Apel /></div>
+  {
+    !gasit ? (
+      /* Articolul negasit arata ca orice alta pagina negasita: acelasi desen cu
+         cifrele si personajul care cauta. Pagina statica de 404 nu se poate
+         chema de aici, fiindca pagina asta se randeaza la cerere si 404-ul
+         static nu e in manifestul serverului. De aia desenul sta intr-o
+         componenta. Fara apelul final dedesubt: pe o pagina care spune „nu am
+         gasit", omul are nevoie de o iesire, nu de o oferta. */
+      <Ratacit
+        titlu="Articolul ăsta s-a rătăcit"
+        text="Poate a fost retras, poate adresa e greșită. Celelalte articole sunt la un clic."
+        buton="Toate articolele"
+        href="/blog/"
+      />
+    ) : (
+      <>
+        <main id="continut" class="bg-crem pt-32 pb-8 sm:pt-40">
+          <article class="container-site max-w-3xl rounded-[2rem] bg-alb px-6 py-10 sm:px-12 sm:py-14">
+            <a href="/blog/" class="text-sm font-medium text-albastru-text">Toate articolele</a>
+            <h1 class="mt-5 text-4xl sm:text-5xl">{gasit.titlu}</h1>
+            <p class="mt-4 text-sm text-gri">
+              {site.profesoara} · {gasit.publicat_la ? dataRo(gasit.publicat_la) : ''} · {minuteCitit(gasit.continut)} min de citit
+            </p>
+            {gasit.imagine && (
+              <img src={gasit.imagine} alt={gasit.imagine_alt} class="mt-8 aspect-[16/9] w-full rounded-[1.5rem] object-cover" width="960" height="540" loading="eager" decoding="async" />
+            )}
+            <div
+              class="articol mt-10 space-y-5 text-[1.08rem] leading-[1.75] text-cerneala/90 [&_a]:text-albastru-text [&_a]:underline [&_blockquote]:rounded-2xl [&_blockquote]:bg-crem [&_blockquote]:px-6 [&_blockquote]:py-4 [&_blockquote]:text-cerneala [&_code]:rounded [&_code]:bg-crem [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[0.95em] [&_h2]:mt-10 [&_h2]:text-3xl [&_h3]:mt-8 [&_h3]:font-sans [&_h3]:text-xl [&_h3]:font-medium [&_img]:rounded-2xl [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_strong]:font-bold [&_ul]:list-disc [&_ul]:pl-6"
+              set:html={html}
+            />
+          </article>
+        </main>
+        <div class="bg-crem pt-12"><Apel /></div>
+      </>
+    )
+  }
 </Base>

@@ -1,0 +1,42 @@
+---
+/**
+ * Ecranul de „nu am gasit pagina", cu cifrele si personajul care cauta.
+ *
+ * Exista fiindca 404-ul aparea in doua feluri. `/404.astro` avea desenul, iar
+ * `/blog/[slug]` isi scria singur un 404 sarac, cu o eticheta si un titlu.
+ * Motivul e tehnic: pagina de articol se randeaza la cerere, iar pagina statica
+ * de 404 nu e in manifestul serverului, deci `Astro.rewrite('/404')` nu are ce
+ * gasi. Raspunsul corect nu e sa copiem desenul, ci sa-l scoatem intr-un loc.
+ *
+ * Cifrele nu sunt text simplu: cercul cu personajul TINE locul zeroului, intre
+ * cei doi patru. Ideea e a lui Artiom. De aia nu exista si o eticheta „404"
+ * deasupra, ar spune acelasi lucru de doua ori. Ramane doar pentru cititoarele
+ * de ecran, care nu vad desenul.
+ */
+import PersonajCerc from './PersonajCerc.astro'
+
+interface Props {
+  titlu: string
+  text: string
+  buton: string
+  href: string
+}
+const { titlu, text, buton, href } = Astro.props
+---
+
+<main id="continut" class="flex min-h-[70vh] items-center bg-crem pt-24">
+  <div class="container-site text-center">
+    {/* Cifrele si cercul se aliniaza pe linia de jos a cifrelor, nu pe centru,
+        ca zeroul sa stea in rand cu ceilalti doi, nu sa pluteasca. */}
+    <div class="flex items-end justify-center gap-2 sm:gap-4" aria-hidden="true">
+      <span class="font-display text-[6.5rem] leading-[0.78] text-cerneala sm:text-[10rem]">4</span>
+      <PersonajCerc nume="cauta" inel="portocaliu" disc="alb" marime={112} marimeMare={168} grosime={10} />
+      <span class="font-display text-[6.5rem] leading-[0.78] text-cerneala sm:text-[10rem]">4</span>
+    </div>
+    <p class="sr-only">Eroare 404</p>
+
+    <h1 class="mt-8 text-4xl sm:text-5xl">{titlu}</h1>
+    <p class="echilibrat mt-4 text-lg text-gri">{text}</p>
+    <a href={href} class="pastila pastila-albastra mt-8">{buton}</a>
+  </div>
+</main>

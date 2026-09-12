@@ -1,13 +1,44 @@
 ---
 import Base from './Base.astro'
-interface Props { title: string; description: string; actualizat: string }
-const { title, description, actualizat } = Astro.props
+interface Props {
+  title: string
+  description: string
+  actualizat: string
+  /**
+   * Numele unei figuri din public/images/personaj/, pusa langa titlu.
+   * Paginile legale sunt text de sus pana jos si arata pustii in cap; o
+   * figura care face chiar lucrul despre care e pagina spune din prima
+   * privire unde a ajuns omul. Se da doar unde exista una potrivita.
+   */
+  personaj?: string
+  /** descrierea figurii, goala daca e pura decoratie */
+  personajAlt?: string
+}
+const { title, description, actualizat, personaj, personajAlt = '' } = Astro.props
 ---
 <Base title={`${title} · DorDeFranceza`} description={description}>
   <main id="continut" class="bg-crem pt-32 pb-20 sm:pt-40">
     <article class="container-site max-w-3xl rounded-[2rem] bg-alb px-6 py-10 sm:px-12 sm:py-14">
-      <h1 class="text-4xl sm:text-5xl">{title}</h1>
-      <p class="mt-3 text-sm text-gri">Ultima actualizare: {actualizat}</p>
+      <div class="flex items-end justify-between gap-8">
+        <div>
+          <h1 class="text-4xl sm:text-5xl">{title}</h1>
+          <p class="mt-3 text-sm text-gri">Ultima actualizare: {actualizat}</p>
+        </div>
+        {personaj && (
+          /* Figura sta libera, fara rondea sub ea, ca semnele din antet. Sub
+             640px dispare: acolo titlul are nevoie de toata latimea. */
+          <img
+            src={`/images/personaj/${personaj}.webp`}
+            alt={personajAlt}
+            aria-hidden={personajAlt === '' ? 'true' : undefined}
+            width="150"
+            height="320"
+            class="hidden h-[190px] w-auto shrink-0 select-none sm:block"
+            loading="eager"
+            decoding="async"
+          />
+        )}
+      </div>
       <div class="prose-legal mt-10 space-y-6 text-[1.02rem] leading-relaxed text-cerneala/85 [&_h2]:mt-10 [&_h2]:font-sans [&_h2]:text-xl [&_h2]:font-medium [&_h2]:text-cerneala [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6 [&_a]:text-albastru [&_a]:underline">
         <slot />
       </div>
