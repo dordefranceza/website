@@ -120,6 +120,16 @@
      echilibrare peste sase randuri. */
   .echilibrat { text-wrap: balance; }
 
+  /* Titlu la care al doilea rand sta in mijlocul primului, nu lipit de stanga.
+     Blocul insusi ramane la stanga: `inline-block` il strange exact cat cel mai
+     lat rand, iar `text-align: center` aseaza randurile intre ele.
+     Sub 640px nu se aplica nimic: pe telefon randul intai nu incape oricum si
+     titlul se aseaza singur, cum ii vine mai bine. */
+  @media (min-width: 640px) {
+    .titlu-centrat-jos { display: inline-block; text-align: center; }
+    .titlu-centrat-jos > span { display: block; }
+  }
+
   :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
     outline: 2px solid var(--color-albastru);
     outline-offset: 3px;

@@ -42,9 +42,12 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
 
     {/* Discutia gratuita sta deasupra comutatorului: e valabila pentru amandoua. */}
     <div class="dezvaluie mt-12 flex flex-col items-start gap-6 rounded-[1.5rem] bg-alb p-7 sm:flex-row sm:items-center sm:p-9">
-      <span class="flex size-14 shrink-0 items-center justify-center rounded-full bg-verde-5">
-        <Icon name="solar:chat-round-check-bold" class="size-7 text-verde" />
-      </span>
+      {/* Aici era o bifă verde într-un cerc verde. Artiom: „e folosită de toate
+          website-urile din lume". Acum stă ușa din familia noastră de semne,
+          desenată o dată cu celelalte: discuția de cunoaștere chiar e ușa pe
+          care intri, si e singura gratuită. Semnele noastre stau libere, fără
+          rondea sub ele, ca în antet și la întrebări. */}
+      <Semn nume="usa" inaltime={72} class="shrink-0" />
       <div class="flex-1">
         <p class="font-sans text-xl font-medium">{discutie.nume} <span class="text-verde">gratuită</span></p>
         <p class="echilibrat mt-1.5 text-gri">{discutie.detaliu}. {discutie.beneficii[2]}.</p>

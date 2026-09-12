@@ -193,24 +193,43 @@ export const despre = {
  *  Cel mai frecvent motiv pentru care un adult amână: nu știe cum arată.
  *  Aici i se arată, minut cu minut.
  * ======================================================================== */
+/**
+ * Cele patru momente ale unei lecții. Nu mai stau scrise în minute, ci în cote
+ * din lecție, fiindcă lecțiile nu mai sunt toate de aceeași lungime:
+ * individual ține 50 de minute, la grup 80. Cotele sunt aceleași, minutele se
+ * socotesc din ele, deci nu mai există niciun „50" scris de mână prin pagini,
+ * care să rămână în urmă când se schimbă durata.
+ *
+ * 10 + 40 + 30 + 20 = 100. La 50 de minute iese 5/20/15/10, la 80 iese
+ * 8/32/24/16. Amândouă se închid exact, fără rest.
+ */
 export const anatomiaLectiei = [
   {
-    cand: 'Primele 5 minute',
+    parte: 'Intrarea în franceză',
+    cota: 0.1,
     ce: 'Vorbim liber în franceză despre ce ai făcut de la ultima lecție. Nu te corectez încă, doar notez.',
   },
   {
-    cand: '20 de minute',
-    ce: 'Situația reală din planul tău: un email de trimis, întrebările de la interviu, dialogul de la doctor sau de la bancă.',
+    parte: 'Situația din planul tău',
+    cota: 0.4,
+    ce: 'Un email de trimis, întrebările de la interviu, dialogul de la doctor sau de la bancă. Ce urmează în viața ta, nu ce urmează în manual.',
   },
   {
-    cand: '15 minute',
-    ce: 'Exersezi tu. Intervin doar cât să nu rămâi blocat, apoi trecem prin greșelile notate, cu explicații scurte.',
+    parte: 'Exersezi tu',
+    cota: 0.3,
+    ce: 'Intervin doar cât să nu rămâi blocat, apoi trecem prin greșelile notate, cu explicații scurte.',
   },
   {
-    cand: 'Ultimele 10 minute',
+    parte: 'Închiderea',
+    cota: 0.2,
     ce: 'Fixăm ce ai învățat și stabilim ce urmează. În aceeași zi primești pe email rezumatul și tema, dacă vrei temă.',
   },
 ] as const
+
+/** Minutele unei părți, dintr-o lecție de lungimea dată. */
+export function minutele(cota: number, durata: number): number {
+  return Math.round(cota * durata)
+}
 
 /* ===========================================================================
  *  DOVEZI

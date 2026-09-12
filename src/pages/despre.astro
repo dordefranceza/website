@@ -4,36 +4,83 @@ import Despre from '../components/acasa/Despre.astro'
 import Metoda from '../components/acasa/Metoda.astro'
 import Apel from '../components/acasa/Apel.astro'
 import { Icon } from 'astro-icon/components'
-import { nuEstePentru } from '../config/continut'
+import { anatomiaLectiei, minutele, nuEstePentru } from '../config/continut'
+import { site } from '../config/site'
+import PersonajCerc from '../components/PersonajCerc.astro'
 ---
 
 <Base title="Despre Dorina · DorDeFranceza" description="Cine e Dorina, cum predă franceza online și de ce cursanții ei ajung să vorbească, nu doar să înțeleagă.">
   <main id="continut" class="pt-16 sm:pt-20">
     <Despre />
     <Metoda />
-    <section class="bg-crem py-20 sm:py-28">
-      <div class="container-site max-w-3xl">
-        <p class="eticheta">Cum lucrez</p>
-        <h2 class="mt-3 text-4xl sm:text-5xl">O lecție obișnuită, de 50 de minute</h2>
-        <ol class="mt-10 space-y-6">
-          {[
-            ['Primele 5 minute', 'Vorbim liber, în franceză, despre ce ai făcut de la ultima lecție. Fără corecturi încă, doar notez.'],
-            ['20 de minute', 'Tema lecției: o situație reală din planul tău. Un email de trimis, un interviu, un formular, un dialog la doctor.'],
-            ['15 minute', 'Exersezi tu. Eu intervin doar cât să nu rămâi blocat, apoi trecem prin greșelile notate, cu explicații scurte.'],
-            ['Ultimele 10 minute', 'Fixăm ce ai învățat, stabilim tema și ce urmează. Primești rezumatul pe email în aceeași zi.'],
-          ].map(([cand, ce]) => (
-            <li class="flex gap-6 rounded-[1.5rem] bg-alb p-6">
-              <span class="w-28 shrink-0 font-display text-xl text-albastru">{cand}</span>
-              <p class="leading-relaxed text-gri">{ce}</p>
+    {/*
+      Aici scria „O lecție obișnuită, de 50 de minute", cu cei patru pași
+      copiați de mână din `continut.ts`. Doua probleme: vorbea doar despre
+      lecția individuală, desi la grup lecția ține 80 de minute, si era o a
+      doua copie a aceluiasi text, care se putea abate de la prima.
+
+      Acum citeste aceeasi structura ca pagina de start, dar o arata altfel:
+      pagina de start spune cat tine fiecare parte, aici stau amandoua
+      lungimile una langa alta. Asta e si motivul pentru care sectiunea merita
+      sa existe pe /despre.
+    */}
+    <section class="bg-crem py-20 sm:py-28" aria-labelledby="titlu-cum-lucrez">
+      <div class="container-site max-w-4xl">
+        <div class="flex items-start justify-between gap-10">
+          <div>
+            <p class="eticheta">Cum lucrez</p>
+            <h2 id="titlu-cum-lucrez" class="mt-3 text-4xl sm:text-5xl">O lecție obișnuită, pas cu pas</h2>
+            <p class="echilibrat mt-5 text-lg text-gri">
+              Aceleași patru momente de fiecare dată, ca să știi mereu unde ești. Se schimbă doar cât ține fiecare.
+            </p>
+          </div>
+          <PersonajCerc nume="prezinta" inel="albastru" disc="alb" marime={175} marimeMare={175} class="hidden shrink-0 lg:block" />
+        </div>
+
+        {/* Capul de tabel apare doar de la 640px. Mai jos, fiecare cifra isi
+            poarta eticheta ei, altfel numerele raman fara nume pe telefon. */}
+        <div class="mt-10 hidden justify-end gap-8 px-7 pb-2 sm:flex">
+          <span class="w-16 text-center text-xs font-bold uppercase tracking-wider text-gri/70">individual</span>
+          <span class="w-16 text-center text-xs font-bold uppercase tracking-wider text-gri/70">la grup</span>
+        </div>
+        <ol class="mt-4 space-y-3 sm:mt-0">
+          {anatomiaLectiei.map((pas) => (
+            <li class="flex flex-col gap-4 rounded-[1.5rem] bg-alb p-6 sm:flex-row sm:items-center sm:gap-8 sm:p-7">
+              <div class="flex-1">
+                <p class="font-sans text-lg font-medium">{pas.parte}</p>
+                <p class="mt-1.5 leading-relaxed text-gri">{pas.ce}</p>
+              </div>
+              <div class="flex shrink-0 gap-8">
+                <p class="w-16 text-center">
+                  <span class="block font-display text-3xl leading-none text-albastru">{minutele(pas.cota, site.durataLectie)}</span>
+                  <span class="mt-1 block text-xs uppercase tracking-wider text-gri/70 sm:hidden">individual</span>
+                </p>
+                <p class="w-16 text-center">
+                  <span class="block font-display text-3xl leading-none text-cerneala/55">{minutele(pas.cota, site.durataGrup)}</span>
+                  <span class="mt-1 block text-xs uppercase tracking-wider text-gri/70 sm:hidden">la grup</span>
+                </p>
+              </div>
             </li>
           ))}
         </ol>
+        <p class="echilibrat mt-5 text-gri">
+          Minute. Individual lecția ține {site.durataLectie}, la grup {site.durataGrup}: sunteți mai mulți și fiecare trebuie să apuce să vorbească.
+        </p>
       </div>
     </section>
     <section class="bg-crem py-20 sm:py-28">
-      <div class="container-site max-w-3xl">
+      {/* Era `max-w-3xl`, adica 704 pixeli de text. Randul de la sfarsit cere
+          706: se rupea si ramanea „pot ajuta." singur. Masurat, nu ghicit.
+          Largit la `max-w-4xl`, incape intr-un rand si sectiunea se aliniaza
+          cu cea de deasupra. */}
+      <div class="container-site max-w-4xl">
         <p class="eticheta">Ca să nu pierdem timpul niciunul</p>
-        <h2 class="mt-3 text-4xl sm:text-5xl">Când nu sunt profesoara potrivită</h2>
+        {/* Titlul se rupea „Când nu sunt" / „profesoara potrivită". Acum se
+            rupe unde trebuie, iar al doilea rand sta in mijlocul primului.
+            Pe telefon ramane un text obisnuit, care se aseaza singur. */}
+        <h2 class="mt-3 text-4xl sm:text-5xl">
+          <span class="titlu-centrat-jos">Când nu sunt profesoara <span>potrivită</span></span>
+        </h2>
         <p class="echilibrat mt-5 text-lg text-gri">Prefer să spun asta de la început decât după trei lecții.</p>
         <ul class="mt-8 space-y-3">
           {
@@ -45,7 +92,10 @@ import { nuEstePentru } from '../config/continut'
             ))
           }
         </ul>
-        <p class="mt-8 text-lg leading-relaxed text-gri">
+        {/* `echilibrat` ramane ca plasa: pe un ecran mai ingust randul tot se
+            rupe, iar atunci se rupe in doua randuri egale, nu cu doua cuvinte
+            singure jos. */}
+        <p class="echilibrat mt-8 text-lg leading-relaxed text-gri">
           Dacă niciuna nu te descrie, hai să vorbim 20 de minute și îți spun sincer dacă te pot ajuta.
         </p>
       </div>
