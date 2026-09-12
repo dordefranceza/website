@@ -2,6 +2,7 @@
 import { Icon } from 'astro-icon/components'
 import { intrebari } from '../../config/continut'
 import Semn from '../Semn.astro'
+import PersonajCerc from '../PersonajCerc.astro'
 ---
 
 <section id="intrebari" class="bg-crem py-20 sm:py-28" aria-labelledby="titlu-intrebari">
@@ -11,6 +12,9 @@ import Semn from '../Semn.astro'
       <p class="eticheta">Întrebări frecvente</p>
       <h2 id="titlu-intrebari" class="mt-3 text-4xl sm:text-5xl">Ce mă întreabă toți înainte să înceapă</h2>
       <p class="mt-5 text-lg text-gri">Nu ai găsit răspunsul? Scrie-mi pe WhatsApp, de obicei răspund în aceeași zi.</p>
+      {/* Langa randul despre WhatsApp, figura cu telefonul in mana. Doar de la
+          1024px, unde coloana din stanga ramane goala sub text. */}
+      <PersonajCerc nume="telefon" inel="verde" disc="alb" marime={190} marimeMare={190} class="mt-10 hidden lg:block" />
     </div>
     <div class="dezvaluie-rand space-y-3">
       {intrebari.map((i) => (

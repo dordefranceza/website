@@ -13,6 +13,7 @@
  * sa propuna si in afara lui, pentru cineva anume.
  */
 import Base from '../layouts/Base.astro'
+import PersonajCerc from '../components/PersonajCerc.astro'
 import { oraNeocupata } from '../lib/sloturi'
 import { TIPURI } from '../lib/tipuri'
 import { dataRo, oraRo } from '../lib/timp'
@@ -126,7 +127,7 @@ const titluri: Record<Stare, string> = {
       {stare === 'confirmat' && (
         <>
           <p class="mt-2 text-gri">{ceva}, {cand}. Ți-am trimis pe email confirmarea, cu tot ce trebuie.</p>
-          <img src="/images/personaj/saluta.webp" alt="" aria-hidden="true" width="257" height="640" class="mt-6 h-[170px] w-auto" />
+          <PersonajCerc nume="saluta" inel="verde-10" disc="crem" marime={150} marimeMare={165} class="mt-7" />
           <a href="/" class="pastila pastila-albastra mt-8 inline-block !py-3">Înapoi la site</a>
         </>
       )}

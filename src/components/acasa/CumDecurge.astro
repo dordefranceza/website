@@ -2,6 +2,7 @@
 import { Icon } from 'astro-icon/components'
 import { pasi } from '../../config/continut'
 import Semn from '../Semn.astro'
+import PersonajCerc from '../PersonajCerc.astro'
 ---
 
 <section id="cum-decurge" class="bg-alb py-20 sm:py-28" aria-labelledby="titlu-pasi">
@@ -11,9 +12,14 @@ import Semn from '../Semn.astro'
       <p class="eticheta">Cum decurge</p>
       <h2 id="titlu-pasi" class="mt-3 text-4xl sm:text-5xl">Trei pași. Primul e gratuit.</h2>
       <p class="mt-5 text-lg text-gri">Nu îți vând un pachet înainte să ne cunoaștem. Întâi vorbim, apoi decizi.</p>
-      <a href="/programare/" class="pastila pastila-albastra mt-8">
-        Programează discuția gratuită <Icon name="solar:arrow-right-linear" class="size-5" />
-      </a>
+      {/* Figura arata spre stanga ei, adica spre stanga privitorului, deci sta
+          in dreapta butonului si degetul cade fix pe el. */}
+      <div class="mt-8 flex items-center gap-5">
+        <a href="/programare/" class="pastila pastila-albastra">
+          Programează discuția gratuită <Icon name="solar:arrow-right-linear" class="size-5" />
+        </a>
+        <PersonajCerc nume="arata" inel="portocaliu" disc="crem" marime={132} class="hidden xl:block" />
+      </div>
     </div>
 
     <ol class="dezvaluie-rand space-y-4">

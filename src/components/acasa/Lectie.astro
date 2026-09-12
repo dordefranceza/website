@@ -8,6 +8,7 @@ import { Icon } from 'astro-icon/components'
 import { anatomiaLectiei } from '../../config/continut'
 import { site } from '../../config/site'
 import Semn from '../Semn.astro'
+import PersonajCerc from '../PersonajCerc.astro'
 ---
 
 <section id="cum-arata" class="bg-crem py-20 sm:py-28" aria-labelledby="titlu-lectie">
@@ -33,6 +34,10 @@ import Semn from '../Semn.astro'
           <span>Rezumatul scris ajunge pe email în aceeași zi.</span>
         </p>
       </div>
+      {/* Coloana asta se termina devreme, lista din dreapta tine mult mai mult:
+          golul ramas il umple figura care scrie rezumatul. Doar de la 1024px,
+          fiindca pe telefon coloanele se aseaza una sub alta si nu e niciun gol. */}
+      <PersonajCerc nume="scrie" inel="albastru" disc="alb" marime={190} marimeMare={190} class="mt-10 hidden lg:block" />
     </div>
 
     <ol class="dezvaluie-rand space-y-3">

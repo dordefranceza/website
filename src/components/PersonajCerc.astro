@@ -1,0 +1,140 @@
+---
+/**
+ * Personajul asezat intr-un cerc colorat, ca cercurile cu fotografii din
+ * antetul paginii de start: un inel de culoare in jurul unui disc deschis,
+ * cu figura inauntru, taiata de marginea de jos a cercului.
+ *
+ * Cercul e rama personajului, asta a cerut Artiom. Pe fundal inchis discul e
+ * crem, pe fundal crem e alb: figura are conturul albastru cobalt si bluza
+ * crem, deci are nevoie mereu de un disc deschis sub ea. Pe albastru nu se
+ * pune niciodata direct.
+ *
+ * Figura nu se deseneaza in cod. Fisierele stau in public/images/personaj/,
+ * generate din caietul de referinta docs/personaj/caiet-fara-biscuite.webp.
+ * Reteta e in docs/PREDARE-PERSONAJ.md.
+ */
+interface Props {
+  /** numele fisierului din public/images/personaj/, fara extensie */
+  nume: 'saluta' | 'cauta' | 'scrie' | 'telefon' | 'cu-biscuite' | 'arata' | 'prezinta' | 'incurajeaza' | 'inima' | 'se-uita-jos-a' | 'se-uita-jos-b'
+  /** inelul colorat din jur */
+  inel?: keyof typeof INEL
+  /** discul deschis din spatele figurii */
+  disc?: keyof typeof DISC
+  /** diametrul discului interior, in pixeli */
+  marime?: number
+  /** diametrul de la 640px in sus; implicit acelasi */
+  marimeMare?: number
+  /** grosimea inelului colorat, in pixeli */
+  grosime?: number
+  /** oglindit pe orizontala, cand figura trebuie sa se uite in partea cealalta */
+  oglindit?: boolean
+  class?: string
+}
+
+/**
+ * Clasele se iau dintr-un tabel cu siruri scrise pe de-a intregul: Tailwind
+ * citeste fisierul sursa, deci `bg-${culoare}` nu ar genera niciodata regula.
+ */
+const INEL = {
+  roz: 'bg-roz',
+  verde: 'bg-verde',
+  portocaliu: 'bg-portocaliu',
+  albastru: 'bg-albastru',
+  navy: 'bg-navy',
+  crem: 'bg-crem',
+  'crem-inchis': 'bg-crem-inchis',
+  'albastru-10': 'bg-albastru-10',
+  'verde-10': 'bg-verde-10',
+} as const
+
+const DISC = {
+  alb: 'bg-alb',
+  crem: 'bg-crem',
+  'albastru-5': 'bg-albastru-5',
+  'roz-5': 'bg-roz-5',
+  'verde-5': 'bg-verde-5',
+  'portocaliu-5': 'bg-portocaliu-5',
+} as const
+
+/** Raportul latime/inaltime al fiecarui fisier, ca sa rezervam locul corect. */
+const RAPORT = {
+  saluta: 257 / 640,
+  cauta: 308 / 640,
+  scrie: 270 / 640,
+  telefon: 249 / 640,
+  'cu-biscuite': 203 / 520,
+  arata: 382 / 640,
+  prezinta: 340 / 640,
+  incurajeaza: 249 / 640,
+  inima: 310 / 640,
+  'se-uita-jos-a': 343 / 640,
+  'se-uita-jos-b': 256 / 640,
+} as const
+
+const {
+  nume,
+  inel = 'roz',
+  disc = 'alb',
+  marime = 180,
+  marimeMare,
+  grosime = 12,
+  oglindit = false,
+  class: clasa = '',
+} = Astro.props
+
+const mare = marimeMare ?? marime
+
+/**
+ * Proportiile vin de pe cardul albastru, singurul loc aprobat pana acum:
+ * disc de 190px, figura de 210px, coborata cu 7px. Adica inaltimea figurii e
+ * 1,11 din diametru, iar capul sta la 0,038 din el. Asa iese toata silueta in
+ * cerc, cu picioarele taiate de marginea de jos.
+ */
+const inaltimeImg = Math.round(mare * 1.11)
+const latimeImg = Math.round(inaltimeImg * RAPORT[nume])
+---
+
+<div
+  class:list={['personaj-cerc shrink-0 rounded-full', INEL[inel], clasa]}
+  style={`--d:${marime}px;--d-sm:${mare}px;--g:${grosime}px`}
+  aria-hidden="true"
+>
+  <div class:list={['pc-disc relative overflow-hidden rounded-full', DISC[disc]]}>
+    <img
+      src={`/images/personaj/${nume}.webp`}
+      alt=""
+      width={latimeImg}
+      height={inaltimeImg}
+      class:list={['pc-figura absolute left-1/2 w-auto max-w-none', oglindit && 'scale-x-[-1]']}
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+</div>
+
+<style>
+  .personaj-cerc {
+    --dd: var(--d);
+    /* fara asta, inelul e un bloc cat toata latimea si iese o pastila, nu un cerc */
+    width: fit-content;
+    padding: var(--g);
+    line-height: 0;
+  }
+  .pc-disc {
+    width: var(--dd);
+    height: var(--dd);
+  }
+  .pc-figura {
+    height: calc(var(--dd) * 1.11);
+    top: calc(var(--dd) * 0.038);
+    transform: translateX(-50%);
+  }
+  .pc-figura.scale-x-\[-1\] {
+    transform: translateX(-50%) scaleX(-1);
+  }
+  @media (min-width: 640px) {
+    .personaj-cerc {
+      --dd: var(--d-sm);
+    }
+  }
+</style>

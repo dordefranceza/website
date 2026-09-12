@@ -9,6 +9,7 @@ import { dataRo } from '../../lib/timp'
 import { depozit } from '../../server/depozit'
 import { minuteCitit } from '../../server/markdown'
 import Semn from '../../components/Semn.astro'
+import PersonajCerc from '../../components/PersonajCerc.astro'
 
 export const prerender = false
 
@@ -32,7 +33,7 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-r
 
       {articole.length === 0 ? (
         <div class="mt-12 flex flex-col items-center gap-6 rounded-[1.5rem] bg-alb px-6 py-10 text-center sm:flex-row sm:gap-10 sm:px-10 sm:text-left">
-          <img src="/images/personaj/scrie.webp" alt="" aria-hidden="true" width="270" height="640" class="h-[150px] w-auto shrink-0 sm:h-[190px]" />
+          <PersonajCerc nume="scrie" inel="roz" disc="crem" marime={150} marimeMare={180} />
           <p class="text-gri">Primele articole sunt pe drum. Dorina scrie despre ce vede în lecțiile de zi cu zi. Până atunci, scrie-i pe WhatsApp.</p>
         </div>
       ) : (

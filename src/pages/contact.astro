@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro'
 import { Icon } from 'astro-icon/components'
 import FormularContact from '../components/FormularContact'
 import { site, linkWhatsApp } from '../config/site'
+import PersonajCerc from '../components/PersonajCerc.astro'
 ---
 
 <Base title="Contact · DorDeFranceza" description="Scrie-i Dorinei pe WhatsApp, pe email sau prin formular. Răspunde în aceeași zi.">
@@ -27,7 +28,7 @@ import { site, linkWhatsApp } from '../config/site'
           </a>
         </div>
         {/* Umple golul de sub carduri, care apare doar cand cele doua coloane stau alaturi */}
-        <img src="/images/personaj/telefon.webp" alt="" aria-hidden="true" width="249" height="640" class="mt-10 hidden h-[230px] w-auto lg:block" />
+        <PersonajCerc nume="telefon" inel="verde" disc="alb" marime={200} marimeMare={200} class="mt-10 hidden lg:block" />
       </div>
       <div class="rounded-[2rem] bg-alb p-6 sm:p-10">
         <h2 class="font-sans text-2xl font-medium">Sau lasă un mesaj</h2>
