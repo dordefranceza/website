@@ -193,12 +193,58 @@ cabinet, la Disponibilitate. Până atunci nimeni nu poate rezerva.
 
 ### 6. Datele reale, în cod
 
-- `src/config/firma.ts`: tot ce e în `[paranteze]` e necompletat. Fără ele,
-  paginile legale sunt incomplete. În dezvoltare apare un avertisment portocaliu
-  cât timp lipsesc.
-- `src/config/site.ts`: email, telefon, WhatsApp, Instagram, TikTok sunt
-  substituenți.
-- `src/config/continut.ts`: bucățile marcate DE CONFIRMAT despre Dorina.
+**`src/config/site.ts`: gata, pe 12 septembrie seara.**
+
+| Câmp | Valoare |
+|---|---|
+| `telefon` | `+33 6 62 35 20 71`, numărul real al Dorinei, francez |
+| `whatsapp` | `33662352071`, același cu `WHATSAPP_DORINA` de pe Vercel |
+| `email` | `dordefranceza@gmail.com` |
+| `instagram` | gol, contul nu există încă |
+| `tiktok` | `@dordefranceza`, confirmat de Artiom că există |
+
+Numărul substituent `+40 700 000 000` trimitea toți vizitatorii într-un WhatsApp
+inexistent, din antet, din bara de jos de pe telefon, din subsol, de pe cardul
+albastru, de pe contact și de pe programare. Toate trec prin `linkWhatsApp` din
+`site.ts`, deci s-au reparat dintr-un singur rând.
+
+Emailul: `contact@dordefranceza.com` ar arăta mai bine, dar cutia nu există, iar
+`send.dordefranceza.com` doar trimite. Până se face o cutie reală pe domeniu,
+adresa de pe site e gmailul, ca să nu se piardă mesaje. Artiom a ales asta știind
+compromisul.
+
+Instagram: un șir gol scoate singur legătura din subsol, fără altă modificare.
+Când se face contul, se scrie adresa acolo și reapare.
+
+**`src/config/firma.ts`: ÎNCĂ NECOMPLETAT, și e mai mult decât patru câmpuri.**
+
+Pe 12 septembrie Artiom a spus că activitatea e de **antreprenor individual în
+Moldova**, nu în România. Asta strică presupunerea pe care sunt scrise paginile
+legale acum, care sunt scrise pentru un prestator român:
+
+- `cui` și `registru` nu există în Moldova: acolo e **IDNO** de 13 cifre și
+  Registrul de stat ținut de Agenția Servicii Publice;
+- autoritatea pentru date nu e ANSPDCP, ci **Centrul Național pentru Protecția
+  Datelor cu Caracter Personal** din Chișinău. Atenție: fiindcă site-ul se
+  adresează cursanților din România, GDPR se aplică oricum (art. 3 alin. 2), iar
+  un cursant din România se poate plânge tot la ANSPDCP;
+- ANPC și SAL sunt pentru comercianți din România. Dreptul de retragere în 14
+  zile rămâne, fiindcă legea consumatorului din țara cumpărătorului se aplică,
+  dar formularea „acești termeni sunt guvernați de legea română" trebuie
+  recitită de cineva care știe, nu rescrisă din ureche;
+- separat de povestea cu Moldova, și valabil oricum: platforma europeană **SOL**
+  este ÎNCHISĂ. Verificat pe 12 septembrie 2026, cerând chiar adresa din cod:
+  `https://ec.europa.eu/consumers/odr` redirectează spre
+  `consumer-redress.ec.europa.eu/site-relocation_en`, unde Comisia scrie negru
+  pe alb că platforma e închisă. Legătura apare în trei locuri: subsolul
+  fiecărei pagini, pagina de termeni și pagina de anulare. Trebuie scoasă sau
+  înlocuită, indiferent în ce țară e înregistrată firma.
+
+Nimic din toate astea nu s-a atins. Nu se completează din presupuneri: e nevoie
+de denumirea exactă, IDNO și adresa sediului, plus o decizie despre paginile
+legale.
+
+`src/config/continut.ts`: bucățile marcate DE CONFIRMAT despre Dorina.
 
 ### 7. O programare de probă
 

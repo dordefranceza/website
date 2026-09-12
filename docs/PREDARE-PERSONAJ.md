@@ -82,6 +82,31 @@ albastru, cu contur crem și haine bleumarin. Arată a pată, nu a desen, iar
 Artiom a respins-o pe loc. Fișierul e șters. Pe fundal închis, personajul se
 pune **într-un cerc crem**, ca cercurile cu poze din antet.
 
+## Cercul, componenta `PersonajCerc.astro`
+
+Inel colorat plus disc deschis, exact limbajul cercurilor cu fotografii din
+antet. Proporțiile vin de pe cardul albastru, singurul loc aprobat înainte:
+figura are `1,11 × diametru` înălțime și stă la `0,038 × diametru` de sus, deci
+iese toată silueta, cu picioarele tăiate de marginea de jos.
+
+```astro
+<PersonajCerc nume="arata" inel="portocaliu" disc="crem" marime={132} />
+```
+
+Pe fundal crem discul e `alb`, pe fundal închis e `crem`. Pe albastru nu se pune
+niciodată direct, conturul cobalt dispare.
+
+**Două capcane, ambele plătite deja:**
+
+1. Învelișul are nevoie de `width: fit-content`. Fără el e un bloc cât toată
+   lățimea, iar `rounded-full` face o pastilă lungă, nu un cerc.
+2. Culorile se iau dintr-un tabel cu șiruri scrise întregi (`roz: 'bg-roz'`).
+   Tailwind citește fișierul sursă, deci `bg-${culoare}` nu generează niciodată
+   regula și cercul rămâne fără fundal.
+
+La `marime`, un raport bun: 130 lângă un buton, 170-190 într-o coloană goală,
+200 singur pe pagină.
+
 ## Decuparea pe transparent
 
 Nu prin scoaterea unei culori: bluza e crem exact ca fundalul și s-ar găuri.
@@ -92,39 +117,83 @@ conturul albastru rămâne. Codul e simplu, cu `sharp`, în istoricul sesiunii.
 Apoi se taie marginile goale, se redimensionează la 640px înălțime și se
 salvează webp cu `alphaQuality: 100`.
 
+Nu se mai scrie de mână, e un script:
+
+```bash
+node scripts/decupa-personaj.mjs /cale/catre/poza.png numele-nou
+```
+
+Rezultatul ajunge direct în `public/images/personaj/numele-nou.webp`. Verifică
+după aceea că bluza și pantofii nu s-au găurit: pune poza pe un fundal magenta
+și uită-te.
+
 ## Ce există acum și unde
 
 | Fișier în `public/images/personaj/` | Unde apare |
 |---|---|
 | `cu-biscuite.webp` | bannerul de cookie-uri, stânga, tăiată de marginea cardului |
-| `cauta.webp` | pagina de 404, în locul rândunicii |
-| `scrie.webp` | blogul gol, lângă „primele articole sunt pe drum" |
-| `saluta.webp` | `/confirma/` după Confirm, și în cercul crem de pe cardul albastru din apelul final |
-| `telefon.webp` | contact, în golul de sub cele trei carduri, doar de la 1024px |
+| `cauta.webp` | pagina de 404, în cerc portocaliu |
+| `scrie.webp` | blogul gol, în cerc roz; și pe pagina de start, la „Cum arată o lecție", în cerc albastru |
+| `saluta.webp` | `/confirma/` după Confirm, în cerc verde deschis, și în cercul crem de pe cardul albastru din apelul final |
+| `telefon.webp` | contact, în cerc verde; și pe pagina de start, la „Întrebări frecvente", tot verde |
+| `arata.webp` | pagina de start, lângă butonul albastru de la „Cum decurge", în cerc portocaliu |
+| `prezinta.webp` | pagina de start, la „Pentru ce ai nevoie de franceză", în cerc roz |
+| `incurajeaza.webp` | pagina de start, pe cardul negru „De ce merge", cerc roz cu disc crem |
+| `inima.webp` | pagina de start și `/preturi/`, lângă garanția de bani înapoi, cerc verde |
+| `se-uita-jos-a.webp` | pagina de start și `/preturi/`, deasupra titlului de la prețuri, cerc portocaliu. A luat locul semnului cu sămânța, care nu spunea nimic despre preț |
+| `se-uita-jos-b.webp` | NEFOLOSIT. Varianta cealaltă, stă dreaptă și arată cu degetul în jos. Generată în aceeași rundă și păstrată ca să nu se mai plătească 3 credite dacă Artiom se răzgândește |
 
-## Regula pe care Artiom a acceptat-o
+Cele patru de jos sunt generate pe 12 septembrie 2026, seara, cu `media_id`-ul
+caietului `9bb61939-5e5a-436b-bcf3-1b971d40d1fc` (importat din adresa de pe
+GitHub). Au ieșit bune toate patru din prima, 12 credite cu totul.
 
-**Nu în secțiunile paginii de start.** Fiecare are deja semnul ei mic: ușa,
-podul, sămânța, fereastra, balconul. Două desene în același loc se bat cap în
-cap. Personajul intră doar unde pagina e altfel goală sau unde e o gaură reală
-de spațiu.
+`arata.webp` și `prezinta.webp` arată spre **stânga privitorului**, fiindcă în
+prompt e mâna ei dreaptă. Deci figura stă în dreapta lucrului spre care arată.
+Pentru cealaltă direcție există `oglindit` pe componentă, nu se mai generează.
 
-## Ce a cerut Artiom pentru mai departe
+## Regula veche a căzut
 
-1. **Personajul în cercuri colorate**, ca cercurile cu fotografii din antet.
-   Prima aplicare e făcută, pe cardul albastru. Ideea îi place și vrea mai
-   mult în direcția asta: cercul e rama personajului.
-2. Mai multe poziții și expresii, generate la nevoie, din același caiet.
-3. Un biscuite desenat separat există deja, cinci variante, în istoricul
-   sesiunii. Artiom a ales să folosim personajul cu biscuitele în mână, nu
-   biscuitele singur, dar dacă vrea vreodată semnul singur, varianta 5 era
-   preferata lui: cu mușcătură și firimituri.
+Până pe 12 septembrie, la prânz, regula era „nu în secțiunile paginii de start",
+fiindcă fiecare are deja semnul ei mic: ușa, podul, sămânța, fereastra,
+balconul.
+
+**Seara, Artiom a cerut exact pe dos:** când dai scroll să apară din loc în loc
+un personaj, la locul potrivit, cu mimica potrivită, iar lângă butoane să arate
+spre buton. Asta e acum regula.
+
+Sunt șapte apariții pe pagina de start, cam una la două secțiuni: prezintă cu
+palma la „Pentru ce ai nevoie", arată cu degetul spre butonul albastru la „Cum
+decurge", scrie la „Cum arată o lecție", degetul mare ridicat pe cardul negru,
+mâna pe inimă la garanție, telefonul în mână la întrebări, salutul pe cardul
+albastru de la final.
+
+Semnele mici au rămas toate. Nu se bat cap în cap fiindcă personajul stă în
+cerc, la altă scară, și nu în locul semnului.
+
+**Unde tot nu intră:**
+
+- în antet, unde sunt deja patru cercuri cu fotografii;
+- la „Despre Dorina", unde e fotografia ei adevărată. Personajul nu e Dorina;
+- pe telefon. Toate cercurile noi sunt `hidden lg:block` sau `xl:block`: acolo
+  coloanele se așază una sub alta și nu mai există niciun gol de umplut.
+
+## Ce a rămas pentru mai departe
+
+1. Mai multe poziții, generate la nevoie, din același caiet. Trei credite bucata
+   și niciodată fără să întrebi întâi.
+2. Un biscuite desenat separat există deja, cinci variante, în istoricul
+   sesiunii din 12 septembrie. Artiom a ales să folosim personajul cu biscuitele
+   în mână, nu biscuitele singur, dar dacă vrea vreodată semnul singur, varianta
+   5 era preferata lui: cu mușcătură și firimituri.
+3. Neverificat cu ochii: cercul de pe blogul gol. În depozitul local există un
+   articol de probă, deci starea goală nu se vede pe `npm run dev`. Codul e
+   același ca pe celelalte patru pagini, unde s-a văzut că merge.
 
 ## Ce NU e legat de personaj și a rămas de făcut
 
-- Datele reale din `src/config/site.ts`: telefonul e încă `+40 700 000 000`,
-  emailul `contact@dordefranceza.ro`, pe `.ro` deși site-ul e pe `.com`.
-  Instagram și TikTok duc spre conturi care poate nu există.
+- ~~Datele reale din `src/config/site.ts`~~. Făcute pe 12 septembrie, seara:
+  telefon `+33 6 62 35 20 71`, email `dordefranceza@gmail.com`, Instagram scos
+  până există contul, TikTok păstrat.
 - `src/config/firma.ts`: tot ce e în paranteze drepte e necompletat, iar
   paginile legale rămân incomplete până se completează.
 - Orarul Dorinei: tabelul `disponibilitate` e gol, deci formularul de
