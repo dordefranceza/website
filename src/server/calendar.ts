@@ -3,7 +3,7 @@
  *
  * Artiom: „calendarul de la Google este cel mai bun, ca acolo vin notificari pe
  * telefon". Are dreptate, si nu are rost sa ne batem cu el: noi tinem evidenta,
- * dar amintirea cu cincisprezece minute inainte o da mai bine telefonul.
+ * dar amintirea cu treizeci de minute inainte o da mai bine telefonul.
  *
  * Doua cai, amandoua fara cont legat si fara permisiuni cerute nimanui:
  *   - un LINK „pune in Google Calendar", o apasare pe telefon;
@@ -111,16 +111,12 @@ export function fisierIcs(p: Programare, c: Client, setari: Setari, pentruDorina
     `DESCRIPTION:${scapaIcs(descrierea(p, c, setari, pentruDorina))}`,
     `LOCATION:${scapaIcs(p.link_zoom || setari.link_zoom || 'Zoom')}`,
     'STATUS:CONFIRMED',
-    // Doua amintiri, ca sa nu fie nevoie de nicio setare pe telefon.
+    // Amintirea, cu 30 de minute inainte, cat a cerut Artiom. Merge fara nicio
+    // setare pe telefon: e scrisa in eveniment, nu in calendar.
     'BEGIN:VALARM',
-    'TRIGGER:-PT1H',
+    'TRIGGER:-PT30M',
     'ACTION:DISPLAY',
-    `DESCRIPTION:${scapaIcs(`Peste o oră: ${titlul(p, c, pentruDorina)}`)}`,
-    'END:VALARM',
-    'BEGIN:VALARM',
-    'TRIGGER:-PT10M',
-    'ACTION:DISPLAY',
-    `DESCRIPTION:${scapaIcs(`Peste 10 minute: ${titlul(p, c, pentruDorina)} (${dataOraRo(p.incepe)})`)}`,
+    `DESCRIPTION:${scapaIcs(`Peste 30 de minute: ${titlul(p, c, pentruDorina)} (${dataOraRo(p.incepe)})`)}`,
     'END:VALARM',
     'END:VEVENT',
     'END:VCALENDAR',

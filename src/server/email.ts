@@ -283,7 +283,7 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
  * butoane. Confirmarea se face dintr-un clic, fara cont si fara parola, pe
  * baza codului din link. Linkul expira, ca sa nu ramana valabil la nesfarsit.
  */
-export function emailPropunere(p: Programare, c: Client, setari: Setari, mesajDorinei = ''): Email {
+export function emailPropunere(p: Programare, c: Client, setari: Setari, mesajDorinei = '', primaLectie = false): Email {
   const tip = TIPURI[p.tip]
   const zi = dataRo(p.incepe)
   const ora = oraRo(p.incepe)
@@ -325,10 +325,18 @@ export function emailPropunere(p: Programare, c: Client, setari: Setari, mesajDo
       'Dorina, DorDeFranceza',
     ].filter(Boolean).join('\n'),
     html: sablon({
-      figura: 'scrie',
-      eticheta: 'Propunere de lecție',
-      titlu: `${zi}, ora ${ora}`,
-      intro: `Bună, ${scapa(prenume)}! Îți propun ora asta. Apasă butonul și îmi spui acolo dacă îți convine sau nu, dintr-un singur clic.`,
+      /*
+       * Pentru cineva care vine prima oara, emailul asta e prima intalnire cu
+       * scoala. Artiom: „sa fie fata ceea sus, «bine ai venit», si jos «prima
+       * ta lectie de proba, care este programata pe data asta, ora asta»".
+       * Deci la prima lectie mainile intinse, la a doua doar ora propusa.
+       */
+      figura: primaLectie ? 'saluta' : 'scrie',
+      eticheta: primaLectie ? 'Prima ta lecție' : 'Propunere de lecție',
+      titlu: primaLectie ? 'Bine ai venit!' : `${zi}, ora ${ora}`,
+      intro: primaLectie
+        ? `Bună, ${scapa(prenume)}! Mă bucur că ai ajuns aici. Prima ta ${scapa(tip.nume.toLowerCase())} e programată pe <strong>${scapa(zi)}, ora ${scapa(ora)}</strong>. Apasă butonul de mai jos și confirmi dintr-un singur clic, sau îmi spui tot de acolo dacă ora nu îți convine.`
+        : `Bună, ${scapa(prenume)}! Îți propun ora asta. Apasă butonul și îmi spui acolo dacă îți convine sau nu, dintr-un singur clic.`,
       corp: randuri(lista),
       butoane: butoane + subsolPas,
       subsol: 'Trimis de Dorina, de pe site-ul DorDeFranceza.',

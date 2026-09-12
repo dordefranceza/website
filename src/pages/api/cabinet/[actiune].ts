@@ -214,7 +214,11 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
       )
       if (!p.client) return eroare(500, 'Cursantul nu s-a salvat')
 
-      const r = await trimite(emailPropunere(p, p.client, setari, textLung(b.mesaj, 600)))
+      /* Prima lectie a omului, ca emailul sa stie daca zice „bine ai venit"
+         sau doar propune o ora. Se numara dupa creare, deci lectia asta se
+         scade din total. */
+      const aleLui = (await d.programari()).filter((x) => x.client_id === p.client!.id && x.stare !== 'anulata' && x.id !== p.id)
+      const r = await trimite(emailPropunere(p, p.client, setari, textLung(b.mesaj, 600), aleLui.length === 0))
       if (!r.ok) {
         await d.actualizeazaProgramare(p.id, { stare: 'anulata' })
         return eroare(502, 'Emailul nu a plecat, așa că propunerea a fost anulată. Încearcă din nou.')
