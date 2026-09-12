@@ -39,18 +39,39 @@ const schema = {
       <div class="flex items-end justify-between gap-12">
         <div class="dezvaluie max-w-2xl">
           {/*
-            Acelasi lucru ca pe /pentru-ce/: paragraful iese pe telefon si in
-            locul lui vine figura. Aici NU cea care arata cu degetul, ceruta pe
-            nume de Artiom sa nu fie: aia are sens pe ecran mare, unde degetul
-            cade fix pe butonul de langa ea, dar singura in cerc arata ciudat.
-            Sta cea care scrie, fiindca pagina asta vorbeste despre planul scris
-            si despre rezumatul de dupa fiecare lectie.
+            Pe telefon, figura sta in DREAPTA si textul curge pe langa ea, la
+            stanga. Prima varianta o punea deasupra titlului, dar asa manca un
+            sfert de ecran degeaba; Artiom: „poza in dreapta si textul in stanga".
+
+            E `float`, nu doua coloane, fiindca o coloana ingusta ar strivi
+            titlul: cel de la „cum decurge" are noua cuvinte si ar cadea pe cinci
+            randuri. Asa, primele randuri trec pe langa cerc si restul folosesc
+            toata latimea.
+
+            Elementul de dupa are `clear-both`, altfel s-ar urca si el langa
+            figura. La /pentru-ce/ conteaza in mod deosebit: fasia care se trage
+            cu degetul are `overflow-x`, iar asa ceva nu se aseaza langa un
+            float, se strange.
           */}
-          <PersonajCerc nume="scrie" inel="portocaliu" disc="alb" marime={150} class="mb-7 lg:hidden" />
+          {/* Aici NU cea care arata cu degetul, ceruta pe nume de Artiom sa nu
+              fie: aia are sens pe ecran mare, unde degetul cade fix pe butonul
+              de langa ea. Sta cea care scrie, fiindca pagina vorbeste despre
+              planul scris si despre rezumatul de dupa fiecare lectie. */}
           <p class="eticheta">{cumDecurge.eticheta}</p>
-          <h1 class="mt-3 text-4xl sm:text-5xl">{cumDecurge.titlu}</h1>
+          {/*
+            Figura sta DUPA eticheta, nu inaintea ei, si asta conteaza:
+            `.eticheta` e `inline-block`, iar o cutie inline-block nu se aseaza
+            langa un float daca nu incape intreaga. „Pentru ce ai nevoie de
+            franceza" cere 266 de pixeli si langa cerc raman vreo 190, deci
+            sarea dedesubt si figura ramanea singura sus.
+
+            Asezata dupa ea, eticheta isi ia randul intreg, iar titlul, care e
+            bloc, curge frumos pe langa cerc.
+          */}
+          <PersonajCerc nume="scrie" inel="portocaliu" disc="alb" marime={96} class="float-right mb-3 ml-4 lg:hidden" />
+          <h1 class="echilibrat mt-3 text-[2rem] max-sm:leading-[1.15] sm:text-5xl">{cumDecurge.titlu}</h1>
           <p class="echilibrat mt-5 hidden text-lg text-gri lg:block">{cumDecurge.intro}</p>
-          <a href="/programare/?tip=cunoastere" class="pastila pastila-albastra mt-8">
+          <a href="/programare/?tip=cunoastere" class="pastila pastila-albastra clear-both mt-8">
             Programează discuția gratuită <Icon name="solar:arrow-right-linear" class="size-5" />
           </a>
         </div>
