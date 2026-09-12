@@ -10,9 +10,14 @@
  * greutate inapoi, dar scurt: un titlu, o propozitie, un buton. Atat.
  *
  * Ce a iesit si nu se pune la loc fara sa intrebi: pastila „Prima discutie e
- * gratuita", lista de trei puncte si al doilea buton, cel de WhatsApp. WhatsApp
- * ramane in antetul de sus, in bara fixa de pe telefon, pe contact si pe cardul
- * albastru de la finalul paginii.
+ * gratuita", lista de trei puncte, al doilea buton (cel de WhatsApp), propozitia
+ * de sub titlu si randul „20 de minute, fara plata". Ultimele doua le-a taiat
+ * Artiom cu rosu pe o captura. Ce am pierdut odata cu ele, ca sa stii daca vrei
+ * inapoi: randul de sub buton spunea ca discutia nu costa si nu obliga la nimic,
+ * exact acolo unde omul ezita sa apese.
+ *
+ * WhatsApp ramane in antetul de sus, in bara fixa de pe telefon, pe contact si
+ * pe cardul albastru de la finalul paginii.
  *
  * Discul albastru pal din spatele figurii nu e decor intamplator: fara el,
  * figura pluteste pe un camp alb. Are `-z-10` fiindca un element pozitionat
@@ -23,8 +28,8 @@
  * e scris de model: a fost verificat litera cu litera la marire inainte sa
  * intre in pagina. Vezi docs/PREDARE-PERSONAJ.md.
  */
-import { site } from '../../config/site'
 import Val from '../Val.astro'
+import Semn from '../Semn.astro'
 ---
 
 <section class="relative overflow-hidden bg-alb pt-24 sm:pt-28 lg:pt-32" aria-labelledby="titlu-antet">
@@ -47,23 +52,23 @@ import Val from '../Val.astro'
       />
     </div>
 
-    <div class="order-1 text-center lg:order-2 lg:text-left">
-      <h1 id="titlu-antet" class="intrare text-[2.6rem] leading-[1.04] sm:text-5xl lg:text-[3.6rem]">
-        Franceza explicată simplu, <em class="not-italic text-albastru">pe înțelesul tău</em>
+    <div class="relative order-1 text-center lg:order-2 lg:text-left">
+      {/* Randunica, singurul semn al marcii care zboara. Tine dinamica ceruta
+          langa titlu fara sa aduca rosul unui steag, care nu e in paleta. */}
+      <Semn nume="randunica" inaltime={62} class="plutitor mx-auto mb-4 lg:mx-0" />
+
+      <h1 id="titlu-antet" class="intrare text-[2.9rem] leading-[1.02] sm:text-[3.4rem] lg:text-[4rem] 2xl:text-[4.4rem]">
+        Franceza explicată simplu,{' '}
+<em class="not-italic text-albastru">pe înțelesul tău</em>
       </h1>
-      <p class="intrare mt-5 text-lg leading-relaxed text-gri" style="--intarziere:120ms">
-        Lecții individuale online cu Dorina. {site.durataLectie} de minute, pe Zoom. Vorbești din prima lecție.
-      </p>
+
       <a
         href="/programare/"
-        class="intrare pastila pastila-albastra mt-8 !px-7 !py-4 text-[1.05rem]"
-        style="--intarziere:200ms"
+        class="intrare pastila pastila-albastra mt-9 !px-7 !py-4 text-[1.05rem]"
+        style="--intarziere:160ms"
       >
         Programează o discuție gratuită
       </a>
-      <p class="intrare mt-4 text-sm text-gri" style="--intarziere:260ms">
-        {site.durataCunoastere} de minute. Fără plată și fără să te angajezi la nimic.
-      </p>
     </div>
   </div>
 
