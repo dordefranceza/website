@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Switch } from '@/components/ui/switch'
 import type { Setari as TipSetari } from '@/lib/tipuri'
 import { apel, descarcaExport } from '../api'
-import { legat } from '../auth'
+import { confirmaDoiPasi, incepeDoiPasi, legat, opresteDoiPasi, stareDoiPasi, type StareDoiPasi } from '../auth'
 import { Camp, Card, Eroare, Titlu, Toast, clasaInput, clasaSelect } from '../comune'
 
 export default function Setari() {
@@ -12,6 +12,10 @@ export default function Setari() {
   const [eroare, setEroare] = useState('')
   const [toast, setToast] = useState('')
   const [asteapta, setAsteapta] = useState(false)
+  const [doiPasi, setDoiPasi] = useState<StareDoiPasi | null>(null)
+  const [inrolare, setInrolare] = useState<{ factorId: string; qr: string; cheie: string } | null>(null)
+  const [cod, setCod] = useState('')
+  const [lucreaza, setLucreaza] = useState(false)
 
   const incarca = () => {
     setEroare('')
@@ -24,6 +28,13 @@ export default function Setari() {
       .catch((e: Error) => setEroare(e.message))
   }
   useEffect(incarca, [])
+
+  useEffect(() => {
+    if (!legat) return
+    stareDoiPasi()
+      .then(setDoiPasi)
+      .catch(() => setDoiPasi({ pornit: false, factorId: null }))
+  }, [])
 
   const anunta = (t: string) => {
     setToast(t)
@@ -41,6 +52,49 @@ export default function Setari() {
       anunta(e instanceof Error ? e.message : 'Nu s-a salvat')
     } finally {
       setAsteapta(false)
+    }
+  }
+
+  async function legAplicatia() {
+    setLucreaza(true)
+    try {
+      setInrolare(await incepeDoiPasi())
+      setCod('')
+    } catch (e) {
+      anunta(e instanceof Error ? e.message : 'Nu s-a putut incepe legarea')
+    } finally {
+      setLucreaza(false)
+    }
+  }
+
+  async function confirmAplicatia() {
+    if (!inrolare) return
+    setLucreaza(true)
+    try {
+      await confirmaDoiPasi(inrolare.factorId, cod)
+      setInrolare(null)
+      setCod('')
+      setDoiPasi(await stareDoiPasi())
+      anunta('Verificarea în doi pași e pornită')
+    } catch (e) {
+      anunta(e instanceof Error ? e.message : 'Codul nu e corect')
+    } finally {
+      setLucreaza(false)
+    }
+  }
+
+  async function scoateAplicatia() {
+    if (!doiPasi?.factorId) return
+    if (!window.confirm('Scoți aplicația de verificare? După asta se intră doar cu parola.')) return
+    setLucreaza(true)
+    try {
+      await opresteDoiPasi(doiPasi.factorId)
+      setDoiPasi(await stareDoiPasi())
+      anunta('Aplicația a fost scoasă')
+    } catch (e) {
+      anunta(e instanceof Error ? e.message : 'Nu s-a putut scoate')
+    } finally {
+      setLucreaza(false)
     }
   }
 
@@ -100,7 +154,45 @@ export default function Setari() {
             {mod === 'supabase' ? 'Legat la baza de date.' : 'Mod local: datele stau doar pe acest calculator.'}
             {legat ? '' : ' Când se leagă Supabase, cabinetul trece singur pe baza de date.'}
           </p>
-          <p className="mt-3 text-sm text-gri">Verificarea în doi pași cu Google Authenticator vine în etapa următoare.</p>
+
+          <div className="mt-7">
+            <h3 className="font-sans text-[0.95rem] font-medium">Verificarea în doi pași</h3>
+            {!legat ? (
+              <p className="mt-2 text-sm text-gri">Merge doar cu baza de date legată.</p>
+            ) : doiPasi === null ? (
+              <p className="mt-2 text-sm text-gri">Se încarcă…</p>
+            ) : doiPasi.pornit ? (
+              <>
+                <p className="mt-2 text-sm text-gri">Pornită. La fiecare intrare în cabinet ți se cere codul de șase cifre din aplicație.</p>
+                <button type="button" onClick={scoateAplicatia} disabled={lucreaza} className="pastila pastila-navy mt-4 !py-2.5 text-sm disabled:opacity-60">Scoate aplicația</button>
+              </>
+            ) : inrolare ? (
+              <>
+                <p className="mt-2 text-sm text-gri">Deschide Google Authenticator, apasă pe plus, alege scanarea unui cod QR și îndreaptă telefonul spre imaginea de mai jos.</p>
+                <img src={inrolare.qr} alt="Codul QR pentru aplicația de verificare" width={176} height={176} className="mt-4 rounded-xl bg-alb p-2" />
+                <p className="mt-3 text-sm text-gri">Dacă nu poți scana, scrie în aplicație cheia asta:</p>
+                <p className="mt-1 select-all break-all font-mono text-[0.8rem] text-cerneala">{inrolare.cheie}</p>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <input
+                    value={cod}
+                    onChange={(e) => setCod(e.target.value)}
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    placeholder="123456"
+                    aria-label="Codul de șase cifre din aplicație"
+                    className={`${clasaInput} max-w-[9rem]`}
+                  />
+                  <button type="button" onClick={confirmAplicatia} disabled={lucreaza || cod.replace(/\s/g, '').length < 6} className="pastila pastila-albastra !py-2.5 text-sm disabled:opacity-60">Confirmă</button>
+                  <button type="button" onClick={() => setInrolare(null)} className="text-sm text-gri underline-offset-4 hover:underline">Renunț</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="mt-2 text-sm text-gri">Oprită. Cu ea pornită, cine îți află parola tot nu intră fără telefonul tău.</p>
+                <button type="button" onClick={legAplicatia} disabled={lucreaza} className="pastila pastila-albastra mt-4 !py-2.5 text-sm disabled:opacity-60">Leagă Google Authenticator</button>
+              </>
+            )}
+          </div>
         </Card>
       </div>
 

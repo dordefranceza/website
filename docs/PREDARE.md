@@ -146,13 +146,28 @@ mesajul nu ajunge nicaieri. Cand se lamureste ce adresa reala foloseste Dorina,
 pune-o pe `reply_to` la emailurile catre cursanti, sau activeaza receiving in
 Resend cu inregistrarea MX `inbound-smtp.eu-west-1.amazonaws.com` pe `send`.
 
-### 3. Orarul Dorinei
+### 3. Verificarea în doi pași
+
+Ecranul de înrolare există acum în cabinet, la Setări, sub Contul: cod QR de
+scanat cu Google Authenticator, casetă pentru codul de șase cifre și buton de
+scos aplicația când se schimbă telefonul. În Supabase, TOTP e pornit, iar
+serverul cerea deja `aal2` de la conturile care au un factor confirmat.
+
+Capcana de ținut minte: ștergerea aplicației de pe telefon NU scoate factorul
+de pe server. Dacă rămâne acolo, intrarea cere în continuare un cod pe care
+nu-l mai are nimeni. Se scoate din Setări, cât timp mai ești logat, sau din
+Supabase, de la utilizator.
+
+Nu a fost încercat pe viu: cere o intrare în cabinet, deci întâi trebuie pusă
+parola din invitație.
+
+### 4. Orarul Dorinei
 
 Tabelul `disponibilitate` e gol, deci `/api/sloturi` întoarce zile goale și
 formularul de programare nu arată nicio oră liberă. Dorina își pune orarul din
 cabinet, la Disponibilitate. Până atunci nimeni nu poate rezerva.
 
-### 4. Datele reale, în cod
+### 5. Datele reale, în cod
 
 - `src/config/firma.ts`: tot ce e în `[paranteze]` e necompletat. Fără ele,
   paginile legale sunt incomplete. În dezvoltare apare un avertisment portocaliu
@@ -161,7 +176,7 @@ cabinet, la Disponibilitate. Până atunci nimeni nu poate rezerva.
   substituenți.
 - `src/config/continut.ts`: bucățile marcate DE CONFIRMAT despre Dorina.
 
-### 5. O programare de probă
+### 6. O programare de probă
 
 De făcut după ce domeniul e verificat în Resend, ca să se vadă că emailul
 pleacă și către cursant, nu doar către Dorina. Emailurile de test nu se trimit

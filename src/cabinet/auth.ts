@@ -87,6 +87,60 @@ export async function recupereazaParola(email: string): Promise<void> {
   if (error) throw new Error(mesajAuth(error.message))
 }
 
+/* =============================================================================
+ *  VERIFICAREA IN DOI PASI, CU O APLICATIE DE AUTENTIFICARE
+ * ========================================================================== */
+
+export type StareDoiPasi = { pornit: boolean; factorId: string | null }
+
+const NUME_FACTOR = 'Aplicatia de verificare'
+
+/** Ce aplicatie de verificare are contul acum. */
+export async function stareDoiPasi(): Promise<StareDoiPasi> {
+  if (!sb) return { pornit: false, factorId: null }
+  const { data, error } = await sb.auth.mfa.listFactors()
+  if (error) throw new Error(error.message)
+  const confirmat = data?.totp?.find((f) => f.status === 'verified')
+  return { pornit: Boolean(confirmat), factorId: confirmat?.id ?? null }
+}
+
+/**
+ * Incepe legarea aplicatiei. Intoarce codul QR, gata de pus intr-un <img>, si
+ * cheia scrisa, pentru cine nu poate scana.
+ *
+ * Factorii ramasi neconfirmati de la o incercare abandonata se sterg intai:
+ * Supabase refuza al doilea factor cu acelasi nume si eroarea nu spune de ce.
+ */
+export async function incepeDoiPasi(): Promise<{ factorId: string; qr: string; cheie: string }> {
+  if (!sb) throw new Error('Baza de date nu e legata')
+  const { data: existenti } = await sb.auth.mfa.listFactors()
+  for (const f of existenti?.totp ?? []) {
+    if (f.status !== 'verified') await sb.auth.mfa.unenroll({ factorId: f.id })
+  }
+  const { data, error } = await sb.auth.mfa.enroll({ factorType: 'totp', friendlyName: NUME_FACTOR })
+  if (error || !data) throw new Error(error?.message ?? 'Nu s-a putut incepe legarea')
+  return { factorId: data.id, qr: data.totp.qr_code, cheie: data.totp.secret }
+}
+
+/** Confirma legarea cu primul cod de sase cifre din aplicatie. */
+export async function confirmaDoiPasi(factorId: string, cod: string): Promise<void> {
+  if (!sb) return
+  const { error } = await sb.auth.mfa.challengeAndVerify({ factorId, code: cod.replace(/\s/g, '') })
+  if (error) throw new Error('Codul nu este corect. Incearca din nou.')
+}
+
+/**
+ * Scoate aplicatia de pe cont, pentru cand se schimba telefonul.
+ * Atentie: stergerea din aplicatia de pe telefon NU scoate factorul de pe
+ * server. Daca ramane aici, intrarea cere in continuare un cod pe care nu-l
+ * mai are nimeni.
+ */
+export async function opresteDoiPasi(factorId: string): Promise<void> {
+  if (!sb) return
+  const { error } = await sb.auth.mfa.unenroll({ factorId })
+  if (error) throw new Error(error.message)
+}
+
 function mesajAuth(m?: string): string {
   if (!m) return 'Nu s-a putut intra. Încearcă din nou.'
   if (/invalid login/i.test(m)) return 'Email sau parolă greșită.'
