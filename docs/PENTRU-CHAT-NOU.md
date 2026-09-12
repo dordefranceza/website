@@ -45,5 +45,21 @@ De acolo se începe.
 - Fără push, fără deploy, fără ștergeri până nu spune el explicit.
 - Fără „—" în textele de pe site și fără linii despărțitoare în design.
 
+**Starea codului:** 24 de commituri stau LOCAL, nepushate. Ce e pe live e
+versiunea de dinaintea lor: prima pagină refăcută, personajul în cercuri,
+valul, icoanele și grila nouă de prețuri nu se văd încă pe dordefranceza.com.
+Nu pusha nimic până nu spune Artiom.
+
+**Ce rămâne deschis,** mai pe larg în `docs/PREDARE.md`:
+- `src/config/firma.ts` e gol. Afacerea e întreprindere individuală în
+  **Moldova**, dar paginile legale sunt scrise pentru un furnizor din România,
+  cu CUI, ANPC și ANSPDCP. Trebuie rescrise pentru Moldova, cu IDNO și CNPDCP.
+- platforma europeană SOL e **închisă din 20 iulie 2025**, dar linkul către ea
+  e încă în trei locuri: subsol, termeni, anulare-si-rambursare.
+- orarul Dorinei e gol, de aceea `/api/sloturi` răspunde corect dar fără nicio
+  oră liberă. Se completează din cabinet.
+- o întrebare fără răspuns: la pachetele de grup, 5 lecții la 24 € înseamnă o
+  reducere de doar 4 la sută. Am propus 25/23/21/20 în loc de 25/24/22/20.
+
 **Conturile** sunt în Chrome-ul cu dordefranceza@gmail.com. Sunt două Chrome și
 numele lor se schimbă între ele: întreabă-l pe care, nu ghici.
