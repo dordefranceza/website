@@ -98,8 +98,17 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
           <h3 class="font-sans text-xl font-medium">Nu rămâi cu banii dați degeaba</h3>
           <p class="mt-2 leading-relaxed text-cerneala/85">{site.garantie.text}</p>
         </div>
-        {/* Promisiunea e personala, deci o tine cineva, nu doar o iconita. */}
-        <PersonajCerc nume="inima" inel="verde" disc="alb" marime={176} marimeMare={196} class="absolute -top-10 right-6 hidden lg:block 2xl:right-10" />
+        {/*
+          Promisiunea e personala, deci o tine cineva, nu doar o iconita.
+          Figura iese din banda DOAR in sus, cu talpa la nivelul marginii de jos:
+          asa pare ca sta pe banda, si mai ales nu mai intra peste randul de
+          dedesubt. Inainte iesea si in jos cu 36 de pixeli si acoperea textul.
+          Marginea din dreapta e aceeasi cu cea din stanga blocului, ca sa nu
+          atarne compozitia intr-o parte.
+          Inelul e verdele deschis, nu cel inchis: pe fundal verde pal, unul
+          inchis taia ca o rama. Asa trece dintr-o nuanta in alta.
+        */}
+        <PersonajCerc nume="inima" inel="verde-10" disc="alb" marime={176} marimeMare={196} class="absolute bottom-0 right-8 hidden lg:block sm:right-10" />
       </div>
     )}
 
