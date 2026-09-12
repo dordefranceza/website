@@ -1,0 +1,93 @@
+---
+/**
+ * Banda ondulata dintre o sectiune alba si panza crem a paginii.
+ *
+ * Nu e un val, sunt trei, suprapuse, cu perioade si viteze diferite si doua
+ * dintre ele mergand in sensuri opuse. Fiind toate de aceeasi culoare, ce se
+ * vede e doar linia de sus, adica invelisul lor: cum perioadele nu se impart
+ * una la alta, linia aia nu se repeta niciodata la fel. De aici iese miscarea
+ * haotica si lenta a marii, in loc de un val care culiseaza vizibil.
+ *
+ * Bucla se inchide perfect: fiecare strat se muta exact cu o perioada, deci
+ * la capatul animatiei desenul e identic cu cel de la inceput si nu se vede
+ * nicio saritura.
+ */
+interface Props {
+  /** inaltimea benzii, clasele Tailwind */
+  class?: string
+  /** culoarea in care se varsa, adica fundalul sectiunii de dedesubt */
+  culoare?: string
+}
+const { class: clasa = 'h-24 lg:h-32', culoare = '#f8f3eb' } = Astro.props
+
+const LATIME = 1440
+const INALTIME = 120
+
+/**
+ * Un val periodic, desenat cu arcuri cubice care aproximeaza sinusoida.
+ * Incepe cu o perioada inainte de margine si tine cu doua peste, ca sa aiba
+ * ce arata si cand culiseaza spre stanga, si cand culiseaza spre dreapta.
+ */
+function val(perioada: number, amplitudine: number, mijloc: number): string {
+  const c = amplitudine * 1.3
+  const repetari = Math.ceil(LATIME / perioada) + 2
+  const r = (n: number) => Math.round(n * 10) / 10
+  let d = `M${r(-perioada)},${mijloc}`
+  for (let i = 0; i < repetari; i++) {
+    const x = -perioada + i * perioada
+    d += ` C${r(x + perioada * 0.125)},${r(mijloc - c)} ${r(x + perioada * 0.375)},${r(mijloc - c)} ${r(x + perioada * 0.5)},${mijloc}`
+    d += ` C${r(x + perioada * 0.625)},${r(mijloc + c)} ${r(x + perioada * 0.875)},${r(mijloc + c)} ${r(x + perioada)},${mijloc}`
+  }
+  const capat = r(-perioada + repetari * perioada)
+  return `${d} L${capat},${INALTIME} L${r(-perioada)},${INALTIME} Z`
+}
+
+/**
+ * Primul strat e hula mare si lenta, celelalte doua sunt ondulatii tot mai mici
+ * calare pe ea, ca la mare. Perioadele sunt alese sa nu se imparta una la alta
+ * (1620, 900, 620), ca invelisul lor sa aiba o perioada comuna mult mai lunga
+ * decat se uita cineva la el. Sensurile alterneaza, altfel toate trei par un
+ * singur val care aluneca intr-o parte.
+ */
+const straturi = [
+  { perioada: 1620, amplitudine: 30, mijloc: 50, durata: '33s', sens: 'stanga' },
+  { perioada: 900, amplitudine: 15, mijloc: 64, durata: '24s', sens: 'dreapta' },
+  { perioada: 620, amplitudine: 9, mijloc: 74, durata: '17s', sens: 'stanga' },
+]
+---
+
+<div class:list={['relative', clasa]} aria-hidden="true">
+  <svg class="absolute inset-x-0 bottom-0 h-full w-full" viewBox={`0 0 ${LATIME} ${INALTIME}`} preserveAspectRatio="none">
+    {
+      straturi.map((s) => (
+        <g class="val-strat" data-sens={s.sens} style={`--p:${s.perioada};--durata:${s.durata}`}>
+          <path d={val(s.perioada, s.amplitudine, s.mijloc)} fill={culoare} />
+        </g>
+      ))
+    }
+  </svg>
+</div>
+
+<style>
+  .val-strat {
+    animation: val-stanga var(--durata) linear infinite;
+    will-change: transform;
+  }
+  .val-strat[data-sens='dreapta'] {
+    animation-name: val-dreapta;
+  }
+
+  @keyframes val-stanga {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(var(--p) * -1px)); }
+  }
+  @keyframes val-dreapta {
+    from { transform: translateX(calc(var(--p) * -1px)); }
+    to { transform: translateX(0); }
+  }
+
+  /* Cine a cerut sistemului mai putina miscare primeste valul nemiscat. */
+  @media (prefers-reduced-motion: reduce) {
+    .val-strat { animation: none; }
+  }
+</style>

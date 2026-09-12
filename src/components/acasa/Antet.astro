@@ -1,27 +1,21 @@
 ---
 /**
- * Antetul paginii de start, dupa referinta August Health: titlu serif mare,
- * centrat, pe alb; in jur, cercuri colorate cu FOTOGRAFII, nu carduri de
- * interfata. Cardurile de dinainte imitau un produs software care aici nu
- * exista si nu spuneau nimic. Pozele spun: Paris, o masa de cafenea, un
- * birou cu laptopul deschis, si Dorina. Pe telefon ramane un singur cerc.
+ * Antetul paginii de start: titlu serif mare, centrat, pe alb.
+ *
+ * Nu mai are nicio fotografie. Cele trei poze generate de dinainte (strada din
+ * Paris, masa de cafenea, biroul cu laptopul) i se pareau lui Artiom false, si
+ * aveau dreptate sa i se para: erau imagini de stoc facute de un model, puse sa
+ * treaca drept realitate. In locul lor sta personajul desenat al marcii, in doua
+ * ipostaze, plus cuvantul „Bienvenue" foarte palid in golul de jos.
+ *
+ * Fotografia adevarata a Dorinei nu a disparut de pe site, sta la /despre/ si in
+ * sectiunea Despre de pe pagina de start. Artiom a ales dinadins sa nu fie in
+ * antet.
  */
 import { Icon } from 'astro-icon/components'
 import { site, linkWhatsApp } from '../../config/site'
+import Val from '../Val.astro'
 
-/** Cercurile din jurul textului. Inelul colorat ramane vizibil in jurul pozei, ca in referinta. */
-/**
- * Marimile si pozitiile sunt calculate ca cercurile sa NU intre peste text.
- * Titlul are max-w-3xl (768px) centrat, deci la 1280px latime incepe la 256px:
- * un cerc de 200px lipit de margine se opreste la 200px si ramane afara.
- * De la 1536px e loc pentru cercuri mari, asa ca abia acolo cresc.
- */
-const cercuri = [
-  { poza: '/images/dorina-800.webp', alt: 'Dorina, profesoară de franceză', culoare: 'bg-roz', pozitie: 'left-0 top-[26%] size-[200px] 2xl:left-[2%] 2xl:size-[280px]', anim: 'plutitor', intarziere: '0s' },
-  { poza: '/images/antet-paris.webp', alt: '', culoare: 'bg-verde', pozitie: 'right-0 top-[10%] size-[170px] 2xl:right-[3%] 2xl:size-[230px]', anim: 'plutitor-lent', intarziere: '-3s' },
-  { poza: '/images/antet-cafenea.webp', alt: '', culoare: 'bg-albastru', pozitie: 'left-[1%] top-[66%] size-[180px] 2xl:left-[5%] 2xl:size-[240px]', anim: 'plutitor', intarziere: '-2s' },
-  { poza: '/images/antet-birou.webp', alt: '', culoare: 'bg-portocaliu', pozitie: 'right-[1%] top-[54%] size-[200px] 2xl:right-[4%] 2xl:size-[280px]', anim: 'plutitor-lent', intarziere: '-5s' },
-]
 ---
 
 <section class="relative overflow-hidden bg-alb pt-32 sm:pt-40 lg:pt-44" aria-labelledby="titlu-antet">
@@ -42,7 +36,7 @@ const cercuri = [
     <div class="intrare mt-9 flex flex-col items-center gap-3 sm:flex-row" style="--intarziere:240ms">
       <a href="/programare/" class="pastila pastila-albastra !px-7 !py-4 text-[1.05rem]">Programează o discuție gratuită</a>
       <a href={linkWhatsApp} target="_blank" rel="noopener" class="pastila pastila-crem !px-6 !py-4 text-[1.05rem]">
-        <Icon name="solar:chat-round-line-bold" class="size-5 text-verde" /> Scrie pe WhatsApp
+        <Icon name="whatsapp" class="size-5 text-verde" /> Scrie pe WhatsApp
       </a>
     </div>
 
@@ -58,32 +52,35 @@ const cercuri = [
   </div>
 
   {/*
-    Cercurile cu fotografii, doar de la 1280px in sus. Intre 1024 si 1280,
-    textul ocupa aproape toata latimea si cercurile cadeau peste el: „simplu"
-    intra sub poza Dorinei, iar randul cu WhatsApp sub cea cu biroul.
-    Inelul colorat e de 14px.
+    Cele doua figuri, doar de la 1280px in sus. Sub pragul asta textul ocupa
+    aproape toata latimea si figurile ar cadea peste el.
+    Cea care saluta e oglindita, ca mana ridicata sa cada spre text, nu spre
+    marginea paginii. Cea care prezinta e desenata aratand spre stanga ei, deci
+    sta in dreapta si palma ei deschisa duce tot spre text.
   */}
   <div class="pointer-events-none absolute inset-0 hidden xl:block" aria-hidden="true">
-    {
-      cercuri.map((c) => (
-        <div class:list={['absolute rounded-full p-3.5', c.culoare, c.pozitie, c.anim]} style={`animation-delay:${c.intarziere}`}>
-          <img src={c.poza} alt={c.alt} class="size-full rounded-full object-cover" width="340" height="340" loading={c.alt ? 'eager' : 'lazy'} decoding="async" />
-        </div>
-      ))
-    }
+    <img src="/images/personaj/saluta.webp" alt="" width="257" height="640"
+         class="absolute left-[4%] top-[14%] h-[440px] w-auto -scale-x-100 2xl:left-[8%] 2xl:h-[520px]" />
+    <img src="/images/personaj/prezinta.webp" alt="" width="340" height="640"
+         class="absolute right-[3%] top-[17%] h-[430px] w-auto 2xl:right-[7%] 2xl:h-[500px]" />
   </div>
 
-  {/* Pana la 1280px, un singur cerc, cu Dorina, asezat sub text */}
-  <div class="container-site relative z-10 mt-12 flex justify-center xl:hidden">
-    <div class="rounded-full bg-roz p-3">
-      <img src="/images/dorina-480.webp" alt="Dorina, profesoară de franceză" class="size-52 rounded-full object-cover sm:size-64" width="288" height="288" loading="eager" fetchpriority="high" decoding="async" />
-    </div>
+  {/* Pana la 1280px, o singura figura, cea care saluta, asezata sub text */}
+  <div class="container-site relative z-10 mt-10 flex justify-center xl:hidden">
+    <img src="/images/personaj/saluta.webp" alt="" aria-hidden="true" width="257" height="640"
+         class="h-[260px] w-auto sm:h-[320px]" loading="eager" fetchpriority="high" decoding="async" />
+  </div>
+
+  {/*
+    „Bienvenue", cu fontul serif al site-ului, inclinat, la 6% opacitate. Sta in
+    golul dintre lista de puncte si val, deci nu se bate cu titlul. E text, nu
+    poza: se citeste de cititoarele de ecran? nu, are aria-hidden, e decor.
+    Doar de la 1024px in sus, pe telefon nu incape.
+  */}
+  <div class="pointer-events-none absolute inset-x-0 bottom-[14%] hidden select-none justify-center lg:flex" aria-hidden="true">
+    <span class="font-display text-[9rem] italic leading-none text-albastru/[0.06] 2xl:text-[12rem]">Bienvenue</span>
   </div>
 
   {/* Banda crem ondulata, trecerea spre panza crem a paginii */}
-  <div class="relative mt-16 h-24 lg:mt-40 lg:h-32" aria-hidden="true">
-    <svg class="absolute inset-x-0 bottom-0 h-full w-full" viewBox="0 0 1440 120" preserveAspectRatio="none">
-      <path d="M0,60 C240,110 480,0 720,40 C960,80 1200,120 1440,50 L1440,120 L0,120 Z" fill="#f8f3eb" />
-    </svg>
-  </div>
+  <Val class="mt-16 h-24 lg:mt-40 lg:h-32" />
 </section>
