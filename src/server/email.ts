@@ -129,18 +129,26 @@ function sablon(o: {
   figura?: 'saluta' | 'telefon' | 'incurajeaza' | 'scrie'
 }): string {
   const figura = o.figura
-    ? `<td width="112" style="width:112px;vertical-align:top;padding-left:18px" class="fara-figura">
-          <img src="${adresaSite()}/images/email/${o.figura}.png" alt="" width="112" height="112" style="display:block;width:112px;height:112px;border:0;border-radius:999px">
+    ? `<td width="112" style="width:112px;vertical-align:top;padding-left:18px" class="figura-cel">
+          <img src="${adresaSite()}/images/email/${o.figura}.png" alt="" width="112" height="112" style="display:block;width:112px;height:112px;border:0;border-radius:999px" class="figura-img">
         </td>`
     : ''
 
   return `<!doctype html>
 <html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><title>${scapa(o.titlu)}</title>
 <style>
-  /* Pe ecrane inguste figura iese: titlul are nevoie de toata latimea. */
+  /*
+    Pe telefon figura NU se mai ascunde, se micsoreaza.
+    Prima varianta o scotea de tot sub 520px, ca sa aiba titlul toata latimea.
+    Artiom s-a uitat pe telefon: „nu-i nici poza cea cu fata, nu stiu de ce, pe
+    pc este parca". Avea dreptate sa se mire: personajul e jumatate din motivul
+    pentru care emailul arata a noi. Deci ramane, la 68 de pixeli, iar titlul
+    scade cu doua puncte ca sa incapa amandoua.
+  */
   @media (max-width:520px) {
-    .fara-figura { display:none !important; }
-    .titlu-email { font-size:24px !important; }
+    .figura-cel { width:68px !important; padding-left:12px !important; }
+    .figura-img { width:68px !important; height:68px !important; }
+    .titlu-email { font-size:22px !important; }
   }
 </style>
 </head>
