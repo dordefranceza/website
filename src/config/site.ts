@@ -57,8 +57,8 @@ export const site = {
     cunoastere: 0,
     /** pretul unei lectii singure, cea mai scumpa cale */
     individual: 40,
-    /** pe lectie, in cursul de doua luni; grupul nu se vinde la bucata */
-    grup: 20,
+    /** o lectie de grup luata singura, ca proba; in pachet scade pana la 20 */
+    grup: 25,
   },
   marimeGrup: '3 sau 4 persoane',
 
@@ -119,21 +119,63 @@ export const pachete = [
 ] as const
 
 /**
- * Cursul de grup. NU se vinde la bucata: un grup are nevoie ca aceiasi oameni sa
- * vina la aceeasi ora, saptamani la rand. De aia e un curs de doua luni, cu loc
- * rezervat, nu o lectie pe care o iei cand vrei.
+ * Grupul, pe trepte, ca si individualul.
+ *
+ * O grupa are nevoie ca aceiasi oameni sa vina la aceeasi ora saptamani la rand,
+ * deci cursul intreg ramane produsul principal si cel mai ieftin pe lectie. Dar
+ * intre „cursul de doua luni" si „nimic" era prapastie: ceri 300 € unui om care
+ * nu a vazut nicio lectie. De aia exista si o lectie de proba, si doua pachete
+ * intre ele.
+ *
+ * Scaderea, citita de-a lungul randului: 25, 24, 22, 20.
  */
+export const grupuri = [
+  {
+    id: 'proba',
+    nume: 'Lecție de probă',
+    lectii: 1,
+    pretLectie: site.preturi.grup,
+    nota: 'Intri o dată într-o grupă, vezi cum e și abia apoi decizi.',
+    evidentiat: false,
+  },
+  {
+    id: 'cinci',
+    nume: 'Pachet de 5 lecții',
+    lectii: 5,
+    pretLectie: 24,
+    nota: 'Cinci săptămâni. Cât să prinzi ritmul grupei.',
+    evidentiat: false,
+  },
+  {
+    id: 'zece',
+    nume: 'Pachet de 10 lecții',
+    lectii: 10,
+    pretLectie: 22,
+    nota: 'Aproape tot cursul, dar plătit în doi pași.',
+    evidentiat: false,
+  },
+  {
+    id: 'curs',
+    nume: 'Curs de 2 luni',
+    lectii: 15,
+    pretLectie: 20,
+    nota: 'Cursul întreg, de la început până la capăt, cu loc rezervat.',
+    evidentiat: true,
+  },
+] as const
+
+/** Cursul intreg, produsul principal al grupei. */
 export const cursGrup = {
-  nume: 'Curs în grup, 2 luni',
-  lectii: 15,
-  pretLectie: site.preturi.grup,
+  ...grupuri[grupuri.length - 1],
   durata: site.durataGrup,
-  nota: 'Loc rezervat într-o grupă de același nivel, cu orar fix.',
 } as const
 
-/** Cat la suta economisesti fata de pretul unei lectii singure. */
-export function reducere(pretLectie: number): number {
-  return Math.round((1 - pretLectie / site.preturi.individual) * 100)
+/**
+ * Cat la suta economisesti fata de pretul unei lectii luate singure.
+ * `baza` e 40 € la individual si 25 € la grup, de aceea se poate da din afara.
+ */
+export function reducere(pretLectie: number, baza: number = site.preturi.individual): number {
+  return Math.round((1 - pretLectie / baza) * 100)
 }
 
 /** Cat te costa cu totul un pachet. */

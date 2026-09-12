@@ -17,9 +17,10 @@
  */
 import { Icon } from 'astro-icon/components'
 import { beneficiiGrup, beneficiiIndividual, discutie } from '../../config/continut'
-import { cursGrup, inLei, pachete, reducere, site, total } from '../../config/site'
+import { cursGrup, grupuri, pachete, site } from '../../config/site'
 import Semn from '../Semn.astro'
 import PersonajCerc from '../PersonajCerc.astro'
+import CardPret from './CardPret.astro'
 
 interface Props {
   titlu?: string
@@ -85,70 +86,16 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
       <div class="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {
           pachete.map((p) => (
-            <div
-              class:list={[
-                'relative flex flex-col rounded-[1.5rem] p-7',
-                p.evidentiat ? 'bg-navy text-alb xl:-translate-y-3' : 'bg-alb',
-              ]}
-            >
-              {p.evidentiat && (
-                <span class="absolute right-6 top-6 rounded-full bg-roz px-3 py-1 text-xs font-bold uppercase tracking-wider text-cerneala">
-                  Cel mai bun preț
-                </span>
-              )}
-              {/* pe cardul evidentiat, eticheta sta in coltul din dreapta sus,
-                  deci numele are nevoie de loc ca sa nu treaca pe sub ea */}
-              <p class:list={['font-sans text-lg font-medium', p.evidentiat && 'pr-36']}>{p.nume}</p>
-
-              {/* Mare e pretul PE LECTIE, mic totalul. Citit de-a lungul randului,
-                  numarul mare face 40, 36, 33, 31, iar scaderea aia e tot
-                  argumentul pachetelor. Totalul sta dedesubt, unde trebuie sa
-                  fie limpede, dar nu el conduce privirea. */}
-              <p class="mt-5 font-display text-5xl leading-none">
-                {p.pretLectie} {site.moneda}
-                <span class:list={['ml-1 font-sans text-base', p.evidentiat ? 'text-alb/70' : 'text-gri']}>pe lecție</span>
-              </p>
-              <p class:list={['mt-3 text-sm', p.evidentiat ? 'text-alb/70' : 'text-gri']}>
-                {p.lectii === 1
-                  ? `o lecție de ${site.durataLectie} de minute`
-                  : `${p.lectii} lecții de ${site.durataLectie} de minute`}
-              </p>
-              {p.lectii === 1 ? (
-                <p class:list={['text-sm', p.evidentiat ? 'text-alb/60' : 'text-gri']}>
-                  {inLei(p.pretLectie)} lei la cursul de azi
-                </p>
-              ) : (
-                <p class:list={['text-sm font-medium', p.evidentiat ? 'text-alb' : 'text-cerneala']}>
-                  {total(p.lectii, p.pretLectie)} {site.moneda} cu totul
-                  <span class:list={['font-normal', p.evidentiat ? 'text-alb/60' : 'text-gri']}>
-                    {' '}· {inLei(total(p.lectii, p.pretLectie))} lei
-                  </span>
-                </p>
-              )}
-
-              {reducere(p.pretLectie) > 0 && (
-                <p
-                  class:list={[
-                    'mt-4 inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold',
-                    p.evidentiat ? 'bg-alb/15 text-alb' : 'bg-verde-5 text-verde',
-                  ]}
-                >
-                  Economisești {reducere(p.pretLectie)}%, adică{' '}
-                  {total(p.lectii, site.preturi.individual) - total(p.lectii, p.pretLectie)} {site.moneda}
-                </p>
-              )}
-
-              <p class:list={['mt-4 flex-1 text-sm leading-relaxed', p.evidentiat ? 'text-alb/80' : 'text-gri']}>
-                {p.nota}
-              </p>
-
-              <a
-                href={`/programare/?tip=individual&pachet=${p.id}`}
-                class:list={['pastila mt-6 w-full', p.evidentiat ? 'pastila-alba' : 'pastila-albastra']}
-              >
-                Alege
-              </a>
-            </div>
+            <CardPret
+              nume={p.nume}
+              lectii={p.lectii}
+              pretLectie={p.pretLectie}
+              durata={site.durataLectie}
+              baza={site.preturi.individual}
+              nota={p.nota}
+              evidentiat={p.evidentiat}
+              href={`/programare/?tip=individual&pachet=${p.id}`}
+            />
           ))
         }
       </div>
@@ -170,26 +117,26 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
 
     {/* --------------------------------------------------------------------- grup */}
     <div id="panou-grup" role="tabpanel" aria-labelledby="fila-grup" tabindex="0" hidden>
-      <div class="mt-8 grid gap-5 lg:grid-cols-[1fr_1.1fr]">
-        <div class="relative flex flex-col justify-center rounded-[1.5rem] bg-navy p-8 text-alb sm:p-10">
-          <p class="font-sans text-lg font-medium">{cursGrup.nume}</p>
-          <p class="mt-5 font-display text-6xl leading-none">
-            {cursGrup.pretLectie} {site.moneda}
-            <span class="ml-1 font-sans text-lg text-alb/70">pe lecție</span>
-          </p>
-          <p class="mt-3 text-alb/70">{cursGrup.lectii} lecții de {cursGrup.durata} de minute</p>
-          <p class="font-medium text-alb">
-            {total(cursGrup.lectii, cursGrup.pretLectie)} {site.moneda} cursul întreg
-            <span class="font-normal text-alb/60"> · {inLei(total(cursGrup.lectii, cursGrup.pretLectie))} lei</span>
-          </p>
-          <p class="mt-4 inline-flex w-fit rounded-full bg-alb/15 px-3 py-1 text-xs font-bold">
-            {Math.round((cursGrup.pretLectie * 60) / cursGrup.durata)} {site.moneda} pe oră de lecție
-          </p>
-          <p class="echilibrat mt-4 leading-relaxed text-alb/80">{cursGrup.nota}</p>
-          <a href="/programare/?tip=grup" class="pastila pastila-alba mt-7 w-full sm:w-fit sm:!px-8">Vreau un loc în grupă</a>
-        </div>
+      <div class="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        {
+          grupuri.map((g) => (
+            <CardPret
+              nume={g.nume}
+              lectii={g.lectii}
+              pretLectie={g.pretLectie}
+              durata={site.durataGrup}
+              baza={site.preturi.grup}
+              nota={g.nota}
+              evidentiat={g.evidentiat}
+              eticheta="Cursul întreg"
+              href={`/programare/?tip=grup&pachet=${g.id}`}
+            />
+          ))
+        }
+      </div>
 
-        <div class="rounded-[1.5rem] bg-alb p-8 sm:p-10">
+      <div class="mt-6 grid gap-5 rounded-[1.5rem] bg-alb p-7 sm:p-9 lg:grid-cols-[1fr_1fr] lg:gap-10">
+        <div>
           <p class="font-sans text-lg font-medium">Cum merge o grupă</p>
           <ul class="mt-5 space-y-3">
             {
@@ -201,13 +148,23 @@ const { titlu = 'Prețuri simple, fără abonament', compact = false } = Astro.p
               ))
             }
           </ul>
-          <p class="echilibrat mt-6 text-sm leading-relaxed text-gri">
-            Grupa pornește când se strâng {site.marimeGrup}. Până atunci nu plătești nimic: îți spun eu când e gata și abia
-            atunci confirmi.
+        </div>
+        <div class="rounded-[1.25rem] bg-crem p-6">
+          <p class="font-sans font-medium">Cât costă o oră de lecție</p>
+          <p class="echilibrat mt-2 text-sm leading-relaxed text-gri">
+            Lecția de grup ține {site.durataGrup} de minute, nu {site.durataLectie}, fiindcă trebuie să apuce toată lumea
+            să vorbească. La cursul întreg iese{' '}
+            <strong class="font-medium text-cerneala">
+              {Math.round((cursGrup.pretLectie * 60) / site.durataGrup)} {site.moneda} pe oră
+            </strong>
+            , adică exact cât costă o oră pe platformele cu profesori mulți.
+          </p>
+          <p class="echilibrat mt-4 text-sm leading-relaxed text-gri">
+            Grupa pornește când se strâng {site.marimeGrup}. Până atunci nu plătești nimic: îți spun eu când e gata și
+            abia atunci confirmi.
           </p>
         </div>
       </div>
-    </div>
 
     {/*
       Banda si figura sunt LIPITE, nu despartite: figura sta peste capatul din

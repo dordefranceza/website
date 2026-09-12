@@ -1,0 +1,67 @@
+---
+/**
+ * Un card de pret, folosit si la lectiile individuale, si la grup.
+ *
+ * Ordinea in care se citesc cele trei trepte conteaza si e ceruta de Artiom:
+ * mare e pretul PE LECTIE, fiindca de-a lungul randului el face scaderea care
+ * vinde pachetul, iar totalul sta mic dedesubt.
+ */
+import { inLei, reducere, site, total } from '../../config/site'
+
+interface Props {
+  nume: string
+  lectii: number
+  pretLectie: number
+  /** cate minute are o lectie de felul asta */
+  durata: number
+  /** pretul unei lectii luate singure, fata de care se calculeaza economia */
+  baza: number
+  nota: string
+  evidentiat?: boolean
+  href: string
+  /** textul de pe eticheta din colt, doar pe cardul evidentiat */
+  eticheta?: string
+}
+const { nume, lectii, pretLectie, durata, baza, nota, evidentiat = false, href, eticheta = 'Cel mai bun preț' } = Astro.props
+const economie = reducere(pretLectie, baza)
+---
+
+<div class:list={['relative flex flex-col rounded-[1.5rem] p-7', evidentiat ? 'bg-navy text-alb xl:-translate-y-3' : 'bg-alb']}>
+  {evidentiat && (
+    <span class="absolute right-6 top-6 rounded-full bg-roz px-3 py-1 text-xs font-bold uppercase tracking-wider text-cerneala">
+      {eticheta}
+    </span>
+  )}
+
+  <p class:list={['font-sans text-lg font-medium', evidentiat && 'pr-36']}>{nume}</p>
+
+  <p class="mt-5 font-display text-5xl leading-none">
+    {pretLectie} {site.moneda}
+    <span class:list={['ml-1 font-sans text-base', evidentiat ? 'text-alb/70' : 'text-gri']}>pe lecție</span>
+  </p>
+
+  <p class:list={['mt-3 text-sm', evidentiat ? 'text-alb/70' : 'text-gri']}>
+    {lectii === 1 ? 'o lecție' : `${lectii} lecții`} de {durata} de minute
+  </p>
+
+  {lectii === 1 ? (
+    <p class:list={['text-sm', evidentiat ? 'text-alb/60' : 'text-gri']}>{inLei(pretLectie)} lei la cursul de azi</p>
+  ) : (
+    <p class:list={['text-sm font-medium', evidentiat ? 'text-alb' : 'text-cerneala']}>
+      {total(lectii, pretLectie)} {site.moneda} cu totul
+      <span class:list={['font-normal', evidentiat ? 'text-alb/60' : 'text-gri']}>
+        {' '}· {inLei(total(lectii, pretLectie))} lei
+      </span>
+    </p>
+  )}
+
+  {economie > 0 && (
+    <p class:list={['mt-4 inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold', evidentiat ? 'bg-alb/15 text-alb' : 'bg-verde-5 text-verde']}>
+      Economisești {economie}%, adică {total(lectii, baza) - total(lectii, pretLectie)} {site.moneda}
+    </p>
+  )}
+
+  <p class:list={['mt-4 flex-1 text-sm leading-relaxed', evidentiat ? 'text-alb/80' : 'text-gri']}>{nota}</p>
+
+  <a href={href} class:list={['pastila mt-6 w-full', evidentiat ? 'pastila-alba' : 'pastila-albastra']}>Alege</a>
+</div>
