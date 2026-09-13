@@ -57,7 +57,17 @@ function parametru(nume: string): string {
 export default function Programare({ whatsapp }: Props) {
   const [pas, setPas] = useState<1 | 2 | 3 | 4>(1)
   const [tip, setTip] = useState<TipProgramare>('cunoastere')
-  const [scopInitial, setScopInitial] = useState('')
+  /*
+   * Nivelul si scopul se aleg de pe pastile, nu din listele sistemului.
+   * Artiom, aratand doua poze de pe telefon: lista derulanta se deschide ca o
+   * foaie cenusie a telefonului, peste site, si nu seamana cu nimic din ce am
+   * facut. Pe pastile se vad toate optiunile deodata si se apasa o data.
+   *
+   * Valorile pleaca mai departe prin cate un `input hidden`, deci restul
+   * formularului, care se trimite cu FormData, ramane neatins.
+   */
+  const [nivel, setNivel] = useState('')
+  const [scop, setScop] = useState('')
   /** Pachetul ales pe pagina de preturi, daca a venit de acolo. */
   const [mesajInitial, setMesajInitial] = useState('')
   const [sloturi, setSloturi] = useState<Sloturi>({})
@@ -93,7 +103,7 @@ export default function Programare({ whatsapp }: Props) {
       setTip(t)
       setPas(2)
     }
-    setScopInitial(parametru('scop'))
+    setScop(parametru('scop'))
     const p = pachete.find((x) => x.id === parametru('pachet'))
     if (p) setMesajInitial(`Vreau ${p.nume.toLowerCase()}, ${p.pretLectie} € pe lecție.`)
   }, [])
@@ -442,27 +452,49 @@ export default function Programare({ whatsapp }: Props) {
                 <Input id="p-telefon" name="telefon" type="tel" autoComplete="tel" inputMode="tel" placeholder="07xx xxx xxx" className="h-12 rounded-xl bg-crem" />
               </div>
               <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="p-email">Email, pentru confirmare și linkul de Zoom</Label>
+                <Label htmlFor="p-email">Email, pentru confirmare și linkul lecției</Label>
                 <Input id="p-email" name="email" type="email" required autoComplete="email" inputMode="email" className="h-12 rounded-xl bg-crem" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="p-nivel">Nivelul tău acum</Label>
-                <select id="p-nivel" name="nivel" defaultValue="" className="h-12 w-full rounded-xl bg-crem px-3 text-[0.95rem]">
-                  <option value="">Alege</option>
+              <fieldset className="space-y-2.5 sm:col-span-2">
+                <legend className="mb-2.5 text-sm font-medium">Nivelul tău acum</legend>
+                <input type="hidden" name="nivel" value={nivel} />
+                <div className="flex flex-wrap gap-2">
                   {NIVELURI.map((n) => (
-                    <option key={n} value={n}>{n}</option>
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setNivel((x) => (x === n ? '' : n))}
+                      aria-pressed={nivel === n}
+                      className={cn(
+                        'rounded-full px-4 py-2.5 text-[0.95rem] transition',
+                        nivel === n ? 'bg-albastru text-alb' : 'bg-crem hover:bg-crem-inchis',
+                      )}
+                    >
+                      {n}
+                    </button>
                   ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="p-scop">Pentru ce ai nevoie de franceză</Label>
-                <select id="p-scop" name="scop" defaultValue={scopInitial} className="h-12 w-full rounded-xl bg-crem px-3 text-[0.95rem]">
-                  <option value="">Alege</option>
-                  {SCOPURI.map((s) => (
-                    <option key={s} value={s}>{s}</option>
+                </div>
+              </fieldset>
+              <fieldset className="space-y-2.5 sm:col-span-2">
+                <legend className="mb-2.5 text-sm font-medium">Pentru ce ai nevoie de franceză</legend>
+                <input type="hidden" name="scop" value={scop} />
+                <div className="flex flex-wrap gap-2">
+                  {SCOPURI.map((sc) => (
+                    <button
+                      key={sc}
+                      type="button"
+                      onClick={() => setScop((x) => (x === sc ? '' : sc))}
+                      aria-pressed={scop === sc}
+                      className={cn(
+                        'rounded-full px-4 py-2.5 text-left text-[0.95rem] leading-snug transition',
+                        scop === sc ? 'bg-albastru text-alb' : 'bg-crem hover:bg-crem-inchis',
+                      )}
+                    >
+                      {sc}
+                    </button>
                   ))}
-                </select>
-              </div>
+                </div>
+              </fieldset>
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="p-mesaj">Ceva ce ar trebui să știe Dorina? (opțional)</Label>
                 <Textarea id="p-mesaj" name="mesaj" rows={3} defaultValue={mesajInitial} className="rounded-xl bg-crem" placeholder="Termen, situație, ce ai încercat până acum…" />
