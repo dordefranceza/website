@@ -40,16 +40,36 @@ import Semn from '../Semn.astro'
         aria-hidden="true"
       >
       </div>
-      <img
-        src="/images/personaj/bienvenue-sus.webp"
-        alt="Personajul DorDeFranceza ține o placardă pe care scrie Bienvenue"
-        width="626"
-        height="1300"
-        class="intrare relative h-[360px] w-auto sm:h-[460px] lg:h-[560px] 2xl:h-[620px]"
-        loading="eager"
-        fetchpriority="high"
-        decoding="async"
-      />
+      {/*
+        Doua fisiere pentru aceeasi figura, ca telefonul sa nu tragaa una de
+        desktop.
+        Fisierul mare are 1300 de pixeli inaltime, dar pe telefon se afiseaza la
+        360. Lighthouse l-a numarat: 85 KB trimisi, 65 dintre ei risipiti, si
+        era chiar elementul care hotara cand pare pagina incarcata. Cel mic are
+        720 de pixeli, adica dublul marimii afisate, deci ramane clar si pe
+        ecran retina, si cantareste 36 KB.
+
+        Se face cu <picture>, nu cu srcset si sizes: figura e inalta, nu lata, si
+        latimea ei se schimba singura dupa inaltime, deci descriptorii de latime
+        ar fi trebuit socotiti pe dinafara. Cu media query spunem direct: de la
+        1024 in sus, cea mare.
+
+        Cea mica se face din cea mare, cand se schimba:
+        node -e "require('sharp')('public/images/personaj/bienvenue-sus.webp').resize({height:720}).webp({quality:88,alphaQuality:100}).toFile('public/images/personaj/bienvenue-sus-mic.webp')"
+      */}
+      <picture>
+        <source media="(min-width: 1024px)" srcset="/images/personaj/bienvenue-sus.webp" />
+        <img
+          src="/images/personaj/bienvenue-sus-mic.webp"
+          alt="Personajul DorDeFranceza ține o placardă pe care scrie Bienvenue"
+          width="626"
+          height="1300"
+          class="intrare relative h-[360px] w-auto sm:h-[460px] lg:h-[560px] 2xl:h-[620px]"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </picture>
     </div>
 
     <div class="relative order-1 text-center lg:order-2 lg:text-left">
