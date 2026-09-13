@@ -56,6 +56,22 @@ function parametru(nume: string): string {
 
 export default function Programare({ whatsapp }: Props) {
   const [pas, setPas] = useState<1 | 2 | 3 | 4>(1)
+  /** Panoul alb cu pasii; la el urca pagina cand se schimba pasul. */
+  const panou = useRef<HTMLDivElement>(null)
+  /**
+   * Se ridica doar cand pasul s-a schimbat fiindca a apasat omul.
+   *
+   * Fara semnalul asta ar urca si la deschiderea paginii: cine vine de pe
+   * /preturi/ cu `?tip=` in adresa sare singur la pasul 2, inca dinainte sa
+   * apuce sa citeasca antetul, si i-ar fugi pagina sub ochi.
+   */
+  const dinApasare = useRef(false)
+
+  /** Trece la alt pas si cere ridicarea paginii la panou. */
+  function mergiLaPas(n: 1 | 2 | 3 | 4) {
+    dinApasare.current = true
+    setPas(n)
+  }
   const [tip, setTip] = useState<TipProgramare>('cunoastere')
   /*
    * Nivelul si scopul se aleg de pe pastile, nu din listele sistemului.
@@ -178,7 +194,7 @@ export default function Programare({ whatsapp }: Props) {
       if (!r.ok || !d.ok) {
         if (r.status === 409) {
           setSlot('')
-          setPas(2)
+          mergiLaPas(2)
         }
         if (d.sugestie) setSugestie(d.sugestie)
         throw new Error(d.eroare || 'Programarea nu a putut fi salvată')
@@ -191,6 +207,35 @@ export default function Programare({ whatsapp }: Props) {
       setTrimite(false)
     }
   }
+
+  /*
+   * La fiecare schimbare de pas, pagina urca la panou.
+   *
+   * Pasul 2 e lung: calendarul, apoi orele libere. Cand omul apasa ora si apoi
+   * „Continuă", el e tocmai jos, iar panoul se schimba deasupra lui, in afara
+   * ecranului. Ramanea uitandu-se la cardul bleumarin si la subsol, fara sa
+   * inteleaga ca formularul a trecut mai departe. Artiom: „raman acolo jos,
+   * trebuie sa ma ridice sus, acolo la datele tale, ca sa fie comod clientul".
+   *
+   * Se ridica pana la marginea de sus a panoului, nu pana la capatul paginii:
+   * asa se vad si pasii bifati, deci omul vede din ce a venit si unde a ajuns.
+   *
+   * Locul lasat pentru bara fixa de sus vine din `scroll-padding-top: 6rem`,
+   * pus o data pe `html` in global.css. Prima incercare mai punea si un
+   * `scroll-mt-24` pe panou, si cele doua s-au adunat: panoul se oprea la 205
+   * pixeli de marginea de sus in loc de 96. Nu se pune al doilea numar.
+   *
+   * `behavior: 'auto'` e scris dinadins: `html` are `scroll-behavior: smooth`,
+   * iar o derulare lina spre un panou care tocmai si-a schimbat inaltimea poate
+   * fi taiata la jumatate. Optiunea data in cod bate regula din CSS.
+   */
+  useLayoutEffect(() => {
+    if (!dinApasare.current) return
+    dinApasare.current = false
+    /* pasul 4 nu mai are panou: el urca pana sus de tot, in efectul de dedesubt */
+    if (pas === 4) return
+    panou.current?.scrollIntoView({ block: 'start', behavior: 'auto' })
+  }, [pas])
 
   /*
    * Dupa confirmare, pagina urca inapoi la antet, iar antetul trebuie sa fie
@@ -350,7 +395,7 @@ export default function Programare({ whatsapp }: Props) {
     <div className="mt-10 grid gap-6 sm:mt-12 lg:grid-cols-[300px_1fr]">
       <div className="order-2 lg:order-1 lg:sticky lg:top-28 lg:self-start">{rezumat}</div>
 
-      <div className="order-1 rounded-[2rem] bg-alb p-6 sm:p-9 lg:order-2">
+      <div ref={panou} className="order-1 rounded-[2rem] bg-alb p-6 sm:p-9 lg:order-2">
         {/* Pasii */}
         <ol className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium">
           {(['Tipul', 'Ziua și ora', 'Datele tale'] as const).map((nume, i) => {
@@ -378,7 +423,7 @@ export default function Programare({ whatsapp }: Props) {
                   type="button"
                   onClick={() => {
                     setTip(t)
-                    setPas(2)
+                    mergiLaPas(2)
                   }}
                   className={cn(
                     'flex items-start gap-4 rounded-[1.25rem] p-5 text-left transition hover:-translate-y-0.5 sm:gap-5',
@@ -426,7 +471,7 @@ export default function Programare({ whatsapp }: Props) {
           <div className="mt-8">
             <div className="flex items-center justify-between gap-4">
               <h2 className="font-sans text-2xl font-medium">Alege ziua</h2>
-              <button type="button" onClick={() => setPas(1)} className="inline-flex items-center gap-1 text-sm font-medium text-albastru-text">
+              <button type="button" onClick={() => mergiLaPas(1)} className="inline-flex items-center gap-1 text-sm font-medium text-albastru-text">
                 <IconBack className="size-4" /> Schimbă tipul
               </button>
             </div>
@@ -501,7 +546,7 @@ export default function Programare({ whatsapp }: Props) {
             </div>
 
             <div className="mt-8 flex justify-end">
-              <Button type="button" disabled={!slot} onClick={() => setPas(3)} className="h-12 rounded-full px-7 text-base">
+              <Button type="button" disabled={!slot} onClick={() => mergiLaPas(3)} className="h-12 rounded-full px-7 text-base">
                 Continuă <IconArrow className="size-5" />
               </Button>
             </div>
@@ -512,7 +557,7 @@ export default function Programare({ whatsapp }: Props) {
           <form ref={formular} onSubmit={trimiteFormular} className="relative mt-8">
             <div className="flex items-center justify-between gap-4">
               <h2 className="font-sans text-2xl font-medium">Datele tale</h2>
-              <button type="button" onClick={() => setPas(2)} className="inline-flex items-center gap-1 text-sm font-medium text-albastru-text">
+              <button type="button" onClick={() => mergiLaPas(2)} className="inline-flex items-center gap-1 text-sm font-medium text-albastru-text">
                 <IconBack className="size-4" /> Schimbă ora
               </button>
             </div>
