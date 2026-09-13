@@ -1,0 +1,132 @@
+---
+/**
+ * Paginile pe intentie, toate cinci dintr-un singur fisier.
+ *
+ * `getStaticPaths` face cate o pagina adevarata pentru fiecare intrare din
+ * `intentii`: /franceza-pentru-incepatori/, /pregatire-examene/ si asa mai
+ * departe. Sunt pagini normale, cu adresa lor, nu file dintr-un accordeon: asa
+ * le poate arata Google separat, fiecare la cautarea ei.
+ *
+ * Fisierul se numeste `[intentie].astro`, cu paranteze patrate, si sta direct
+ * in `pages/`. Asta inseamna ca prinde orice adresa de un singur nivel care nu
+ * e deja luata de un fisier cu nume fix. Paginile existente, `/preturi/`,
+ * `/despre/` si celelalte, au fisierele lor si castiga ele, deci nu se calca
+ * nimic in picioare.
+ *
+ * Intrebarile de jos intra si in datele structurate, ca `FAQPage`. Google le
+ * poate arata desfasurate sub rezultat, iar omul isi vede raspunsul fara sa mai
+ * intre. Se pierde un clic, se castiga increderea.
+ */
+import Base from '../layouts/Base.astro'
+import PersonajCerc from '../components/PersonajCerc.astro'
+import Preturi from '../components/acasa/Preturi.astro'
+import { intentii } from '../config/intentii'
+import { site } from '../config/site'
+import { Icon } from 'astro-icon/components'
+
+export function getStaticPaths() {
+  return intentii.map((i) => ({ params: { intentie: i.slug }, props: { i } }))
+}
+
+const { i } = Astro.props
+
+/* Adresa formularului vine cu nevoia deja aleasa, ca omul sa nu o mai spuna o
+   data. Campul `scop` din pasul 3 se completeaza singur din parametru. */
+const linkProgramare = `/programare/?scop=${encodeURIComponent(i.scop)}`
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: i.intrebari.map((q) => ({
+    '@type': 'Question',
+    name: q.intrebare,
+    acceptedAnswer: { '@type': 'Answer', text: q.raspuns },
+  })),
+}
+---
+
+<Base title={i.titluPagina} description={i.descriere}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />
+
+  <main id="continut" class="bg-crem pt-24 pb-20 sm:pt-36 sm:pb-28">
+    <div class="container-site">
+      <div class="grid items-center gap-5 sm:gap-8 lg:grid-cols-[1.3fr_1fr] lg:gap-12">
+        <div class="order-2 text-center lg:order-1 lg:text-left">
+          <p class="eticheta">{i.eticheta}</p>
+          <h1 class="mt-3 text-4xl sm:text-5xl lg:text-[3.5rem]">{i.titlu}</h1>
+          <p class="mx-auto mt-4 max-w-xl text-lg text-gri lg:mx-0">{i.intro}</p>
+          <div class="mt-7 flex flex-wrap justify-center gap-3 lg:justify-start">
+            <a href={linkProgramare} class="pastila pastila-albastra">Programează o discuție gratuită</a>
+          </div>
+        </div>
+        <div class="order-1 flex justify-center lg:order-2 lg:justify-end">
+          <div class="relative">
+            <div class="plutitor absolute -left-5 top-3 size-12 rounded-full bg-roz sm:-left-10 sm:size-24" aria-hidden="true"></div>
+            <div class="plutitor-lent absolute -bottom-1 -right-3 size-9 rounded-full bg-albastru sm:-right-8 sm:size-20" aria-hidden="true"></div>
+            <PersonajCerc nume={i.figura} inel={i.inel} disc="alb" marime={128} marimeMare={272} grosime={14} class="relative" />
+          </div>
+        </div>
+      </div>
+
+      <section class="mt-14 rounded-[2rem] bg-alb p-6 sm:mt-20 sm:p-10" aria-labelledby="cum-lucram">
+        <h2 id="cum-lucram" class="font-sans text-2xl font-medium sm:text-3xl">Cum lucrăm</h2>
+        <div class="mt-5 space-y-4 text-lg leading-relaxed text-gri">
+          {i.paragrafe.map((p) => <p>{p}</p>)}
+        </div>
+      </section>
+
+      <section class="mt-6 rounded-[2rem] bg-navy p-6 text-alb sm:p-10" aria-labelledby="rezultate">
+        <h2 id="rezultate" class="font-sans text-2xl font-medium sm:text-3xl">Unde ajungi</h2>
+        <ul class="mt-5 space-y-3">
+          {i.rezultate.map((r) => (
+            <li class="flex items-start gap-3 text-lg">
+              <Icon name="solar:check-circle-bold" class="mt-1 size-5 shrink-0 text-verde-10" />
+              <span>{r}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="mt-6 rounded-[2rem] bg-alb p-6 sm:p-10" aria-labelledby="intrebari">
+        <h2 id="intrebari" class="font-sans text-2xl font-medium sm:text-3xl">Întrebări</h2>
+        <div class="mt-5 space-y-6">
+          {i.intrebari.map((q) => (
+            <div>
+              <h3 class="font-sans text-lg font-medium">{q.intrebare}</h3>
+              <p class="mt-1.5 text-lg leading-relaxed text-gri">{q.raspuns}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Legaturile catre surori: asa Google vede un grup, nu cinci pagini
+          razlete, iar omul care nu s-a regasit aici gaseste unde sa se duca. */}
+      <section class="mt-6 rounded-[2rem] bg-alb p-6 sm:p-10" aria-labelledby="si-altele">
+        <h2 id="si-altele" class="font-sans text-2xl font-medium sm:text-3xl">Nu asta căutai?</h2>
+        <p class="mt-2 text-gri">Uite celelalte situații cu care vin oamenii la mine.</p>
+        <div class="mt-5 grid gap-2 sm:grid-cols-2">
+          {intentii.filter((x) => x.slug !== i.slug).map((x) => (
+            <a href={`/${x.slug}/`} class="flex min-h-12 items-center rounded-full bg-crem px-5 text-[0.95rem] font-medium transition hover:bg-crem-inchis">
+              {x.titlu}
+            </a>
+          ))}
+          <a href="/pentru-ce/" class="flex min-h-12 items-center rounded-full bg-crem px-5 text-[0.95rem] font-medium transition hover:bg-crem-inchis">
+            Toate situațiile, pe scurt
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <Preturi titlu="Cât costă" compact />
+
+    <div class="container-site">
+      <section class="rounded-[2rem] bg-albastru p-8 text-center text-alb sm:p-12">
+        <h2 class="font-display text-3xl sm:text-4xl">Prima discuție e gratuită</h2>
+        <p class="mx-auto mt-3 max-w-xl text-lg text-alb/80">
+          {site.durataCunoastere} de minute în care îmi spui ce vrei, îți evaluez nivelul și îți spun sincer de unde pornim și cât ar dura. Fără nicio obligație.
+        </p>
+        <a href={linkProgramare} class="pastila pastila-alba mt-7">Alege ziua și ora</a>
+      </section>
+    </div>
+  </main>
+</Base>
