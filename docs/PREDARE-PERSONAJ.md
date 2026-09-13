@@ -71,6 +71,26 @@ Forma promptului care a mers de cinci ori din cinci:
 
 `aspect_ratio: "2:3"` pentru o siluetă întreagă.
 
+### Fața trebuie descrisă, altfel iese alta
+
+La prima `bucura` din 13 septembrie, modelul a desenat gura **deschisă**, cu
+interior, și ochiul stâng cu o buclă în plus, sprânceana coborâtă până se
+lipea de el. Artiom a văzut-o pe loc: „cu un ochi iese un pic altfel, pare
+străin". Avea dreptate, și nu se vedea decât mărind fața.
+
+Caietul de referință ține hainele, părul și conturul, dar **nu ține fața**.
+Aia trebuie scrisă în prompt, pe bucăți:
+
+> two small solid round dots for the eyes, both exactly the same size and
+> shape, perfectly symmetric, clearly separated from the eyebrows; two short
+> thin curved eyebrows, symmetric, not touching the eyes; one tiny curved line
+> for the nose; the mouth is a single simple closed curved smile line, mouth
+> closed, no open mouth, no teeth, no mouth interior
+
+Cu propozițiile astea a ieșit din prima. Costul greșelii: 3 credite aruncate.
+**Uită-te la față mărită înainte să pui poza în site**, decupajul o micșorează
+și ascunde exact genul ăsta de greșeală.
+
 ### Două capcane
 
 **Pata portocalie.** Dacă în prompt scrii „one small coral orange detail" pe
