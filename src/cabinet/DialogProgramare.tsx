@@ -43,6 +43,23 @@ export default function DialogProgramare({ programare, inchide, laSalvare, anunt
     setEroare('')
   }, [programare])
 
+  /*
+   * Linkul salii din Setari, pentru cazul in care lectia n-are unul al ei.
+   *
+   * Sta AICI, inaintea lui `return null`, si asta nu e o chestiune de gust:
+   * React cere ca toate carligele sa fie chemate in aceeasi ordine la fiecare
+   * randare. Pus dupa iesirea de mai jos, la deschiderea ferestrei se chemau
+   * doua carlige in plus fata de randarea dinainte, iar cabinetul se facea
+   * pagina alba. Artiom a apasat „Detalii" si exact asta a primit.
+   */
+  const [linkSala, setLinkSala] = useState('')
+  useEffect(() => {
+    if (!programare) return
+    apel<{ setari: { link_zoom: string } }>('setari')
+      .then((r) => setLinkSala(r.setari.link_zoom ?? ''))
+      .catch(() => setLinkSala(''))
+  }, [programare])
+
   if (!programare) return null
   const c = programare.client
 
@@ -65,16 +82,6 @@ export default function DialogProgramare({ programare, inchide, laSalvare, anunt
       setAsteapta(false)
     }
   }
-
-  /* Linkul salii din Setari, pentru cazul in care lectia n-are unul al ei.
-     Vine din memoria scurta a cabinetului, deci de obicei e deja adus. */
-  const [linkSala, setLinkSala] = useState('')
-  useEffect(() => {
-    if (!programare) return
-    apel<{ setari: { link_zoom: string } }>('setari')
-      .then((r) => setLinkSala(r.setari.link_zoom ?? ''))
-      .catch(() => setLinkSala(''))
-  }, [programare])
 
   /* Numarul, doar cifre, cum il cere wa.me; gol daca omul n-a lasat telefon. */
   const cifreTelefon = (c?.telefon ?? '').replace(/\D/g, '')
