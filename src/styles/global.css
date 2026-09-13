@@ -385,7 +385,24 @@
   cele doua nu pot ajunge sa se contrazica. Peste 1024px bara nu exista, deci
   nici regula asta nu se aplica.
 */
-@media (max-width: 1023px) {
+@media (max-width: 639px) {
+  /*
+    Pe telefon cardul e lipit de marginea de jos, cu colturile rotunjite doar
+    sus. Asa nu mai ramane nimic pe sub el.
+
+    Statea la 16 pixeli de margine, iar prin fasia aceea se zarea valul crem al
+    antetului: valul intra sub card si din el se mai vedea o dunga, ceea ce
+    arata a linie rupta. Artiom: „liniuta ceea este de la bannerul de cookie,
+    jos". Lipit de margine, nu mai e pe unde sa se vada nimic.
+  */
+  html.bara-vizibila #ddf-cookie {
+    bottom: 5.25rem;
+    border-bottom-left-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
   html.bara-vizibila #ddf-cookie {
     bottom: 6rem;
   }
