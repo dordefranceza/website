@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "carlige": "node scripts/verifica-carlige.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.0",
