@@ -72,8 +72,22 @@ const D = curba()
 ---
 
 <div class:list={['relative', clasa]} aria-hidden="true">
+  {/*
+    Valul coboara cu un pixel sub cutia lui.
+
+    Marginea de jos a desenului cadea pe o fractiune de pixel, iar randul acela
+    se amesteca intre cremul valului si albul sectiunii de deasupra. Iesea o
+    dunga de un pixel, mai deschisa, pe toata latimea: masurata, la x=40 era
+    #f9f5ef intre doua randuri de #f8f3eb. Artiom a incercuit-o pe telefon si
+    avea dreptate, e chiar genul de linie despartitoare pe care a cerut sa nu le
+    mai punem nicaieri.
+
+    Coborat cu un pixel, randul de imbinare cade peste panza crem a paginii,
+    adica crem peste crem, deci nu se mai vede. Valul nu se misca: ce se pierde
+    e un pixel din partea plina de jos, care e oricum crem.
+  */}
   <svg
-    class="val-plutire absolute inset-x-0 bottom-0 h-full w-full"
+    class="val-plutire absolute inset-x-0 -bottom-px h-[calc(100%+1px)] w-full"
     viewBox={`0 0 ${LATIME} ${INALTIME}`}
     preserveAspectRatio="none"
   >
