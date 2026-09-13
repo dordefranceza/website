@@ -21,6 +21,16 @@
  *    un pic. Detaliul asta face mai mult decat toate celelalte la un loc.
  * 3. Capetele sunt rotunde, ca varful unei carioci, si bifa e usor curbata, nu
  *    din doua segmente drepte.
+ *
+ * Se si deseneaza singura, cand apare. Artiom: „cand omul confirma si ii apare
+ * pagina «ne vedem curand», bifa de jos sa se faca animata". Intai cercul,
+ * apoi semnul, ca si cum ar trage-o cineva cu carioca.
+ *
+ * Trucul e `pathLength={1}`: browserul socoteste singur lungimea adevarata a
+ * conturului si o raporteaza la 1, deci linia punctata si decalajul se scriu in
+ * fractiuni, nu in pixeli masurati de mana. Fara el ar trebui aflata lungimea
+ * fiecarei curbe cu JavaScript si rescrisa la orice schimbare a desenului.
+ * Regulile sunt in global.css, langa celelalte animatii.
  */
 export function Bifa({ marime = 80, class: clasa = '' }: { marime?: number; class?: string }) {
   return (
@@ -37,11 +47,13 @@ export function Bifa({ marime = 80, class: clasa = '' }: { marime?: number; clas
     >
       {/* cercul, cu razele inegale si cu coada care trece peste inceput */}
       <path
+        className="bifa-cerc"
+        pathLength={1}
         d="M52.5 14.2C79 11.5 106.5 32 106 59.5c-.5 26.5-22.5 47.5-48 46.5C33 105 13.8 84 14.2 58.8 14.6 34 33.5 15.2 56.5 13.6c13-.9 25.5 3 34.5 11"
         strokeWidth="7"
       />
       {/* bifa, dintr-o singura miscare, putin curbata */}
-      <path d="M39 60.5c4.5 4.5 9 10 13.5 16.5C60.5 63 70 50 82 40" strokeWidth="8" />
+      <path className="bifa-semn" pathLength={1} d="M39 60.5c4.5 4.5 9 10 13.5 16.5C60.5 63 70 50 82 40" strokeWidth="8" />
     </svg>
   )
 }

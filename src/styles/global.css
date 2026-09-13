@@ -326,3 +326,41 @@
 
 .plutitor { animation: plutire 7s ease-in-out infinite; }
 .plutitor-lent { animation: plutire 9s ease-in-out infinite; animation-delay: -3s; }
+
+/*
+  Bifa de reusita se deseneaza singura cand apare, intai cercul, apoi semnul.
+
+  `pathLength="1"` e pus pe fiecare traseu in Bifa.tsx, deci lungimea reala a
+  conturului e raportata la 1 si aici se poate scrie in fractiuni. Linia
+  punctata are o singura bucata cat tot traseul, iar decalajul de 1 o impinge
+  complet in afara: nu se vede nimic. Animatia il aduce la 0, deci traseul
+  intra in cadru de la un capat la celalalt, ca o carioca trasa pe hartie.
+
+  `forwards` e obligatoriu: fara el desenul ar sari inapoi la invizibil cand se
+  termina animatia.
+*/
+@keyframes bifa-deseneaza {
+  to { stroke-dashoffset: 0; }
+}
+
+.bifa-cerc,
+.bifa-semn {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: bifa-deseneaza 0.55s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+/* semnul porneste cand cercul e aproape inchis, si se trage mai repede */
+.bifa-semn {
+  animation-duration: 0.34s;
+  animation-delay: 0.44s;
+}
+
+/* cine a cerut sistemului mai putina miscare primeste bifa gata desenata */
+@media (prefers-reduced-motion: reduce) {
+  .bifa-cerc,
+  .bifa-semn {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
