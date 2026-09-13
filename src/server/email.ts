@@ -392,7 +392,7 @@ export function emailGrupa(g: Grupa, c: Client, lectii: Programare[], setari: Se
       'Lecțiile tale:',
       ...lectii.map((p, i) => `${i + 1}. ${dataOraRo(p.incepe)}`),
       '',
-      link ? `Link Zoom: ${link}` : 'Linkul de Zoom vine pe email înainte de prima lecție.',
+      link ? `Link Google Meet: ${link}` : 'Linkul vine pe email înainte de prima lecție.',
       '',
       'Toate lecțiile sunt în fișierul atașat: îl deschizi pe telefon și intră singure în calendar.',
       '',
@@ -472,7 +472,7 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
 
   const intro =
     p.tip === 'cunoastere'
-      ? `Bună, ${scapa(prenume)}! Mulțumesc că ai făcut primul pas. Ne vedem pe Zoom, vorbim 20 de minute despre ce vrei să obții și îți spun sincer de unde pornim.`
+      ? `Bună, ${scapa(prenume)}! Mulțumesc că ai făcut primul pas. Ne vedem pe Google Meet, vorbim 20 de minute despre ce vrei să obții și îți spun sincer de unde pornim.`
       : `Bună, ${scapa(prenume)}! Lecția ta este în calendar. Mai jos ai toate detaliile.`
 
   const butoane = [
@@ -491,7 +491,7 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
       `Bună, ${prenume}!`,
       '',
       `${tip.nume} este programată pentru ${zi}, ora ${ora} (ora României), ${p.durata_min} de minute.`,
-      link ? `Link Zoom: ${link}` : 'Linkul de Zoom vine pe email înainte de lecție.',
+      link ? `Link Google Meet: ${link}` : 'Linkul vine pe email înainte de lecție.',
       '',
       nota.text,
       '',
@@ -608,7 +608,7 @@ export function emailContact(d: { nume: string; email: string; telefon: string; 
   }
 }
 
-/** Linkul de Zoom trimis manual din cabinet, cu butonul "Trimite linkul". */
+/** Linkul lectiei trimis manual din cabinet, cu butonul "Trimite linkul". */
 export function emailLinkZoom(p: Programare, c: Client, link: string): Email {
   const zi = dataRo(p.incepe)
   const ora = oraRo(p.incepe)

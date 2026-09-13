@@ -218,7 +218,7 @@ export default function Calendar() {
           )}
 
           <p className="mt-4 text-sm leading-relaxed text-gri">
-            Apasă pe o lecție ca să o deschizi: acolo o confirmi, o muți, trimiți linkul de Zoom sau o bifezi plătită.
+            Apasă pe o lecție ca să o deschizi: acolo o confirmi, o muți, trimiți linkul lecției sau o bifezi plătită.
           </p>
         </Card>
       </div>

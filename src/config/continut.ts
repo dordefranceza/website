@@ -56,7 +56,7 @@ export const pasi = [
   {
     numar: '01',
     titlu: 'O discuție gratuită, de 20 de minute',
-    text: 'Ne cunoaștem pe Zoom. Îți evaluez nivelul, îmi spui ce vrei să obții și până când. Fără nicio obligație.',
+    text: 'Ne cunoaștem pe Google Meet. Îți evaluez nivelul, îmi spui ce vrei să obții și până când. Fără nicio obligație.',
   },
   {
     numar: '02',
@@ -65,7 +65,7 @@ export const pasi = [
   },
   {
     numar: '03',
-    titlu: 'Lecții de 50 de minute, pe Zoom',
+    titlu: 'Lecții de 50 de minute, pe Google Meet',
     text: 'Individual sau în grup mic, cu materiale din viața reală și teme scurte. Între lecții, feedback pe WhatsApp.',
   },
 ]
@@ -99,7 +99,7 @@ export const metoda = [
  */
 export const discutie = {
   nume: 'Discuție de cunoaștere',
-  detaliu: `${site.durataCunoastere} de minute, pe Zoom`,
+  detaliu: `${site.durataCunoastere} de minute, pe Google Meet`,
   beneficii: [
     'Îți evaluez nivelul real, nu cel din CV',
     'Îmi spui obiectivul și termenul tău',
@@ -122,7 +122,7 @@ export const beneficiiIndividual = [
    * langa pret, unde omul se intreaba daca mai are ceva de facut sau de platit
    * ca sa inceapa.
    */
-  'Linkul de Zoom, fără cont',
+  'Linkul de Meet, fără cont',
 ] as const
 
 /** Ce primesti la cursul de grup. */
@@ -143,7 +143,7 @@ export const intrebari = [
   {
     intrebare: 'Cum se desfășoară lecțiile?',
     raspuns:
-      'Pe Zoom, 50 de minute, cu ecranul partajat. Primești materialele înainte, iar după lecție ai un rezumat scurt și tema, dacă vrei temă.',
+      'Pe Google Meet, 50 de minute, cu ecranul partajat. Primești materialele înainte, iar după lecție ai un rezumat scurt și tema, dacă vrei temă.',
   },
   {
     intrebare: 'Ce nivel trebuie să am ca să încep?',

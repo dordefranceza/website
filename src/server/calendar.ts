@@ -39,7 +39,7 @@ function descrierea(p: Programare, c: Client, setari: Setari, pentruDorina: bool
     pentruDorina && c.email ? `Email: ${c.email}` : '',
     pentruDorina && c.telefon ? `Telefon: ${c.telefon}` : '',
     pentruDorina && c.nivel ? `Nivel: ${c.nivel}` : '',
-    link ? `Zoom: ${link}` : 'Linkul de Zoom vine pe email înainte de lecție.',
+    link ? `Google Meet: ${link}` : 'Linkul vine pe email înainte de lecție.',
     '',
     pentruDorina ? `Cabinet: ${adresaSite()}/admin/#/programari` : `DorDeFranceza: ${adresaSite()}`,
   ]

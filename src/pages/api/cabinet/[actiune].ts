@@ -9,7 +9,7 @@
  *  GET    sumar            cifrele tabloului de bord
  *  GET    programari       ?deLa=ISO&panaLa=ISO&stare=
  *  PATCH  programare       { id, stare?, platit?, suma?, note?, link_zoom?, incepe? }
- *  POST   trimite-link     { id, link? }  trimite linkul de Zoom cursantului
+ *  POST   trimite-link     { id, link? }  trimite linkul lectiei cursantului
  *  GET    clienti          cu categoria, grupele si lectiile ramase din pachete
  *  POST   pachet           { client_id, lectii, pret, nume?, platit?, note? }
  *  DELETE pachet           ?id=
@@ -168,7 +168,7 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
       if (!p || !p.client) return eroare(404, 'Programarea nu există')
       const setari = await d.setari()
       const link = text(b.link, 300) || p.link_zoom || setari.link_zoom
-      if (!link) return eroare(400, 'Nu există niciun link de Zoom. Pune-l în Setări.')
+      if (!link) return eroare(400, 'Nu există niciun link de lecție. Pune-l în Setări.')
       if (link !== p.link_zoom) await d.actualizeazaProgramare(p.id, { link_zoom: link })
       const r = await trimite(emailLinkZoom(p, p.client, link))
       if (!r.ok) return eroare(502, 'Emailul nu a plecat')

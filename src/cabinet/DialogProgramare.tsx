@@ -1,4 +1,4 @@
-/** Fereastra cu detaliile unei programari: stare, plata, ora, linkul de Zoom, note. */
+/** Fereastra cu detaliile unei programari: stare, plata, ora, linkul lectiei, note. */
 import { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Switch } from '@/components/ui/switch'

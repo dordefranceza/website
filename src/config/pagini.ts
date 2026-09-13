@@ -163,7 +163,7 @@ export const cumDecurge = {
       numar: '02',
       titlu: 'Discuția de cunoaștere, 20 de minute, gratuită',
       paragrafe: [
-        'Ne vedem pe Zoom. Primele minute vorbim în română, ca să îmi spui ce vrei și până când. Pe urmă trecem în franceză cât să văd unde ești: nu e un test cu note, e o conversație din care îmi dau seama ce știi și ce lipsește.',
+        'Ne vedem pe Google Meet. Primele minute vorbim în română, ca să îmi spui ce vrei și până când. Pe urmă trecem în franceză cât să văd unde ești: nu e un test cu note, e o conversație din care îmi dau seama ce știi și ce lipsește.',
         'La final îți spun trei lucruri: de la ce nivel pornești, cât ar dura până unde vrei să ajungi, și dacă eu sunt persoana potrivită. Dacă nu sunt, îți spun asta și îți recomand altceva.',
         'Pleci cu un plan scris chiar dacă nu continui cu mine. Nu e un truc de vânzare, e ce mi-aș fi dorit eu când am început.',
       ],
@@ -198,9 +198,9 @@ export const cumDecurge = {
     titlu: 'Lucrurile pe care nu le întreabă nimeni, dar toți vor să le știe',
     intrebari: [
       {
-        intrebare: 'Am nevoie de cont de Zoom?',
+        intrebare: 'Am nevoie de cont ca să intru la lecție?',
         raspuns:
-          'Nu. Primești un link, dai clic pe el și ești înăuntru. Merge din browser, fără să instalezi nimic, și merge și de pe telefon, deși pe calculator e mai comod fiindcă vezi ecranul partajat.',
+          'Nu. Primești un link de Google Meet, dai clic pe el și ești înăuntru. Merge din browser, fără să instalezi nimic, și merge și de pe telefon, deși pe calculator e mai comod fiindcă vezi ecranul partajat.',
       },
       {
         intrebare: 'Ce trebuie să cumpăr?',
