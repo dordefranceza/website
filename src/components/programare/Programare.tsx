@@ -4,7 +4,7 @@
  * la /api/programare. Orele se afiseaza in fusul Romaniei, oricare ar fi
  * fusul browserului.
  */
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -185,13 +185,36 @@ export default function Programare({ whatsapp }: Props) {
       }
       setRezultat({ incepe: d.incepe ?? slot })
       setPas(4)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (er) {
       setEroare(er instanceof Error ? er.message : 'Programarea nu a putut fi salvată')
     } finally {
       setTrimite(false)
     }
   }
+
+  /*
+   * Dupa confirmare, pagina urca inapoi la antet, iar antetul trebuie sa fie
+   * deja cel nou.
+   *
+   * Prima varianta chema `scrollTo` chiar in `trimiteFormular`, inainte ca
+   * React sa fi inlocuit formularul cu cardul. Browserul pornea o derulare
+   * lina spre 0, pagina se scurta brusc sub ea (formularul e de cateva ori mai
+   * inalt decat cardul), derularea era taiata de scurtarea aia si omul ramanea
+   * pe la mijloc, cu titlul intrat sub antetul fix. Artiom a vazut exact asta.
+   *
+   * Deci `useLayoutEffect`, care ruleaza dupa ce DOM-ul nou e pus si inainte de
+   * a se desena, si salt instant, nu lin: lin n-are ce castiga aici, omul nu se
+   * uita la drum, iar instantul nu poate fi intrerupt de o schimbare de
+   * inaltime. Tot aici se schimba si antetul, cele doua variante scrise in
+   * programare.astro.
+   */
+  useLayoutEffect(() => {
+    if (pas !== 4 || !rezultat) return
+    for (const el of document.querySelectorAll<HTMLElement>('[data-antet]')) {
+      el.hidden = el.dataset.antet !== 'gata'
+    }
+    window.scrollTo({ top: 0, behavior: 'auto' })
+  }, [pas, rezultat])
 
   /** Serverul a ghicit adresa buna dintr-o greseala de tastat; o punem noi. */
   function acceptaSugestia() {
@@ -268,10 +291,34 @@ export default function Programare({ whatsapp }: Props) {
           <IconCheck className="size-9 text-verde" />
         </span>
         <h2 className="mt-6 text-3xl sm:text-4xl">Gata, ești în calendar</h2>
-        <p className="mt-4 text-lg text-gri">
-          {TIPURI[tip].nume}, {dataRo(rezultat.incepe)}, ora {oraRo(rezultat.incepe)}.
+
+        {/*
+          Ziua si ora, scoase din rand si puse intr-o caseta.
+          Erau un rand de text gri ca oricare altul, desi singurul lucru pe care
+          omul vrea sa-l retina de pe ecranul asta e cand are lectia. Artiom:
+          „evidentiaza cel care cu data si ora". Deci fundal crem, ziua cu
+          literele de titlu, ora sub ea si tipul lectiei deasupra, marunt.
+        */}
+        <div className="mt-6 rounded-[1.25rem] bg-crem px-6 py-6 sm:px-8">
+          <p className="text-xs font-bold uppercase tracking-wider text-gri">{TIPURI[tip].nume}</p>
+          <p className="mt-2 font-display text-2xl leading-tight text-cerneala sm:text-3xl">{dataRo(rezultat.incepe)}</p>
+          <p className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-lg font-medium text-cerneala">
+            <IconClock className="size-5 text-albastru" />
+            ora {oraRo(rezultat.incepe)}
+            <span className="text-base font-normal text-gri">(ora României)</span>
+          </p>
+        </div>
+
+        {/*
+          „verifica si in Spam" cadea singur pe ultimul rand, pe telefon, cu
+          „in Spam." atarnand sub restul propozitiei. `whitespace-nowrap` tine
+          cele doua cuvinte lipite: ori incap amandoua pe rand, ori coboara
+          amandoua.
+        */}
+        <p className="mt-5 text-gri">
+          Confirmarea a plecat pe email, cu toate detaliile. Dacă nu o vezi în câteva minute, uită-te și{' '}
+          <span className="whitespace-nowrap">în Spam</span>.
         </p>
-        <p className="mt-2 text-gri">Confirmarea a plecat pe email, cu toate detaliile. Dacă nu o vezi în câteva minute, verifică și în Spam.</p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <a href="/" className="pastila pastila-crem">Înapoi la site</a>
           <a
@@ -288,10 +335,22 @@ export default function Programare({ whatsapp }: Props) {
   }
 
   return (
-    <div className="mt-12 grid gap-6 lg:grid-cols-[300px_1fr]">
-      <div className="lg:sticky lg:top-28 lg:self-start">{rezumat}</div>
+    /*
+     * Pe telefon formularul e primul, rezumatul dupa el.
+     *
+     * Inainte mergeau in ordinea din cod, deci pe o coloana iesea: antet cat
+     * ecranul, apoi cardul bleumarin „Alegerea ta", si abia sub el intrebarea
+     * „Cu ce incepem?". Rezumatul ala e gol pana nu alegi ceva, scrie „ziua, la
+     * pasul 2", si totusi statea intre om si singurul lucru pe care avea de
+     * apasat. Artiom a trimis pagina unui prieten: „a ajuns aici si nu intelegea
+     * cum sa programez". Nu era greu de inteles, era greu de gasit.
+     *
+     * Pe ecran lat raman cum erau, rezumatul in stanga, lipit la derulare.
+     */
+    <div className="mt-10 grid gap-6 sm:mt-12 lg:grid-cols-[300px_1fr]">
+      <div className="order-2 lg:order-1 lg:sticky lg:top-28 lg:self-start">{rezumat}</div>
 
-      <div className="rounded-[2rem] bg-alb p-6 sm:p-9">
+      <div className="order-1 rounded-[2rem] bg-alb p-6 sm:p-9 lg:order-2">
         {/* Pasii */}
         <ol className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium">
           {(['Tipul', 'Ziua și ora', 'Datele tale'] as const).map((nume, i) => {
@@ -322,24 +381,40 @@ export default function Programare({ whatsapp }: Props) {
                     setPas(2)
                   }}
                   className={cn(
-                    'flex items-center gap-5 rounded-[1.25rem] p-5 text-left transition hover:-translate-y-0.5',
+                    'flex items-start gap-4 rounded-[1.25rem] p-5 text-left transition hover:-translate-y-0.5 sm:gap-5',
                     tip === t ? 'bg-albastru-5' : 'bg-crem hover:bg-crem-inchis',
                   )}
                 >
                   <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-alb">
                     <Icon className="size-6 text-albastru" />
                   </span>
-                  <span className="flex-1">
-                    <span className="block font-medium">{TIPURI[t].nume}</span>
-                    <span className="block text-sm text-gri">{text}</span>
-                  </span>
-                  <span className="shrink-0 text-right">
-                    <span className="block font-display text-xl">{TIPURI[t].pret ? `${TIPURI[t].pret} €` : 'Gratuit'}</span>
+                  {/*
+                    Pe telefon pretul coboara sub titlu; coloana din dreapta
+                    ramane doar pentru ecrane late.
+                    Masurat pe un telefon de 417 pixeli: cardul are 329, minus
+                    marginile raman 289, din care iconita ia 64. Pretul in
+                    dreapta mai lua 84, deci titlului si descrierii le ramaneau
+                    141. In 141 de pixeli „Lecție în grup mic" se rupea si lasa
+                    „mic" singur pe rand, iar descrierea se subtia la sase
+                    randuri. Artiom: „daca ramane un cuvant, sa nu-l pui din rand
+                    nou, niciodata". Fara coloana aia, textul are 225 si titlul
+                    incape intreg. De la 640 in sus e loc pentru amandoua, deci
+                    acolo cardul ramane cum era.
+                  */}
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-medium [text-wrap:balance]">{TIPURI[t].nume}</span>
+                    <span className="mt-0.5 block font-display text-xl sm:hidden">
+                      {TIPURI[t].pret ? `${TIPURI[t].pret} €` : 'Gratuit'}
+                    </span>
+                    <span className="mt-1 block text-sm text-gri">{text}</span>
                     {t === 'grup' && (
-                      <span className="block text-xs text-gri">
+                      <span className="mt-0.5 block text-xs text-gri">
                         pe lecție, {cursGrup.lectii * cursGrup.pretLectie} € cursul
                       </span>
                     )}
+                  </span>
+                  <span className="hidden shrink-0 whitespace-nowrap text-right font-display text-xl sm:block">
+                    {TIPURI[t].pret ? `${TIPURI[t].pret} €` : 'Gratuit'}
                   </span>
                 </button>
               ))}

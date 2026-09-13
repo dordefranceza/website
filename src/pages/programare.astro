@@ -10,18 +10,38 @@ import PersonajCerc from '../components/PersonajCerc.astro'
   title="Programează o lecție · DorDeFranceza"
   description={`Alege ziua și ora din calendarul Dorinei. Prima discuție de ${site.durataCunoastere} de minute e gratuită. Confirmarea vine pe email imediat, cu linkul de Zoom.`}
 >
-  <main id="continut" class="bg-crem pt-28 pb-20 sm:pt-36 sm:pb-28">
+  <main id="continut" class="bg-crem pt-24 pb-20 sm:pt-36 sm:pb-28">
     <div class="container-site">
-      {/* Antetul paginii: textul in stanga, o fotografie in cerc colorat in dreapta,
-          ca in antetul de pe pagina de start. Pe telefon cercul sta deasupra. */}
-      <div class="grid items-center gap-8 lg:grid-cols-[1.3fr_1fr] lg:gap-12">
+      {/*
+        Doua antete, nu unul. Pana la trimitere se vede cel care cere ziua si
+        ora; dupa confirmare formularul se preface intr-o bifa, iar antetul de
+        deasupra lui trebuie sa se prefaca odata cu el. Artiom: „deja clientul
+        a ales ziua si ora, de ce lui ii trebuie sa citeasca alta din nou?".
+        Avea dreptate: pagina ramanea cu „Alege ziua si ora care iti convin"
+        deasupra unei programari deja facute.
+
+        Antetul al doilea sta gata scris in pagina, ascuns. Nu se construieste
+        din React, fiindca poza personajului trece prin PersonajCerc si trebuie
+        sa plece odata cu HTML-ul, nu dupa ce se incarca insula. Componenta
+        React doar scoate `hidden` de pe el, la pasul 4.
+      */}
+      <div class="grid items-center gap-5 sm:gap-8 lg:grid-cols-[1.3fr_1fr] lg:gap-12" data-antet="formular">
         <div class="order-2 text-center lg:order-1 lg:text-left">
           <p class="eticheta">Programare</p>
           <h1 class="mt-3 text-4xl sm:text-5xl lg:text-[3.5rem]">Alege ziua și ora care îți convin</h1>
-          <p class="mt-4 max-w-xl text-lg text-gri lg:mx-0 mx-auto">
+          {/*
+            Doua lungimi pentru acelasi lucru. Paragraful intreg impingea
+            formularul sub marginea de jos a telefonului, iar cine ajungea pe
+            pagina nu vedea nimic de apasat. Pe telefon ramane propozitia care
+            conteaza, restul se citeste oricum in cardurile de dedesubt.
+          */}
+          <p class="mx-auto mt-4 max-w-xl text-lg text-gri sm:hidden">
+            Trei pași, un minut. Prima dată e gratuit: {site.durataCunoastere} de minute în care îți evaluez nivelul.
+          </p>
+          <p class="mt-4 hidden max-w-xl text-lg text-gri sm:block lg:mx-0 mx-auto">
             Trei pași, un minut. Confirmarea vine pe email imediat, cu linkul de Zoom. Dacă e prima dată, alege discuția gratuită: {site.durataCunoastere} de minute în care îți evaluez nivelul și pleci cu un plan.
           </p>
-          <ul class="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-gri lg:justify-start">
+          <ul class="mt-6 hidden flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-gri sm:flex lg:justify-start">
             <li class="flex items-center gap-2"><Icon name="solar:calendar-mark-bold" class="size-4 text-albastru" /> Ora României</li>
             <li class="flex items-center gap-2"><Icon name="solar:videocamera-record-bold" class="size-4 text-albastru" /> Pe Zoom, fără cont</li>
             <li class="flex items-center gap-2"><Icon name="solar:shield-check-bold" class="size-4 text-albastru" /> Reprogramare gratuită cu 24 de ore înainte</li>
@@ -29,10 +49,33 @@ import PersonajCerc from '../components/PersonajCerc.astro'
         </div>
         <div class="order-1 flex justify-center lg:order-2 lg:justify-end">
           <div class="relative">
-            <div class="plutitor absolute -left-6 top-4 size-16 rounded-full bg-roz sm:-left-10 sm:size-24" aria-hidden="true"></div>
-            <div class="plutitor-lent absolute -bottom-2 -right-4 size-12 rounded-full bg-albastru sm:-right-8 sm:size-20" aria-hidden="true"></div>
-<PersonajCerc nume="prezinta" inel="portocaliu" disc="crem" marime={176} marimeMare={272} grosime={14} class="relative" />
-            </div>
+            <div class="plutitor absolute -left-5 top-3 size-12 rounded-full bg-roz sm:-left-10 sm:size-24" aria-hidden="true"></div>
+            <div class="plutitor-lent absolute -bottom-1 -right-3 size-9 rounded-full bg-albastru sm:-right-8 sm:size-20" aria-hidden="true"></div>
+            <PersonajCerc nume="prezinta" inel="portocaliu" disc="crem" marime={128} marimeMare={272} grosime={14} class="relative" />
+          </div>
+        </div>
+      </div>
+
+      {/*
+        Antetul de dupa confirmare. Inelul e verde, nu portocaliu: verdele e
+        culoarea cu care raspunde tot restul paginii cand lucrul a reusit, de la
+        bifa din card pana la pasii bifati. Personajul ridica degetul mare, deci
+        primul lucru pe care il vede omul cand pagina urca inapoi sus e ca a
+        iesit bine, inainte sa citeasca un cuvant.
+      */}
+      <div class="grid items-center gap-5 sm:gap-8 lg:grid-cols-[1.3fr_1fr] lg:gap-12" data-antet="gata" hidden>
+        <div class="order-2 text-center lg:order-1 lg:text-left">
+          <p class="eticheta text-verde">Programare confirmată</p>
+          <h1 class="mt-3 text-4xl sm:text-5xl lg:text-[3.5rem]">Ne vedem curând!</h1>
+          <p class="mt-4 max-w-xl text-lg text-gri lg:mx-0 mx-auto">
+            Ora e a ta, am blocat-o în calendarul Dorinei. Mai jos ai ziua, ora și ce urmează.
+          </p>
+        </div>
+        <div class="order-1 flex justify-center lg:order-2 lg:justify-end">
+          <div class="relative">
+            <div class="plutitor absolute -left-5 top-3 size-12 rounded-full bg-roz sm:-left-10 sm:size-24" aria-hidden="true"></div>
+            <div class="plutitor-lent absolute -bottom-1 -right-3 size-9 rounded-full bg-albastru sm:-right-8 sm:size-20" aria-hidden="true"></div>
+            <PersonajCerc nume="incurajeaza" inel="verde" disc="alb" marime={128} marimeMare={272} grosime={14} class="relative" />
           </div>
         </div>
       </div>

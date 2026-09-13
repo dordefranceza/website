@@ -113,7 +113,7 @@ export async function trimite(e: Email): Promise<{ ok: boolean; motiv?: string }
 /* --- Sablonul comun --------------------------------------------------------- */
 
 function buton(adresa: string, text: string, fundal = ALBASTRU, culoare = '#ffffff'): string {
-  return `<a href="${adresa}" style="display:inline-block;padding:14px 22px;background:${fundal};color:${culoare};font-size:15px;font-weight:700;text-decoration:none;border-radius:999px;margin:0 8px 8px 0">${scapa(text)}</a>`
+  return `<a href="${adresa}" style="display:inline-block;padding:14px 22px;background:${fundal};color:${culoare};font-size:15px;font-weight:700;text-decoration:none;border-radius:999px;margin:0 4px 8px">${scapa(text)}</a>`
 }
 
 function randuri(lista: { eticheta: string; valoare: string }[]): string {
@@ -144,9 +144,13 @@ function randuri(lista: { eticheta: string; valoare: string }[]): string {
 function sablon(o: {
   eticheta: string
   titlu: string
+  /** Randul mare de sub titlu, in antet. La programari: ora. */
+  subtitlu?: string
   intro: string
   corp: string
   butoane: string
+  /** Randul marunt de sub butoane: reguli, termene, ce urmeaza. */
+  nota?: string
   subsol: string
   figura?: 'saluta' | 'telefon' | 'incurajeaza' | 'scrie'
 }): string {
@@ -174,7 +178,8 @@ function sablon(o: {
   @media (max-width:520px) {
     .figura-cel { width:68px !important; padding-left:12px !important; }
     .figura-img { width:68px !important; height:68px !important; }
-    .titlu-email { font-size:22px !important; }
+    .titlu-email { font-size:23px !important; }
+    .ora-email { font-size:26px !important; }
   }
 </style>
 </head>
@@ -190,8 +195,18 @@ function sablon(o: {
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0">${'&#847;&zwnj;&nbsp;'.repeat(60)}</div>
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;margin:0 auto;border-collapse:separate">
     <tr><td style="background:${NAVY};border-radius:24px 24px 0 0;padding:34px 32px 30px">
+      <!--
+        Randul de sus tine doar numele si figura. Titlul a coborat sub el, pe
+        toata latimea.
+        Inainte, titlul statea in aceeasi celula cu numele, deci intr-o coloana
+        ingustata cu 112 pixeli de figura. O data lunga se rupea acolo oricum,
+        si iesea „marti, 15 / septembrie 2026, / ora 17:00", trei randuri
+        zdrentuite lipite de stanga. Artiom: „nu-i frumos aranjat textul... sa
+        fie jos, deja in mijloc, frumos, mare". Pe toata latimea si centrata,
+        data incape pe un rand, iar ora sta sub ea, singura si mare.
+      -->
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse"><tr>
-        <td style="vertical-align:top">
+        <td style="vertical-align:middle">
           <!--
             Numele scris cu litere, nu pus ca imagine.
             Gmail, Outlook si Apple Mail nu incarca pozele din emailuri pana
@@ -200,21 +215,88 @@ function sablon(o: {
             langa ea. Artiom a primit exact asta si a crezut ca e bug. Scris cu
             litere, numele se vede intotdeauna, oricare ar fi setarea.
           -->
-          <p style="margin:0 0 26px;font-family:Georgia,'Times New Roman',serif;font-size:21px;line-height:1;color:#ffffff">D&rsquo;or <i>de</i> Franceza</p>
-          <p style="margin:0 0 10px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#aab4ff;font-weight:700">${scapa(o.eticheta)}</p>
-          <h1 class="titlu-email" style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:400;color:#ffffff;line-height:1.25">${scapa(o.titlu)}</h1>
+          <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:21px;line-height:1.2;color:#ffffff">D&rsquo;or <i>de</i> Franceza</p>
         </td>
         ${figura}
       </tr></table>
+      <p style="margin:26px 0 10px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#aab4ff;font-weight:700;text-align:center">${scapa(o.eticheta)}</p>
+      <h1 class="titlu-email" style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:29px;font-weight:400;color:#ffffff;line-height:1.25;text-align:center">${scapa(o.titlu)}</h1>
+      ${o.subtitlu ? `<p class="ora-email" style="margin:8px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:31px;font-weight:400;color:#ffffff;line-height:1.2;text-align:center">${scapa(o.subtitlu)}</p>` : ''}
     </td></tr>
     <tr><td style="background:#ffffff;padding:28px 32px 10px">
       <p style="margin:0 0 18px;font-size:16px;line-height:1.65;color:${CERNEALA}">${o.intro}</p>
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse">${o.corp}</table>
     </td></tr>
-    <tr><td style="background:#ffffff;border-radius:0 0 24px 24px;padding:18px 32px 32px">${o.butoane}</td></tr>
+    <!--
+      Butoanele stateau lipite de stanga fiindca celula nu spunea nimic despre
+      aliniere. Artiom, despre cele doua verzi: „pune-le in mijloc, si al
+      Dorinei in mail tot asa, nu doar la clienti". Deci se centreaza aici, o
+      data, pentru toate emailurile. Atributul align pe celula e pentru Outlook,
+      care ignora alinierea mostenita de <a>-uri.
+    -->
+    <tr><td align="center" style="background:#ffffff;border-radius:0 0 24px 24px;padding:18px 32px 32px;text-align:center">${o.butoane}${
+      o.nota ? `<p style="margin:14px 0 0;font-size:13px;line-height:1.6;color:${GRI};text-align:center">${o.nota}</p>` : ''
+    }</td></tr>
   </table>
   <p style="max-width:600px;margin:20px auto 0;font-size:12px;line-height:1.7;color:${GRI};text-align:center">${o.subsol}</p>
 </body></html>`
+}
+
+/**
+ * Data mare din antet, legata ca sa nu se rupa oriunde.
+ *
+ * Pe telefon „miercuri, 16 septembrie 2026" nu incape pe un rand la marimea
+ * asta, iar browserul rupea unde apuca: „miercuri, 16 / septembrie 2026", cu
+ * anul aruncat singur pe rand. Spatiile dinauntrul datei devin neseparabile,
+ * deci singurul loc unde se mai poate rupe ramane virgula de dupa ziua
+ * saptamanii, adica exact acolo unde s-ar opri si cineva care citeste cu voce
+ * tare. Pe ecran lat incape oricum pe un rand si nu se schimba nimic.
+ */
+/**
+ * Randul cu regulile de anulare, scris dupa lectia care e, nu turnat la fel
+ * peste tot.
+ *
+ * Inainte era un text unic, lipit la fiecare confirmare: „scrie-mi cu cel
+ * putin 24 de ore inainte... ai 14 zile in care te poti retrage pentru orice
+ * suma platita in avans". Artiom s-a oprit la el: „trebuie sa fie acel text?
+ * adica e logic daca clientul a ales maine sa aiba programare?". Nu era, din
+ * doua motive:
+ *
+ * 1. La discutia de cunoastere nu se plateste nimic, deci nu exista nicio suma
+ *    de retras. Randul despre banii dati in avans nu are obiect, si un om care
+ *    citeste despre rambursari la ceva gratuit se intreaba ce n-a inteles.
+ * 2. Daca lectia e peste mai putin de 24 de ore, regula de 24 de ore e deja
+ *    imposibil de respectat in clipa in care omul o citeste. Ii ceri ceva ce
+ *    nu mai poate face, si suna a portita.
+ *
+ * Ce NU se scoate niciodata e legatura catre pagina cu regulile. Confirmarea
+ * asta e suportul durabil pe care cumparatorul primeste conditiile, deci
+ * linkul ramane, oricat de scurt ar fi restul randului.
+ */
+function dataLegata(zi: string): string {
+  return zi.replace(/(\d+)\s+(\S+)\s+(\d{4})/u, '$1\u00a0$2\u00a0$3')
+}
+
+function notaAnulare(p: Programare): { html: string; text: string } {
+  const adresa = `${adresaSite()}/anulare-si-rambursare/`
+  const link = `<a href="${adresa}" style="color:${GRI}">regulile complete</a>`
+  const subDouazeciSiPatru = new Date(p.incepe).getTime() - Date.now() < 24 * 3_600_000
+
+  if (!p.suma) {
+    const spus = subDouazeciSiPatru
+      ? 'Lecția e în mai puțin de 24 de ore. Dacă apare ceva, scrie-mi cât poți de repede și găsim altă oră.'
+      : 'Dacă nu mai poți ajunge, scrie-mi și mutăm ora. Discuția e gratuită, nu pierzi nimic.'
+    return { html: `${spus} Aici sunt ${link}.`, text: `${spus}\nRegulile complete: ${adresa}` }
+  }
+
+  const spus = subDouazeciSiPatru
+    ? 'Lecția e în mai puțin de 24 de ore, deci reprogramarea gratuită nu se mai aplică. Dacă apare ceva, scrie-mi cât poți de repede.'
+    : 'Dacă nu mai poți ajunge, scrie-mi cu cel puțin 24 de ore înainte și reprogramăm gratuit. Sub 24 de ore, lecția se consideră efectuată.'
+  const retragere = 'Ai 14 zile în care te poți retrage pentru orice sumă plătită în avans pentru lecții neefectuate'
+  return {
+    html: `${spus} ${retragere}: ${link}.`,
+    text: `${spus}\n${retragere}. Regulile complete: ${adresa}`,
+  }
 }
 
 /* --- Emailurile ------------------------------------------------------------- */
@@ -399,6 +481,8 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
     buton(`https://wa.me/${variabila('WHATSAPP_DORINA') || ''}`.replace(/\/$/, ''), 'Scrie-i Dorinei pe WhatsApp', '#25d366'),
   ].join('')
 
+  const nota = notaAnulare(p)
+
   return {
     catre: [c.email],
     subiect: `Confirmare: ${tip.nume.toLowerCase()}, ${zi}, ${ora}`,
@@ -409,8 +493,7 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
       `${tip.nume} este programată pentru ${zi}, ora ${ora} (ora României), ${p.durata_min} de minute.`,
       link ? `Link Zoom: ${link}` : 'Linkul de Zoom vine pe email înainte de lecție.',
       '',
-      'Dacă nu mai poți ajunge, scrie-mi cu cel puțin 24 de ore înainte și reprogramăm gratuit. Sub 24 de ore, lecția se consideră efectuată.',
-      `Regulile complete de anulare și dreptul de retragere în 14 zile: ${adresaSite()}/anulare-si-rambursare/`,
+      nota.text,
       '',
       'Pe curând,',
       'Dorina, DorDeFranceza',
@@ -418,10 +501,13 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
     html: sablon({
       figura: 'saluta',
       eticheta: 'Programare confirmată',
-      titlu: `${zi}, ora ${ora}`,
+      /* Ziua pe un rand, ora pe altul. Impreuna se rupeau urat pe telefon. */
+      titlu: dataLegata(zi),
+      subtitlu: `ora ${ora}`,
       intro,
       corp: randuri(lista),
-      butoane: butoane + `<p style="margin:12px 0 0;font-size:13px;line-height:1.6;color:${GRI}">Dacă nu mai poți ajunge, scrie-mi cu cel puțin 24 de ore înainte și reprogramăm gratuit. Sub 24 de ore, lecția se consideră efectuată. Ai 14 zile în care te poți retrage pentru orice sumă plătită în avans pentru lecții neefectuate: <a href="${adresaSite()}/anulare-si-rambursare/" style="color:${GRI}">detalii</a>.</p>`,
+      butoane,
+      nota: nota.html,
       subsol: 'Ai primit acest email pentru că ai făcut o programare pe DorDeFranceza.',
     }),
   }
@@ -453,9 +539,7 @@ export function emailPropunere(p: Programare, c: Client, setari: Setari, mesajDo
   // linkurile din emailuri ar confirma lectia in locul omului.
   const butoane = buton(link, 'Vezi și răspunde')
 
-  const subsolPas = panaLa
-    ? `<p style="margin:12px 0 0;font-size:13px;line-height:1.6;color:${GRI}">Ora e ținută pentru tine până pe ${scapa(panaLa)}. După aceea se eliberează.</p>`
-    : ''
+  const subsolPas = panaLa ? `Ora e ținută pentru tine până pe ${scapa(panaLa)}. După aceea se eliberează.` : ''
 
   return {
     catre: [c.email],
@@ -482,12 +566,16 @@ export function emailPropunere(p: Programare, c: Client, setari: Setari, mesajDo
        */
       figura: primaLectie ? 'saluta' : 'scrie',
       eticheta: primaLectie ? 'Prima ta lecție' : 'Propunere de lecție',
-      titlu: primaLectie ? 'Bine ai venit!' : `${zi}, ora ${ora}`,
+      titlu: primaLectie ? 'Bine ai venit!' : dataLegata(zi),
+      /* La prima lectie titlul e urarea, iar ora sta in tabelul de dedesubt:
+         doua randuri mari, unul peste altul, s-ar bate cap in cap. */
+      subtitlu: primaLectie ? undefined : `ora ${ora}`,
       intro: primaLectie
         ? `Bună, ${scapa(prenume)}! Mă bucur că ai ajuns aici. Prima ta ${scapa(tip.nume.toLowerCase())} e programată pe <strong>${scapa(zi)}, ora ${scapa(ora)}</strong>. Apasă butonul de mai jos și confirmi dintr-un singur clic, sau îmi spui tot de acolo dacă ora nu îți convine.`
         : `Bună, ${scapa(prenume)}! Îți propun ora asta. Apasă butonul și îmi spui acolo dacă îți convine sau nu, dintr-un singur clic.`,
       corp: randuri(lista),
-      butoane: butoane + subsolPas,
+      butoane,
+      nota: subsolPas,
       subsol: 'Răspunzând la acest email îi scrii direct Dorinei.',
     }),
   }
@@ -532,7 +620,8 @@ export function emailLinkZoom(p: Programare, c: Client, link: string): Email {
     html: sablon({
       figura: 'saluta',
       eticheta: 'Linkul lecției',
-      titlu: `${zi}, ora ${ora}`,
+      titlu: dataLegata(zi),
+      subtitlu: `ora ${ora}`,
       intro: `Bună, ${scapa(prenume)}! Aici ai linkul pentru lecția noastră. Intră cu două minute înainte, ca să avem tot timpul nostru.`,
       corp: '',
       butoane: buton(link, 'Intră la lecție'),
