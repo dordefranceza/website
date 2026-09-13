@@ -370,3 +370,23 @@
     stroke-dashoffset: 0;
   }
 }
+
+/*
+  Bannerul de cookie-uri urca deasupra barei de jos numai cat timp bara e pe
+  ecran.
+
+  Bara cu „Programează gratuit" apare abia dupa ce derulezi 60% din primul
+  ecran. Bannerul insa rezerva permanent 96 de pixeli pentru ea, deci la prima
+  incarcare, exact cand bannerul se vede, sub el ramanea o banda goala. Artiom a
+  observat-o: „nu iti pare ca bannerul cookie este prea sus si are mult loc gol
+  jos?".
+
+  Clasa `bara-vizibila` o pune si o scoate acelasi script care arata bara, deci
+  cele doua nu pot ajunge sa se contrazica. Peste 1024px bara nu exista, deci
+  nici regula asta nu se aplica.
+*/
+@media (max-width: 1023px) {
+  html.bara-vizibila #ddf-cookie {
+    bottom: 6rem;
+  }
+}

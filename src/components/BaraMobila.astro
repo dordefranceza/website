@@ -35,7 +35,14 @@ import { linkWhatsApp } from '../config/site'
     const arata = () => {
       const trecutDePrimulEcran = window.scrollY > window.innerHeight * 0.6
       const laSubsol = subsol ? subsol.getBoundingClientRect().top < window.innerHeight : false
-      bara.classList.toggle('translate-y-full', !trecutDePrimulEcran || laSubsol)
+      const seVede = trecutDePrimulEcran && !laSubsol
+      bara.classList.toggle('translate-y-full', !seVede)
+      /* Bannerul de cookie-uri se ridica deasupra barei doar cat timp bara e
+         chiar pe ecran. Artiom, la prima incarcare: „nu iti pare ca bannerul
+         cookie este prea sus si are mult loc gol jos?". Avea dreptate: bannerul
+         rezerva 96 de pixeli pentru o bara care apare abia dupa ce derulezi
+         60% din primul ecran, deci exact cand bannerul se vede, sub el era gol. */
+      document.documentElement.classList.toggle('bara-vizibila', seVede)
     }
     arata()
     window.addEventListener('scroll', arata, { passive: true })
