@@ -165,8 +165,19 @@ export default function Programari() {
         </button>
       )}
 
-      <div className="flex flex-wrap items-center gap-2">
-        {FILTRE.map((f) => {
+      {/*
+        Filtrele, in casute egale pe telefon.
+        Insirate, se rupeau unde apucau: trei pe primul rand, trei pe al doilea
+        si „Toate" singur pe al treilea, cu marginea din dreapta zdrentuita,
+        fiindca numele au lungimi foarte diferite. Artiom: „tot asa, butoanele
+        sunt haotice, mai mare, mai mica, mic din nou". Pe telefon stau acum
+        doua pe rand, toate de aceeasi latime, iar „Toate" tine randul intreg
+        la sfarsit: e si raspunsul care le cuprinde pe celelalte, deci merita
+        randul lui. De la 640 in sus incap pe o linie, deci acolo raman insirate.
+      */}
+      <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-3">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:flex lg:shrink-0 lg:flex-wrap lg:items-center">
+          {FILTRE.map((f) => {
           const n =
             f.cheie === 'noi'
               ? (lista ?? []).filter((p) => p.stare === 'noua').length
@@ -175,19 +186,24 @@ export default function Programari() {
                 : f.cheie === 'propuse'
                   ? (lista ?? []).filter((p) => p.stare === 'propusa').length
                   : 0
-          return (
-            <button
-              key={f.cheie}
-              type="button"
-              onClick={() => setFiltru(f.cheie)}
-              className={cn('rounded-full px-4 py-2 text-sm font-medium transition', filtru === f.cheie ? 'bg-cerneala text-alb' : 'bg-alb hover:bg-crem-inchis')}
-            >
-              {f.nume}
-              {n > 0 && <span className="ml-1.5 rounded-full bg-portocaliu px-1.5 py-0.5 text-[10px] text-alb">{n}</span>}
-            </button>
-          )
-        })}
-        <input value={cauta} onChange={(e) => setCauta(e.target.value)} placeholder="Caută după nume, email, telefon" className="ml-auto h-10 w-full rounded-full bg-alb px-4 text-sm outline-none focus:ring-2 focus:ring-albastru sm:w-72" />
+            return (
+              <button
+                key={f.cheie}
+                type="button"
+                onClick={() => setFiltru(f.cheie)}
+                className={cn(
+                  'flex min-h-10 items-center justify-center rounded-full px-3 text-center text-sm font-medium leading-snug transition lg:px-4',
+                  f.cheie === 'toate' && 'col-span-2 sm:col-span-3 lg:col-span-1',
+                  filtru === f.cheie ? 'bg-cerneala text-alb' : 'bg-alb hover:bg-crem-inchis',
+                )}
+              >
+                {f.nume}
+                {n > 0 && <span className="ml-1.5 rounded-full bg-portocaliu px-1.5 py-0.5 text-[10px] text-alb">{n}</span>}
+              </button>
+            )
+          })}
+        </div>
+        <input value={cauta} onChange={(e) => setCauta(e.target.value)} placeholder="Caută după nume, email, telefon" className="h-10 w-full min-w-0 rounded-full bg-alb px-4 text-sm outline-none focus:ring-2 focus:ring-albastru lg:ml-auto lg:w-72" />
       </div>
 
       <div className="mt-6">
