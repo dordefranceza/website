@@ -15,8 +15,15 @@ import { TIPURI } from '../lib/tipuri'
 import { dataOraRo, dataRo, numeZi, oraRo } from '../lib/timp'
 import { adresaSite, inDezvoltare, variabila } from './mediu'
 import { atasamentIcs, linkGoogleCalendar } from './calendar'
+import { FIGURI } from './figuri'
 
-export type Atasament = { nume: string; continut: string }
+export type Atasament = {
+  nume: string
+  /** Base64. */
+  continut: string
+  /** Cand e pus, atasamentul nu se arata ca fisier: se leaga din HTML prin `cid:`. */
+  contentId?: string
+}
 
 export type Email = {
   catre: string[]
@@ -61,6 +68,18 @@ export async function trimite(e: Email): Promise<{ ok: boolean; motiv?: string }
   const anuleaza = new AbortController()
   const limita = setTimeout(() => anuleaza.abort(), 9_000)
   try {
+    /*
+     * Pozele cerute de HTML prin `cid:personaj-...` se ataseaza singure aici.
+     * Un singur loc, deci orice email nou primeste poza fara sa fie nevoie sa
+     * si-o ceara. Nu se vad ca fisiere in mesaj: `content_id` le face parte din
+     * scrisoare, iar clientii le arata fara sa mai intrebe.
+     */
+    const cerute = [...new Set([...e.html.matchAll(/cid:personaj-([a-z]+)/g)].map((m) => m[1]))]
+    const atasamente: Atasament[] = [
+      ...(e.atasamente ?? []),
+      ...cerute.filter((n) => FIGURI[n]).map((n) => ({ nume: `${n}.png`, continut: FIGURI[n], contentId: `personaj-${n}` })),
+    ]
+
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       signal: anuleaza.signal,
@@ -72,7 +91,9 @@ export async function trimite(e: Email): Promise<{ ok: boolean; motiv?: string }
         subject: e.subiect,
         text: e.text,
         html: e.html,
-        ...(e.atasamente?.length ? { attachments: e.atasamente.map((a) => ({ filename: a.nume, content: a.continut })) } : {}),
+        ...(atasamente.length
+          ? { attachments: atasamente.map((a) => ({ filename: a.nume, content: a.continut, ...(a.contentId ? { content_id: a.contentId } : {}) })) }
+          : {}),
       }),
     })
     if (!r.ok) {
@@ -134,7 +155,7 @@ function sablon(o: {
 
   const figura = o.figura
     ? `<td width="112" style="width:112px;vertical-align:top;padding-left:18px" class="figura-cel">
-          <img src="${adresaSite()}/images/email/${o.figura}.png" alt="" width="112" height="112" style="display:block;width:112px;height:112px;border:0;border-radius:999px" class="figura-img">
+          <img src="cid:personaj-${o.figura}" alt="" width="112" height="112" style="display:block;width:112px;height:112px;border:0;border-radius:999px" class="figura-img">
         </td>`
     : ''
 
@@ -473,7 +494,7 @@ export function emailPropunere(p: Programare, c: Client, setari: Setari, mesajDo
         : `Bună, ${scapa(prenume)}! Îți propun ora asta. Apasă butonul și îmi spui acolo dacă îți convine sau nu, dintr-un singur clic.`,
       corp: randuri(lista),
       butoane: butoane + subsolPas,
-      subsol: 'Trimis de Dorina, de pe site-ul DorDeFranceza.',
+      subsol: 'Răspunzând la acest email îi scrii direct Dorinei.',
     }),
   }
 }
@@ -521,7 +542,9 @@ export function emailLinkZoom(p: Programare, c: Client, link: string): Email {
       intro: `Bună, ${scapa(prenume)}! Aici ai linkul pentru lecția noastră. Intră cu două minute înainte, ca să avem tot timpul nostru.`,
       corp: '',
       butoane: buton(link, 'Intră la lecție'),
-      subsol: 'Trimis de Dorina din cabinetul DorDeFranceza.',
+      /* Cursantul n-are ce sti despre „cabinet": e unealta Dorinei, nu a lui.
+         Artiom a incercuit randul asta si a avut dreptate. */
+      subsol: 'Ne vedem la ora stabilită. Dacă apare ceva, răspunde la acest email.',
     }),
   }
 }
