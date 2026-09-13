@@ -9,10 +9,10 @@ import { cursGrup, site } from '../config/site'
 
 <Base
   title="Prețuri · DorDeFranceza"
-  description={`Lecție individuală de franceză ${site.preturi.individual} € pentru ${site.durataLectie} de minute, pachete de 5, 10 și 24 de lecții cu reducere până la 22%, curs în grup de 2 luni cu ${cursGrup.pretLectie} € lecția de ${cursGrup.durata} de minute. Prima discuție de ${site.durataCunoastere} de minute e gratuită.`}
+  description={`Lecție individuală ${site.preturi.individual} €, pachete de 5, 10 și 24 de lecții cu reducere, curs în grup ${cursGrup.pretLectie} € lecția. Prima discuție e gratuită.`}
 >
   <main id="continut" class="pt-24 sm:pt-28">
-    <Preturi titlu="Știi de la început cât costă" />
+    <Preturi titlu="Știi de la început cât costă" nivel={1} />
 
     <section class="bg-alb py-16 sm:py-20">
       <div class="container-site grid gap-8 md:grid-cols-3">

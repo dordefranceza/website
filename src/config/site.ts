@@ -32,9 +32,24 @@ export const site = {
    * in care explica e. Limba ramane si semnalul pentru cautari: site-ul e in
    * romana, deci nu pierdem nimic largind tara.
    */
+  /* Sub 160 de caractere: atat arata Google, restul il taie cu trei puncte. */
   descriere:
-    'Lecții online de franceză cu Dorina, explicate în română, oriunde ai fi: în România, în Moldova sau în Franța. Pentru job, pentru mutare, pentru BAC sau pentru plăcerea de a vorbi.',
-  url: 'https://dordefranceza.vercel.app',
+    'Lecții online de franceză cu Dorina, explicate în română. Pentru job, pentru mutare, pentru BAC sau pentru plăcerea de a vorbi.',
+  /**
+   * Adresa de care se leaga datele structurate, deci cea pe care Google o
+   * socoteste casa marcii.
+   *
+   * Era scrisa de mana, `dordefranceza.vercel.app`, si a ramas asa dupa mutarea
+   * pe domeniul propriu. Pe 13 septembrie 2026 inca se vedea in JSON-LD-ul de
+   * pe live: `"@id":"https://dordefranceza.vercel.app/#organizatie"`. Adica
+   * site-ul ii spunea lui Google ca marca sta la alta adresa decat cea pe care
+   * o citeste. Cat timp Google nu e sigur care e casa marcii, nu-ti da nici
+   * linkurile acelea sub rezultat.
+   *
+   * Acum vine din aceeasi variabila ca restul adreselor, deci nu mai poate
+   * ramane in urma la o mutare.
+   */
+  url: import.meta.env.PUBLIC_SITE_URL || 'https://dordefranceza.com',
   limba: 'ro',
   locale: 'ro_RO',
   fusOrar: 'Europe/Bucharest',

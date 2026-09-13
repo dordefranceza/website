@@ -24,6 +24,8 @@ import CardPret from './CardPret.astro'
 
 interface Props {
   titlu?: string
+  /** 1 cand componenta e titlul paginii, 2 cand e o sectiune. */
+  nivel?: 1 | 2
   compact?: boolean
 }
 /*
@@ -37,7 +39,18 @@ interface Props {
  * cumpara manuale, si nu apare nimic pe drum. Randul de dedesubt spune si
  * pachetele, si ca lectiile nefacute se intorc.
  */
-const { titlu = 'Prețuri cinstite, fără alte taxe', compact = false } = Astro.props
+/**
+ * `nivel` spune daca sectiunea e titlul paginii sau o bucata din ea.
+ *
+ * Componenta asta e folosita in doua locuri: ca sectiune pe pagina de start,
+ * unde titlul paginii e altul si aici se cuvine un h2, si ca tot continutul
+ * paginii ei proprii, unde ea E titlul si trebuie sa fie h1. Scria h2 in
+ * amandoua, deci /preturi/ si /despre/ ajunsesera pe internet fara niciun h1:
+ * Google nu avea de unde sti despre ce e pagina. Gasit pe 13 septembrie 2026,
+ * citind codul HTML livrat, nu sursa.
+ */
+const { titlu = 'Prețuri cinstite, fără alte taxe', compact = false, nivel = 2 } = Astro.props
+const Titlu = nivel === 1 ? 'h1' : 'h2'
 ---
 
 <section id="preturi" class:list={['bg-crem', compact ? 'py-16' : 'py-20 sm:py-28']} aria-labelledby="titlu-preturi">
@@ -45,7 +58,7 @@ const { titlu = 'Prețuri cinstite, fără alte taxe', compact = false } = Astro
     <div class="dezvaluie mx-auto max-w-2xl text-center">
       <PersonajCerc nume="se-uita-jos-a" inel="portocaliu" disc="alb" marime={150} marimeMare={165} class="mx-auto mb-6" />
       <p class="eticheta">Prețuri</p>
-      <h2 id="titlu-preturi" class="mt-3 text-4xl sm:text-5xl">{titlu}</h2>
+      <Titlu id="titlu-preturi" class="mt-3 text-4xl sm:text-5xl">{titlu}</Titlu>
       {/*
         Scria „plătești lecțiile pe care le faci, fără taxă de înscriere, fără
         abonament". Artiom: „nu îmi place, și de ce ai scris fără abonament dacă
