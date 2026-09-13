@@ -170,7 +170,7 @@ const gestioneaza: APIRoute = async ({ request, params, url }) => {
       const link = text(b.link, 300) || p.link_zoom || setari.link_zoom
       if (!link) return eroare(400, 'Nu există niciun link de lecție. Pune-l în Setări.')
       if (link !== p.link_zoom) await d.actualizeazaProgramare(p.id, { link_zoom: link })
-      const r = await trimite(emailLinkZoom(p, p.client, link))
+      const r = await trimite(emailLinkZoom(p, p.client, link, await d.setari()))
       if (!r.ok) return eroare(502, 'Emailul nu a plecat')
       return raspunde(200, { ok: true })
     }

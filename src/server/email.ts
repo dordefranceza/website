@@ -485,6 +485,21 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
 
   return {
     catre: [c.email],
+    /*
+     * Raspunsul cursantului trebuie sa ajunga undeva.
+     *
+     * Emailurile pleaca de pe `dorina@send.dordefranceza.com`, singurul domeniu
+     * verificat in Resend, iar adresa aia doar trimite: subdomeniul n-are MX de
+     * primire. Cine apasa Reply la confirmare scria in gol, mesajul nu ajungea
+     * nicaieri, nici macar in spam.
+     *
+     * Din 13 septembrie exista `dorina@dordefranceza.com`, prin Cloudflare Email
+     * Routing, care duce mai departe in casuta Dorinei. Expeditorul NU se muta
+     * acolo, fiindca Resend ar refuza sa trimita de pe un domeniu neverificat.
+     * Se pune ca Reply-To: pleaca de pe domeniul verificat, raspunsul vine pe
+     * adresa adevarata.
+     */
+    raspundeLa: setari.email_notificari || variabila('EMAIL_DORINA') || undefined,
     subiect: `Confirmare: ${tip.nume.toLowerCase()}, ${zi}, ${ora}`,
     atasamente: [atasamentIcs(p, c, setari)],
     text: [
@@ -609,12 +624,15 @@ export function emailContact(d: { nume: string; email: string; telefon: string; 
 }
 
 /** Linkul lectiei trimis manual din cabinet, cu butonul "Trimite linkul". */
-export function emailLinkZoom(p: Programare, c: Client, link: string): Email {
+export function emailLinkZoom(p: Programare, c: Client, link: string, setari?: Setari): Email {
   const zi = dataRo(p.incepe)
   const ora = oraRo(p.incepe)
   const prenume = c.nume.split(' ')[0]
   return {
     catre: [c.email],
+    /* la fel ca la confirmare: se trimite de pe domeniul verificat, se raspunde
+       pe adresa care chiar primeste */
+    raspundeLa: setari?.email_notificari || variabila('EMAIL_DORINA') || undefined,
     subiect: `Linkul pentru lecția de ${zi}, ${ora}`,
     text: `Bună, ${prenume}!\n\nLinkul pentru lecția de ${zi}, ora ${ora}: ${link}\n\nPe curând,\nDorina`,
     html: sablon({
