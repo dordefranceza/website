@@ -387,18 +387,37 @@
 */
 @media (max-width: 639px) {
   /*
-    Pe telefon cardul e lipit de marginea de jos, cu colturile rotunjite doar
-    sus. Asa nu mai ramane nimic pe sub el.
+    Pe telefon cardul **coboara sub marginea ecranului**, nu se opreste la ea.
 
-    Statea la 16 pixeli de margine, iar prin fasia aceea se zarea valul crem al
-    antetului: valul intra sub card si din el se mai vedea o dunga, ceea ce
-    arata a linie rupta. Artiom: „liniuta ceea este de la bannerul de cookie,
-    jos". Lipit de margine, nu mai e pe unde sa se vada nimic.
+    Intai statea la 16 pixeli de margine si prin fasia aceea se zarea valul crem
+    al antetului: valul intra sub card si din el se mai vedea o dunga, ceea ce
+    arata a linie rupta. L-am lipit de margine cu `bottom: 0` si tot se vedea, pe
+    iPhone-ul lui Artiom, in Safari. Nu am putut reproduce pe calculator: la
+    430 de pixeli latime golul masurat era zero.
+
+    Pe iOS, `position: fixed` cu `bottom: 0` se socoteste fata de fereastra mare,
+    cea de dinainte ca bara de adresa sa se stranga, deci cand bara e desfasurata
+    poate ramane o fasie de pagina vizibila sub element. De aceea nu se mai bate
+    pe pixeli: cardul intra trei centimetri sub ecran si primeste aceeasi
+    inaltime inapoi ca umplutura. Continutul sta unde statea, iar sub el, oricat
+    de mare ar fi fasia lasata de Safari, e alb, nu val.
   */
-  html.bara-vizibila #ddf-cookie {
+  .ddf-cookie-jos {
+    bottom: -3rem;
+    padding-bottom: calc(3rem + max(1.25rem, env(safe-area-inset-bottom)));
+  }
+
+  html.bara-vizibila .ddf-cookie-jos {
     bottom: 5.25rem;
+    padding-bottom: 1.25rem;
     border-bottom-left-radius: 1.5rem;
     border-bottom-right-radius: 1.5rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .ddf-cookie-jos {
+    bottom: 1rem;
   }
 }
 
