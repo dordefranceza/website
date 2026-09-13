@@ -17,6 +17,27 @@ const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
 ---
 
 {gaId && (
+  <>
+  {/*
+    Banda crem care sta IN SPATELE cardului si acopera fasia dintre el si
+    marginea de jos a ecranului.
+
+    Prin fasia aceea se vedea valul crem al antetului, iar un val taiat de un
+    card alb arata ca o linie rupta pe toata latimea. Artiom a vazut-o pe iPhone
+    si a cerut-o scoasa, dar fara sa se atinga pozitia bannerului: „nu misca
+    bannerul, fa ce vrei, linia sa dispara". Deci nu se misca nimic, se acopera.
+
+    Banda are exact culoarea panzei paginii si se stinge in transparent spre
+    partea de sus, ca sa nu-si faca ea o margine proprie: altfel am fi inlocuit
+    o linie cu alta. Apare si dispare odata cu bannerul.
+  */}
+  <div
+    id="ddf-cookie-banda"
+    hidden
+    aria-hidden="true"
+    class="fixed inset-x-0 bottom-0 z-[94] h-28 bg-gradient-to-t from-crem from-55% to-transparent sm:hidden"
+  >
+  </div>
   <div
     id="ddf-cookie"
     hidden
@@ -52,20 +73,27 @@ const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
     */}
     <p id="ddf-cookie-titlu" class="font-sans text-[1.05rem] font-medium">Cookie-uri, pe scurt</p>
     <p class="mt-2 text-sm leading-relaxed text-gri">
-      Ne-ar ajuta să știm câți oameni ajung aici. Numărătoarea o face Google Analytics și pornește numai dacă spui da. Dacă spui nu, site-ul merge la fel și nu se salvează nimic la tine în browser. Te răzgândești oricând din
+      Ne-ar ajuta să știm câți oameni ajung aici. Numărătoarea o face Google Analytics și pornește doar dacă spui da. Te răzgândești oricând din
       <a href="/cookies/" class="text-albastru-text underline-offset-4 hover:underline">politica de cookie-uri</a>.
     </p>
     <div class="mt-5 flex flex-wrap gap-3">
       <button type="button" data-ddf-cookie="da" class="pastila pastila-albastra !py-2.5 text-sm">Sunt de acord</button>
-      <button type="button" data-ddf-cookie="nu" class="pastila pastila-alba !py-2.5 text-sm">Nu, mulțumesc</button>
+      <button type="button" data-ddf-cookie="nu" class="pastila pastila-alba !py-2.5 text-sm">Doar cele necesare</button>
     </div>
   </div>
+  </>
 
   <script is:inline define:vars={{ gaId }}>
     ;(function () {
       var CHEIE = 'ddf-cookie'
       var banner = document.getElementById('ddf-cookie')
       if (!banner) return
+      /* Banda din spate apare si dispare odata cu cardul, niciodata singura. */
+      var banda = document.getElementById('ddf-cookie-banda')
+      function arata(da) {
+        banner.hidden = !da
+        if (banda) banda.hidden = !da
+      }
 
       function citeste() {
         try {
@@ -106,7 +134,7 @@ const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
 
       function raspunde(v) {
         scrie(v)
-        banner.hidden = true
+        arata(false)
         baraJos(false)
         if (v === 'da') porneste()
       }
@@ -119,7 +147,7 @@ const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
       window.ddfCookie = {
         stare: citeste,
         redeschide: function () {
-          banner.hidden = false
+          arata(true)
           baraJos(true)
           var b = banner.querySelector('button')
           if (b) b.focus()
@@ -129,7 +157,7 @@ const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined)?.trim() ?? ''
       var ales = citeste()
       if (ales === 'da') porneste()
       else if (ales !== 'nu') {
-        banner.hidden = false
+        arata(true)
         baraJos(true)
       }
     })()
