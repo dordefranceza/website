@@ -385,41 +385,22 @@
   cele doua nu pot ajunge sa se contrazica. Peste 1024px bara nu exista, deci
   nici regula asta nu se aplica.
 */
-@media (max-width: 639px) {
-  /*
-    Pe telefon cardul **coboara sub marginea ecranului**, nu se opreste la ea.
+/*
+  Bannerul de cookie-uri urca deasupra barei de jos numai cat timp bara e pe
+  ecran.
 
-    Intai statea la 16 pixeli de margine si prin fasia aceea se zarea valul crem
-    al antetului: valul intra sub card si din el se mai vedea o dunga, ceea ce
-    arata a linie rupta. L-am lipit de margine cu `bottom: 0` si tot se vedea, pe
-    iPhone-ul lui Artiom, in Safari. Nu am putut reproduce pe calculator: la
-    430 de pixeli latime golul masurat era zero.
-
-    Pe iOS, `position: fixed` cu `bottom: 0` se socoteste fata de fereastra mare,
-    cea de dinainte ca bara de adresa sa se stranga, deci cand bara e desfasurata
-    poate ramane o fasie de pagina vizibila sub element. De aceea nu se mai bate
-    pe pixeli: cardul intra trei centimetri sub ecran si primeste aceeasi
-    inaltime inapoi ca umplutura. Continutul sta unde statea, iar sub el, oricat
-    de mare ar fi fasia lasata de Safari, e alb, nu val.
-  */
-  .ddf-cookie-jos {
-    bottom: -3rem;
-    padding-bottom: calc(3rem + max(1.25rem, env(safe-area-inset-bottom)));
-  }
-
-  html.bara-vizibila .ddf-cookie-jos {
-    bottom: 5.25rem;
-    padding-bottom: 1.25rem;
-    border-bottom-left-radius: 1.5rem;
-    border-bottom-right-radius: 1.5rem;
+  Pozitia lui NU se mai umbla. Am incercat sa-l lipesc de marginea de jos si sa-l
+  las sa intre sub ecran, ca sa scap de o dunga pe care Artiom o vedea pe iPhone;
+  a iesit mai rau si pe buna dreptate s-a suparat: „nu trebuie sa schimbam
+  pozitia la banner, trebuie sa stergi linia". Deci ramane unde era, la 16 pixeli
+  de margine, si linia se rezolva altfel.
+*/
+@media (max-width: 1023px) {
+  html.bara-vizibila #ddf-cookie {
+    bottom: 6rem;
   }
 }
 
-@media (min-width: 640px) {
-  .ddf-cookie-jos {
-    bottom: 1rem;
-  }
-}
 
 @media (min-width: 640px) and (max-width: 1023px) {
   html.bara-vizibila #ddf-cookie {
