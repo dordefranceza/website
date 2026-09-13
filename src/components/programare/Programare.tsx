@@ -19,7 +19,7 @@ import IconArrow from '~icons/solar/arrow-right-linear'
 import IconBack from '~icons/solar/arrow-left-linear'
 import IconMail from '~icons/solar/letter-bold'
 import { IconWhatsApp } from '@/components/IconWhatsApp'
-import IconCheck from '~icons/solar/check-circle-bold'
+import { Bifa } from '@/components/Bifa'
 import IconCalendar from '~icons/solar/calendar-mark-bold'
 import IconClock from '~icons/solar/clock-circle-bold'
 import IconUser from '~icons/solar/user-rounded-bold'
@@ -357,9 +357,8 @@ export default function Programare({ whatsapp }: Props) {
   if (pas === 4 && rezultat) {
     return (
       <div className="mx-auto mt-12 max-w-2xl rounded-[2rem] bg-alb p-8 text-center sm:p-12">
-        <span className="mx-auto flex size-16 items-center justify-center rounded-full bg-verde-5">
-          <IconCheck className="size-9 text-verde" />
-        </span>
+        {/* desenata, nu iconita de interfata: vezi comentariul din Bifa.tsx */}
+        <Bifa marime={84} class="mx-auto text-verde" />
         <h2 className="mt-6 text-3xl sm:text-4xl">Gata, ești în calendar</h2>
 
         {/*
