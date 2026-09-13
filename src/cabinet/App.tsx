@@ -103,10 +103,26 @@ export default function App() {
    */
   useLayoutEffect(() => {
     const asaza = (peLoc: boolean) => {
-      const el = bara.current?.querySelector<HTMLElement>('[data-activ="true"] [data-pastila]')
-      if (!el) return
+      const cutie = bara.current
+      const el = cutie?.querySelector<HTMLElement>('[data-activ="true"] [data-pastila]')
+      if (!cutie || !el) return
       if (peLoc) setFaraTranzitie(true)
-      setBulina({ x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight })
+      /*
+       * Masurat fata de BARA, nu fata de link.
+       *
+       * `offsetLeft` se socoteste fata de primul parinte pozitionat, iar
+       * fiecare link are `relative` pe el, pentru straturi. Deci iesea mereu
+       * acelasi numar mic, cat spatiul dintre marginea linkului si iconita, si
+       * pastila statea lipita de marginea din stanga a barei oricare pagina ar
+       * fi fost deschisa. Artiom, de pe telefon: „cerculetul albastru nu se
+       * muta". Nu se muta fiindca nu i se spunea niciodata unde sa se duca.
+       *
+       * Cu dreptunghiurile adevarate ale celor doua elemente, socoteala nu mai
+       * depinde de cine e parinte pozitionat si de cine nu.
+       */
+      const r = el.getBoundingClientRect()
+      const rb = cutie.getBoundingClientRect()
+      setBulina({ x: r.left - rb.left, y: r.top - rb.top, w: r.width, h: r.height })
       if (peLoc) requestAnimationFrame(() => requestAnimationFrame(() => setFaraTranzitie(false)))
     }
     asaza(primaAsezare.current)

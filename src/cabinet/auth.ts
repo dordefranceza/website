@@ -20,6 +20,7 @@ const CHEIE_LOCAL = 'ddf-cabinet-local'
 export type Sesiune = { email: string; cereCod: boolean }
 
 export async function sesiune(): Promise<Sesiune | null> {
+
   if (!sb) {
     try {
       /**
