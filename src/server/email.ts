@@ -16,6 +16,7 @@ import { dataOraRo, dataRo, numeZi, oraRo } from '../lib/timp'
 import { adresaSite, inDezvoltare, variabila } from './mediu'
 import { atasamentIcs, linkGoogleCalendar } from './calendar'
 import { FIGURI } from './figuri'
+import { numarInternational } from '../lib/telefon'
 
 export type Atasament = {
   nume: string
@@ -218,20 +219,13 @@ function sablon(o: {
 
 /* --- Emailurile ------------------------------------------------------------- */
 
-function cifreTelefon(t: string): string {
-  const cifre = t.replace(/\D/g, '')
-  if (t.trim().startsWith('+')) return cifre
-  if (cifre.startsWith('00')) return cifre.slice(2)
-  if (cifre.startsWith('40') || cifre.startsWith('373')) return cifre
-  if (cifre.startsWith('0')) return `40${cifre.slice(1)}`
-  return cifre
-}
+
 
 /** Emailul care ajunge la Dorina la fiecare programare noua. */
 export function emailNotificare(p: Programare, c: Client, setari: Setari): Email {
   const tip = TIPURI[p.tip]
   const cand = dataOraRo(p.incepe)
-  const cifre = cifreTelefon(c.telefon)
+  const cifre = numarInternational(c.telefon)
   const catre = [setari.email_notificari || variabila('EMAIL_DORINA')].filter(Boolean)
 
   const lista = [
@@ -344,7 +338,7 @@ export function emailGrupa(g: Grupa, c: Client, lectii: Programare[], setari: Se
  */
 export function emailRefuz(p: Programare, c: Client, setari: Setari): Email {
   const cand = dataOraRo(p.incepe)
-  const cifre = cifreTelefon(c.telefon)
+  const cifre = numarInternational(c.telefon)
   const catre = [setari.email_notificari || variabila('EMAIL_DORINA')].filter(Boolean)
 
   const lista = [

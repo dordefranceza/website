@@ -7,20 +7,13 @@ import { dataOraRo } from '@/lib/timp'
 import { apel } from './api'
 import { Camp, EtichetaTip, STARE_TEXT, clasaInput, clasaTextarea } from './comune'
 import { isoLaLocal, localLaIso } from './timpLocal'
+import { numarInternational } from '@/lib/telefon'
 import { IconWhatsApp } from '@/components/IconWhatsApp'
 import IconLetter from '~icons/solar/letter-bold'
 import IconPhone from '~icons/solar/phone-bold'
 
 type Props = { programare: Programare | null; inchide: () => void; laSalvare: (p: Programare) => void; anunta: (t: string) => void }
 
-function cifre(t: string): string {
-  const c = t.replace(/\D/g, '')
-  if (t.trim().startsWith('+')) return c
-  if (c.startsWith('00')) return c.slice(2)
-  if (c.startsWith('40') || c.startsWith('373')) return c
-  if (c.startsWith('0')) return `40${c.slice(1)}`
-  return c
-}
 
 export default function DialogProgramare({ programare, inchide, laSalvare, anunta }: Props) {
   const [stare, setStare] = useState<StareProgramare>('noua')
@@ -83,8 +76,10 @@ export default function DialogProgramare({ programare, inchide, laSalvare, anunt
     }
   }
 
-  /* Numarul, doar cifre, cum il cere wa.me; gol daca omul n-a lasat telefon. */
-  const cifreTelefon = (c?.telefon ?? '').replace(/\D/g, '')
+  /* Numarul in forma internationala, cum il cere wa.me. Gol cand omul n-a
+     lasat telefon SAU cand a scris unul local, fara tara: atunci nu ghicim,
+     fiindca ghicitul ducea mesajul la un strain. */
+  const cifreTelefon = numarInternational(c?.telefon ?? '')
 
   const mesajLink = programare
     ? [
@@ -122,8 +117,10 @@ export default function DialogProgramare({ programare, inchide, laSalvare, anunt
           </div>
           {c && (
             <div className="mt-4 flex flex-wrap gap-2">
-              {c.telefon && (
-                <a href={`https://wa.me/${cifre(c.telefon)}`} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 rounded-full bg-whatsapp px-3 py-1.5 text-xs font-bold text-cerneala">
+              {/* Butonul apare doar cand numarul spune si tara. Altfel wa.me
+                  duce la alt om, si asta e mai rau decat sa nu ai buton. */}
+              {cifreTelefon && (
+                <a href={`https://wa.me/${cifreTelefon}`} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 rounded-full bg-whatsapp px-3 py-1.5 text-xs font-bold text-cerneala">
                   <IconWhatsApp className="size-4" /> WhatsApp
                 </a>
               )}
@@ -201,7 +198,7 @@ export default function DialogProgramare({ programare, inchide, laSalvare, anunt
             om, iar Dorina nu mai are de scris nimic de mana: data, ora si
             linkul sunt deja acolo.
           */}
-          {cifreTelefon && (
+          {cifreTelefon ? (
             <a
               href={`https://wa.me/${cifreTelefon}?text=${encodeURIComponent(mesajLink)}`}
               target="_blank"
@@ -210,6 +207,15 @@ export default function DialogProgramare({ programare, inchide, laSalvare, anunt
             >
               <IconWhatsApp className="size-4" /> Trimite linkul pe WhatsApp
             </a>
+          ) : (
+            /* Nu putem sti daca omul are WhatsApp, dar putem sti daca numarul
+               lui e bun de WhatsApp. Cand nu e, spunem de ce, in loc sa lasam
+               un buton care duce aiurea. */
+            <p className="-mt-2 rounded-xl bg-crem px-4 py-3 text-sm leading-relaxed text-gri">
+              {c?.telefon
+                ? <>Numărul <strong className="font-medium text-cerneala">{c.telefon}</strong> nu are prefixul țării, așa că nu pot deschide WhatsApp cu el. Sună-l, sau trimite-i linkul pe email cu butonul de mai sus.</>
+                : <>Nu ți-a lăsat număr de telefon, deci linkul merge doar pe email.</>}
+            </p>
           )}
 
           <Camp eticheta="Note (le vezi doar tu)">

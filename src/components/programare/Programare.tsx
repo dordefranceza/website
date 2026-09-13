@@ -448,8 +448,8 @@ export default function Programare({ whatsapp }: Props) {
                 <Input id="p-nume" name="nume" required autoComplete="name" className="h-12 rounded-xl bg-crem" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="p-telefon">Telefon, opțional (pentru WhatsApp)</Label>
-                <Input id="p-telefon" name="telefon" type="tel" autoComplete="tel" inputMode="tel" placeholder="07xx xxx xxx" className="h-12 rounded-xl bg-crem" />
+                <Label htmlFor="p-telefon">Telefon, opțional. Cu prefixul țării, ca să meargă WhatsApp</Label>
+                <Input id="p-telefon" name="telefon" type="tel" autoComplete="tel" inputMode="tel" placeholder="+373 ... sau +40 ..." className="h-12 rounded-xl bg-crem" />
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="p-email">Email, pentru confirmare și linkul lecției</Label>
