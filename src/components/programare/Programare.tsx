@@ -46,6 +46,31 @@ const TIPURI_LISTA: { tip: TipProgramare; Icon: typeof IconUser; text: string }[
 
 const ZILE_SCURT = ['Lu', 'Ma', 'Mi', 'Jo', 'Vi', 'Sâ', 'Du']
 
+/*
+ * Nivelurile, despartite in doua randuri, fiindca sunt doua feluri de raspuns.
+ *
+ * Puse toate intr-o insiruire care se rupe unde apuca, ieseau haotic: „Încep de
+ * la zero" lung langa „A1" de doua litere, apoi randul urmator inceput aiurea.
+ * Artiom: „una mai lunga, una mai scurta, unde cate una, unde [cate doua], nu-i
+ * tare bine". Asa, codurile stau intr-un rand de casute egale, ca o scara, iar
+ * cele doua raspunsuri de om, „de la zero" si „nu stiu", stau deasupra, tot
+ * egale intre ele. Randul spune si ceva: ori iti stii nivelul, ori nu.
+ *
+ * Se calculeaza din lista, nu se scriu de mana: daca se adauga C2 in NIVELURI,
+ * intra singur la coduri.
+ */
+const NIVEL_COD = /^[ABC][12]$/
+const NIVELE_COD = NIVELURI.filter((n) => NIVEL_COD.test(n))
+const NIVELE_SPUSE = NIVELURI.filter((n) => !NIVEL_COD.test(n))
+
+/** Aceleasi casute peste tot: doar fundalul se schimba cand e aleasa. */
+function casuta(ales: boolean): string {
+  return cn(
+    'flex min-h-12 items-center justify-center rounded-full px-3 py-2.5 text-center text-[0.95rem] leading-snug transition',
+    ales ? 'bg-albastru text-alb' : 'bg-crem hover:bg-crem-inchis',
+  )
+}
+
 function parametru(nume: string): string {
   try {
     return new URLSearchParams(location.search).get(nume) ?? ''
@@ -578,18 +603,16 @@ export default function Programare({ whatsapp }: Props) {
               <fieldset className="space-y-2.5 sm:col-span-2">
                 <legend className="mb-2.5 text-sm font-medium">Nivelul tău acum</legend>
                 <input type="hidden" name="nivel" value={nivel} />
-                <div className="flex flex-wrap gap-2">
-                  {NIVELURI.map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      onClick={() => setNivel((x) => (x === n ? '' : n))}
-                      aria-pressed={nivel === n}
-                      className={cn(
-                        'rounded-full px-4 py-2.5 text-[0.95rem] transition',
-                        nivel === n ? 'bg-albastru text-alb' : 'bg-crem hover:bg-crem-inchis',
-                      )}
-                    >
+                <div className="grid grid-cols-2 gap-2">
+                  {NIVELE_SPUSE.map((n) => (
+                    <button key={n} type="button" onClick={() => setNivel((x) => (x === n ? '' : n))} aria-pressed={nivel === n} className={casuta(nivel === n)}>
+                      {n}
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-5 gap-2">
+                  {NIVELE_COD.map((n) => (
+                    <button key={n} type="button" onClick={() => setNivel((x) => (x === n ? '' : n))} aria-pressed={nivel === n} className={casuta(nivel === n)}>
                       {n}
                     </button>
                   ))}
@@ -598,18 +621,17 @@ export default function Programare({ whatsapp }: Props) {
               <fieldset className="space-y-2.5 sm:col-span-2">
                 <legend className="mb-2.5 text-sm font-medium">Pentru ce ai nevoie de franceză</legend>
                 <input type="hidden" name="scop" value={scop} />
-                <div className="flex flex-wrap gap-2">
+                {/*
+                  Casute egale, nu insiruire.
+                  Frazele au lungimi foarte diferite, deci lipite una de alta
+                  ieseau unde cate una pe rand, unde cate doua, cu marginea din
+                  dreapta zdrentuita. Intr-o grila toate au aceeasi latime, iar
+                  cea care se rupe in doua randuri nu mai strica nimic: randul
+                  intreg creste odata cu ea, si ramane drept.
+                */}
+                <div className="grid gap-2 sm:grid-cols-2">
                   {SCOPURI.map((sc) => (
-                    <button
-                      key={sc}
-                      type="button"
-                      onClick={() => setScop((x) => (x === sc ? '' : sc))}
-                      aria-pressed={scop === sc}
-                      className={cn(
-                        'rounded-full px-4 py-2.5 text-left text-[0.95rem] leading-snug transition',
-                        scop === sc ? 'bg-albastru text-alb' : 'bg-crem hover:bg-crem-inchis',
-                      )}
-                    >
+                    <button key={sc} type="button" onClick={() => setScop((x) => (x === sc ? '' : sc))} aria-pressed={scop === sc} className={casuta(scop === sc)}>
                       {sc}
                     </button>
                   ))}
