@@ -46,13 +46,23 @@ function ziDin(data: string): number {
   return d.getDay() === 0 ? 7 : d.getDay()
 }
 
+/**
+ * Data fara ziua saptamanii: „1 februarie 2026", nu „duminică, 1 februarie 2026".
+ *
+ * In randul de rezumat ziua e spusa o data, la inceput, cu „In fiecare
+ * duminică". Cu `dataRo` intreg iesea de trei ori in aceeasi propozitie.
+ */
+function faraZi(instant: string): string {
+  return dataRo(instant).replace(/^[^,]+,\s*/, '')
+}
+
 /** Data ultimei lectii: prima plus cate sapte zile, cum le face si serverul. */
 function ultimaLectie(prima: string, lectii: number): string {
   if (!prima || lectii < 1) return ''
   const d = new Date(`${prima}T12:00:00`)
   if (Number.isNaN(d.getTime())) return ''
   d.setDate(d.getDate() + (lectii - 1) * 7)
-  return dataRo(d.toISOString())
+  return faraZi(d.toISOString())
 }
 
 /**
@@ -270,7 +280,7 @@ export default function Grupe() {
           {formular.prima && (
             <p className="mt-4 rounded-xl bg-crem px-4 py-3 text-sm leading-relaxed text-cerneala">
               În fiecare <b>{numeZi(ziDin(formular.prima))}</b>, ora <b>{formular.ora}</b>, {formular.lectii} lecții,
-              de pe {dataRo(`${formular.prima}T12:00:00`)} până pe {ultimaLectie(formular.prima, formular.lectii)}.{' '}
+              de pe {faraZi(`${formular.prima}T12:00:00`)} până pe {ultimaLectie(formular.prima, formular.lectii)}.{' '}
               {formular.pret ? <>{formular.pret} € pe lecție, adică <b>{total(formular.lectii, formular.pret)} €</b> de cursant.</> : 'Gratuit.'}{' '}
               {formular.locuri} locuri.
             </p>
