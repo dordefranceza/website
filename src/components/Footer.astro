@@ -75,7 +75,7 @@ const an = new Date().getFullYear()
           <p class="mb-3 mt-8 text-sm font-bold uppercase tracking-wider text-alb/60">Date de identificare</p>
           <p class="text-sm leading-relaxed text-alb/70">
             {firma.denumire}<br />
-            CUI {firma.cui} · {firma.registru}<br />
+            IDNO {firma.cui} · {firma.registru}<br />
             {firma.sediu}
           </p>
         </>
@@ -93,8 +93,7 @@ const an = new Date().getFullYear()
       <a class="hover:text-alb" href="/admin/">Cabinet</a>
     </nav>
     <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label="Protecția consumatorului">
-      <a class="hover:text-alb" href={firma.anpc} target="_blank" rel="noopener">ANPC</a>
-      <a class="hover:text-alb" href={firma.anpcSal} target="_blank" rel="noopener">ANPC SAL</a>
+      <a class="hover:text-alb" href={firma.consumatori} target="_blank" rel="noopener">Protecția consumatorilor</a>
     </nav>
     <p>© {an} {site.nume}. Toate drepturile rezervate.</p>
   </div>

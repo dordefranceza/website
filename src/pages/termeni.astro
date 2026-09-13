@@ -11,7 +11,7 @@ import { cursGrup, inLei, total } from '../config/site'
   {/* Identificarea completa se afiseaza doar cand exista. Pana atunci ramane
       ce e adevarat: marca si datele de contact, fara o forma juridica inventata. */}
   {firmaCompleta ? (
-    <p><strong>{firma.denumire}</strong>, CUI {firma.cui}, înregistrată sub nr. {firma.registru}, cu sediul în {firma.sediu}. Email: <a href={`mailto:${firma.email}`}>{firma.email}</a>. Telefon: {firma.telefon}. Lecțiile sunt ținute de Dorina.</p>
+    <p><strong>{firma.denumire}</strong>, IDNO {firma.cui}, înregistrată sub nr. {firma.registru}, cu sediul în {firma.sediu}. Email: <a href={`mailto:${firma.email}`}>{firma.email}</a>. Telefon: {firma.telefon}. Lecțiile sunt ținute de Dorina.</p>
   ) : (
     <p>Lecțiile sunt oferite sub numele <strong>{site.nume}</strong> și sunt ținute de Dorina. Ne scrii la <a href={`mailto:${firma.email}`}>{firma.email}</a> sau la {firma.telefon}.</p>
   )}
@@ -40,7 +40,7 @@ import { cursGrup, inLei, total } from '../config/site'
   <p>Regulile complete sunt în <a href="/anulare-si-rambursare/">politica de anulare și rambursare</a>. Pe scurt: reprogramare gratuită cu cel puțin 24 de ore înainte; sub 24 de ore lecția se consideră efectuată și se plătește; dacă anulează Dorina, primești lecția înapoi sau banii.</p>
 
   <h2>6. Dreptul de retragere</h2>
-  <p>Conform OUG 34/2014, ai dreptul să te retragi din contract în 14 zile de la programare, fără motiv, pentru sumele plătite în avans pentru lecții neefectuate. La programare confirmi că vrei ca lecția să înceapă înainte de expirarea celor 14 zile și înțelegi că, pentru lecțiile deja efectuate, pierzi dreptul de retragere pentru acestea. Cum te retragi și <a href="/formular-retragere/">formularul model</a>, pe pagina dedicată.</p>
+  <p>Conform Legii nr. 8/2016 a Republicii Moldova, ai dreptul să te retragi din contract în 14 zile, fără motiv, pentru sumele plătite în avans pentru lecții neefectuate. Termenul curge din ziua care urmează încheierii contractului, adică din ziua de după emailul de confirmare. La programare confirmi că vrei ca lecția să înceapă înainte de expirarea celor 14 zile și înțelegi că, pentru lecțiile deja efectuate, pierzi dreptul de retragere pentru acestea. Cum te retragi și <a href="/formular-retragere/">formularul model</a>, pe pagina dedicată.</p>
 
   <h2>7. Obligațiile tale</h2>
   <ul>
@@ -56,7 +56,8 @@ import { cursGrup, inLei, total } from '../config/site'
   <p>Cum prelucrăm datele tale este descris în <a href="/confidentialitate/">politica de confidențialitate</a>. Site-ul nu folosește cookie-uri de urmărire: <a href="/cookies/">politica de cookie-uri</a>.</p>
 
   <h2>10. Legea aplicabilă și litigii</h2>
-  <p>Acești termeni sunt guvernați de legea română. Orice neînțelegere o rezolvăm întâi direct. Dacă nu reușim, te poți adresa <a href={firma.anpc} target="_blank" rel="noopener">Autorității Naționale pentru Protecția Consumatorilor</a>, entităților de <a href={firma.anpcSal} target="_blank" rel="noopener">soluționare alternativă a litigiilor (SAL)</a> ori instanțelor competente din România.</p>
+  <p>Acești termeni sunt guvernați de legea Republicii Moldova, unde își desfășoară activitatea prestatorul. Orice neînțelegere o rezolvăm întâi direct. Dacă nu reușim, te poți adresa <a href={firma.consumatori} target="_blank" rel="noopener">Agenției pentru Protecția Consumatorilor și Supravegherea Pieței</a> ori instanțelor competente din Republica Moldova.</p>
+  <p>Dacă locuiești într-un stat al Uniunii Europene, păstrezi protecțiile pe care ți le dă legea țării tale, indiferent de ce scrie aici. Nu încercăm să ți le luăm: drepturile scrise mai sus ți le dăm oricum, ca promisiune a noastră.</p>
 
   <h2>11. Modificări</h2>
   <p>Putem actualiza termenii. Versiunea în vigoare este cea de pe site, cu data de mai sus. Pentru programările deja confirmate se aplică termenii de la data confirmării.</p>

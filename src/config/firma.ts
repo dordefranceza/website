@@ -1,32 +1,43 @@
 /**
- * Datele de identificare ale prestatorului. Legea 365/2002 (comertul
- * electronic) si OUG 34/2014 (drepturile consumatorilor) cer ca ele sa fie
- * afisate pe site, usor de gasit. Tot ce e intre [paranteze] se completeaza
- * cu datele reale INAINTE de lansare; pana atunci Base.astro le semnaleaza.
+ * Datele de identificare ale prestatorului.
+ *
+ * Activitatea e in **Republica Moldova**, deci legea care conteaza e cea de
+ * acolo, nu cea romana: Legea nr. 8/2016 privind drepturile consumatorilor la
+ * incheierea contractelor si Legea nr. 105/2003 privind protectia
+ * consumatorilor. Pana pe 13 septembrie 2026 paginile citau OUG 34/2014 si
+ * ANPC, adica legi si autoritati romanesti care nu obliga un vanzator din
+ * Moldova. Un articol de lege citat gresit e mai rau decat niciunul: arata ca
+ * textul a fost copiat de undeva.
+ *
+ * Ce ramane valabil si pentru cumparatorii din Romania: ei isi pastreaza
+ * protectiile lor oriunde ar fi vanzatorul, iar noi le dam oricum, scrise ca
+ * promisiune, nu ca trimitere la un articol.
+ *
+ * Tot ce e intre [paranteze] se completeaza cu datele reale cand se deschide
+ * firma, in decembrie 2026. Pana atunci nu se afiseaza deloc, vezi `numeLegal`.
  */
 export const firma = {
   /** Forma juridica sub care se vand lectiile: PFA, II sau SRL. */
-  denumire: '[Nume Prenume] PFA',
-  cui: '[CUI]',
-  registru: '[F../..../....]',
-  sediu: '[Strada, nr., localitate, județ]',
+  denumire: '[Denumirea] SRL',
+  /** IDNO, numarul de identificare de stat din Moldova. */
+  cui: '[IDNO]',
+  registru: '[Nr. de inregistrare, ASP]',
+  sediu: '[Strada, nr., localitatea, raionul]',
   email: 'dordefranceza@gmail.com',
   telefon: '+33 6 62 35 20 71',
   /** true dupa ce firma devine platitoare de TVA. Schimba textul de la preturi. */
   platitorTva: false,
-  /** Autoritatea de supraveghere a datelor si organismele pentru consumatori. */
-  anspdcp: 'https://www.dataprotection.ro',
-  anpc: 'https://anpc.ro',
-  anpcSal: 'https://anpc.ro/ce-este-sal/',
+  /**
+   * Autoritatile din Moldova, verificate pe 13 septembrie 2026.
+   * Erau ANPC si dataprotection.ro, adica autoritatile romane, care n-au ce
+   * face cu un vanzator din Moldova.
+   */
+  dateProtectie: 'https://datepersonale.md',
+  consumatori: 'https://consumator.gov.md',
   /*
-   * Aici era platforma europeana SOL (ODR), `ec.europa.eu/consumers/odr`.
-   * **S-a inchis pe 20 iulie 2025**, prin Regulamentul (UE) 2024/3228: adresa
-   * duce acum la un anunt al Comisiei, nu la un formular. Un link catre o
-   * platforma care nu mai exista nu e doar inutil, e o trimitere gresita
-   * intr-un text legal, deci a fost scos de peste tot.
-   *
-   * Ce ramane valabil pentru un consumator: intai direct cu noi, apoi ANPC
-   * si entitatile SAL de mai sus.
+   * Aici era si platforma europeana SOL (ODR). S-a inchis pe 20 iulie 2025,
+   * prin Regulamentul (UE) 2024/3228, si oricum nu s-a aplicat niciodata
+   * Moldovei. Scoasa de peste tot.
    */
 } as const
 

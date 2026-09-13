@@ -4,11 +4,11 @@ import { site } from '../config/site'
 import { firma, firmaCompleta } from '../config/firma'
 ---
 <Legal title="Politica de confidențialitate" description="Ce date personale colectează DorDeFranceza, în ce scop, cât timp le păstrează, cui le transmite și care sunt drepturile tale conform GDPR." actualizat="12 septembrie 2026">
-  <p>Această politică explică ce date personale colectează site-ul {site.nume} și lecțiile oferite prin el, de ce, cât timp le păstrăm și ce drepturi ai. Se aplică Regulamentul (UE) 2016/679 (GDPR) și Legea 190/2018.</p>
+  <p>Această politică explică ce date personale colectează site-ul {site.nume} și lecțiile oferite prin el, de ce, cât timp le păstrăm și ce drepturi ai. Activitatea se desfășoară în Republica Moldova, deci se aplică Legea nr. 133/2011 privind protecția datelor cu caracter personal. Pentru cursanții care locuiesc în Uniunea Europeană se aplică în plus Regulamentul (UE) 2016/679 (GDPR), fiindcă le oferim servicii acolo. Temeiurile de mai jos sunt scrise pe articolele din GDPR, care sunt cele mai stricte dintre cele două: dacă le respectăm pe acelea, le respectăm și pe celelalte.</p>
 
   <h2>Cine prelucrează datele</h2>
   {firmaCompleta ? (
-    <p>Operatorul de date este <strong>{firma.denumire}</strong>, CUI {firma.cui}, cu sediul în {firma.sediu}, reprezentată de Dorina, profesoară de franceză. Ne scrii la <a href={`mailto:${firma.email}`}>{firma.email}</a> pentru orice întrebare legată de datele tale.</p>
+    <p>Operatorul de date este <strong>{firma.denumire}</strong>, IDNO {firma.cui}, cu sediul în {firma.sediu}, reprezentată de Dorina, profesoară de franceză. Ne scrii la <a href={`mailto:${firma.email}`}>{firma.email}</a> pentru orice întrebare legată de datele tale.</p>
   ) : (
     <p>Datele tale sunt prelucrate de <strong>{site.nume}</strong>, adică de Dorina, profesoara care ține lecțiile. Ne scrii la <a href={`mailto:${firma.email}`}>{firma.email}</a> sau la {firma.telefon} pentru orice întrebare legată de datele tale.</p>
   )}
@@ -51,7 +51,7 @@ import { firma, firmaCompleta } from '../config/firma'
   <p>Datele stau în baza de date doar pe serverele noastre, la care browserul vizitatorilor nu are acces direct. Accesul administratorului este protejat cu parolă și, opțional, cu verificare în doi pași. Emailurile pleacă prin conexiuni criptate.</p>
 
   <h2>Drepturile tale</h2>
-  <p>Ai dreptul de acces, rectificare, ștergere, restricționare a prelucrării, portabilitate și opoziție, precum și dreptul de a depune o plângere la Autoritatea Națională de Supraveghere a Prelucrării Datelor cu Caracter Personal (<a href={firma.anspdcp} target="_blank" rel="noopener">dataprotection.ro</a>). Pentru orice cerere, scrie-ne la <a href={`mailto:${firma.email}`}>{firma.email}</a>. Răspundem în cel mult 30 de zile.</p>
+  <p>Ai dreptul de acces, rectificare, ștergere, restricționare a prelucrării, portabilitate și opoziție, precum și dreptul de a depune o plângere la <a href={firma.dateProtectie} target="_blank" rel="noopener">Centrul Național pentru Protecția Datelor cu Caracter Personal</a> din Republica Moldova. Dacă locuiești în Uniunea Europeană, te poți adresa și autorității de protecție a datelor din țara ta. Pentru orice cerere, scrie-ne la <a href={`mailto:${firma.email}`}>{firma.email}</a>. Răspundem în cel mult 30 de zile.</p>
 
   <h2>Modificări</h2>
   <p>Dacă schimbăm această politică, actualizăm data de sus. Pentru schimbări importante, cursanții activi primesc un email.</p>
