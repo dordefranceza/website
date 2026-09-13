@@ -15,7 +15,7 @@
  */
 interface Props {
   /** numele fisierului din public/images/personaj/, fara extensie */
-  nume: 'saluta' | 'cauta' | 'scrie' | 'telefon' | 'cu-biscuite' | 'arata' | 'prezinta' | 'incurajeaza' | 'inima' | 'se-uita-jos-a' | 'se-uita-jos-b' | 'asezata' | 'ganditoare'
+  nume: 'saluta' | 'cauta' | 'scrie' | 'telefon' | 'cu-biscuite' | 'arata' | 'prezinta' | 'incurajeaza' | 'inima' | 'se-uita-jos-a' | 'se-uita-jos-b' | 'asezata' | 'ganditoare' | 'bucura'
   /** inelul colorat din jur */
   inel?: keyof typeof INEL
   /** discul deschis din spatele figurii */
@@ -74,6 +74,8 @@ const DEPLASARE: Record<string, number> = {
   asezata: 0.104,
   cauta: 0.107,
   'cu-biscuite': 0.005,
+  /* bratele sunt ridicate simetric, deci mijlocul cutiei e chiar mijlocul ei */
+  bucura: 0,
   ganditoare: -0.127,
   incurajeaza: -0.032,
   inima: 0.005,
@@ -104,6 +106,7 @@ const RAPORT = {
   'se-uita-jos-b': 256 / 640,
   asezata: 493 / 900,
   ganditoare: 327 / 900,
+  bucura: 491 / 900,
 } as const
 
 const {
