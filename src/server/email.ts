@@ -274,11 +274,11 @@ export function emailGrupa(g: Grupa, c: Client, lectii: Programare[], setari: Se
     { eticheta: 'Când', valoare: `în fiecare ${numeZi(g.zi)}, ora ${g.ora} (ora României)` },
     { eticheta: 'Lecții', valoare: `${lectii.length} din ${g.lectii}` },
     { eticheta: 'Preț', valoare: g.pret ? `${g.pret} € pe lecție` : 'gratuit' },
-    { eticheta: 'Unde', valoare: link ? 'Pe Zoom, linkul e în butonul de mai jos' : 'Pe Zoom. Linkul vine pe email înainte de prima lecție.' },
+    { eticheta: 'Unde', valoare: link ? 'Online, linkul e în butonul de mai jos' : 'Online. Linkul vine pe email înainte de prima lecție.' },
   ]
 
   const butoane = [
-    link ? buton(link, 'Intră pe Zoom') : '',
+    link ? buton(link, 'Intră la lecție') : '',
     prima ? buton(linkGoogleCalendar(prima, c, setari), 'Pune în calendar', '#0b8043') : '',
   ].join('')
 
@@ -369,7 +369,7 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
     { eticheta: 'Ce', valoare: tip.nume },
     { eticheta: 'Când', valoare: `${zi}, ora ${ora} (ora României)` },
     { eticheta: 'Durată', valoare: `${p.durata_min} de minute` },
-    { eticheta: 'Unde', valoare: link ? 'Pe Zoom, linkul e în butonul de mai jos' : 'Pe Zoom. Linkul vine pe email înainte de lecție.' },
+    { eticheta: 'Unde', valoare: link ? 'Online, linkul e în butonul de mai jos' : 'Online. Linkul vine pe email înainte de lecție.' },
     { eticheta: 'Preț', valoare: p.suma ? `${p.suma} €` : 'Gratuit' },
   ]
 
@@ -379,7 +379,7 @@ export function emailConfirmare(p: Programare, c: Client, setari: Setari): Email
       : `Bună, ${scapa(prenume)}! Lecția ta este în calendar. Mai jos ai toate detaliile.`
 
   const butoane = [
-    link ? buton(link, 'Intră pe Zoom') : '',
+    link ? buton(link, 'Intră la lecție') : '',
     buton(linkGoogleCalendar(p, c, setari), 'Pune în calendar', '#0b8043'),
     buton(`https://wa.me/${variabila('WHATSAPP_DORINA') || ''}`.replace(/\/$/, ''), 'Scrie-i Dorinei pe WhatsApp', '#25d366'),
   ].join('')
@@ -512,15 +512,15 @@ export function emailLinkZoom(p: Programare, c: Client, link: string): Email {
   const prenume = c.nume.split(' ')[0]
   return {
     catre: [c.email],
-    subiect: `Linkul de Zoom pentru ${zi}, ${ora}`,
+    subiect: `Linkul pentru lecția de ${zi}, ${ora}`,
     text: `Bună, ${prenume}!\n\nLinkul pentru lecția de ${zi}, ora ${ora}: ${link}\n\nPe curând,\nDorina`,
     html: sablon({
       figura: 'saluta',
       eticheta: 'Linkul lecției',
       titlu: `${zi}, ora ${ora}`,
-      intro: `Bună, ${scapa(prenume)}! Aici ai linkul pentru lecția noastră. Intră cu 2 minute înainte, ca să avem toate cele 50 de minute.`,
+      intro: `Bună, ${scapa(prenume)}! Aici ai linkul pentru lecția noastră. Intră cu două minute înainte, ca să avem tot timpul nostru.`,
       corp: '',
-      butoane: buton(link, 'Intră pe Zoom'),
+      butoane: buton(link, 'Intră la lecție'),
       subsol: 'Trimis de Dorina din cabinetul DorDeFranceza.',
     }),
   }
