@@ -69,7 +69,6 @@ export function Camp({ eticheta, children, ajutor }: { eticheta: string; childre
 }
 
 export const clasaInput = 'h-11 w-full rounded-xl bg-crem px-3 text-[0.95rem] outline-none focus:ring-2 focus:ring-albastru'
-export const clasaSelect = clasaInput
 export const clasaTextarea = 'w-full rounded-xl bg-crem px-3 py-2.5 text-[0.95rem] outline-none focus:ring-2 focus:ring-albastru'
 
 /** Un mesaj scurt care apare jos si dispare singur. */

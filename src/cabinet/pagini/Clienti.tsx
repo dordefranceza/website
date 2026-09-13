@@ -5,7 +5,8 @@ import { NIVELURI, SCOPURI } from '@/lib/tipuri'
 import { pachete as PACHETE_SITE } from '@/config/site'
 import { dataRo } from '@/lib/timp'
 import { apel } from '../api'
-import { Camp, Eroare, Gol, Titlu, Toast, bani, clasaInput, clasaSelect, clasaTextarea } from '../comune'
+import { Camp, Eroare, Gol, Titlu, Toast, bani, clasaInput, clasaTextarea } from '../comune'
+import { Alege, optiuniDin } from '@/components/ui/alege'
 import DialogPropunere from '../DialogPropunere'
 
 type Categorie = 'individual' | 'grup' | 'proba'
@@ -263,16 +264,10 @@ function DialogClient({ client, inchide, laSalvare, laPropunere, laReincarcare }
           <Camp eticheta="Telefon"><input value={d.telefon} onChange={schimba('telefon')} className={clasaInput} /></Camp>
           <div className="sm:col-span-2"><Camp eticheta="Email"><input type="email" value={d.email} onChange={schimba('email')} className={clasaInput} /></Camp></div>
           <Camp eticheta="Nivel">
-            <select value={d.nivel} onChange={schimba('nivel')} className={clasaSelect}>
-              <option value="">Nestabilit</option>
-              {NIVELURI.map((n) => <option key={n} value={n}>{n}</option>)}
-            </select>
+            <Alege valoare={d.nivel} schimba={(v) => setD({ ...d, nivel: v })} optiuni={optiuniDin(NIVELURI, 'Nestabilit')} />
           </Camp>
           <Camp eticheta="Scop">
-            <select value={d.scop} onChange={schimba('scop')} className={clasaSelect}>
-              <option value="">Nestabilit</option>
-              {SCOPURI.map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
+            <Alege valoare={d.scop} schimba={(v) => setD({ ...d, scop: v })} optiuni={optiuniDin(SCOPURI, 'Nestabilit')} />
           </Camp>
           <div className="sm:col-span-2">
             <Camp eticheta="Note (le vezi doar tu)" ajutor="Progres, teme date, ce urmează.">

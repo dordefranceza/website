@@ -3,7 +3,8 @@ import { Switch } from '@/components/ui/switch'
 import type { Setari as TipSetari } from '@/lib/tipuri'
 import { apel, descarcaExport } from '../api'
 import { confirmaDoiPasi, incepeDoiPasi, legat, opresteDoiPasi, puneParola, stareDoiPasi, type StareDoiPasi } from '../auth'
-import { Camp, Card, Eroare, Titlu, Toast, clasaInput, clasaSelect } from '../comune'
+import { Camp, Card, Eroare, Titlu, Toast, clasaInput } from '../comune'
+import { Alege } from '@/components/ui/alege'
 
 export default function Setari() {
   const [s, setS] = useState<TipSetari | null>(null)
@@ -159,9 +160,11 @@ export default function Setari() {
               <input type="number" min={1} max={120} value={s.orizont_zile} onChange={(e) => setS({ ...s, orizont_zile: Number(e.target.value) })} className={clasaInput} />
             </Camp>
             <Camp eticheta="Pasul dintre lecții" ajutor="Lecție de 50 de minute plus pauza.">
-              <select value={s.pas_minute} onChange={(e) => setS({ ...s, pas_minute: Number(e.target.value) })} className={clasaSelect}>
-                {[30, 45, 60, 75, 90].map((m) => <option key={m} value={m}>{m} de minute</option>)}
-              </select>
+              <Alege
+                valoare={String(s.pas_minute)}
+                schimba={(v) => setS({ ...s, pas_minute: Number(v) })}
+                optiuni={[30, 45, 60, 75, 90].map((m) => ({ valoare: String(m), text: `${m} de minute` }))}
+              />
             </Camp>
           </div>
         </Card>
