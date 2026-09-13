@@ -24,8 +24,29 @@ type Optiuni = { metoda?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'; corp?: un
  */
 type Intrare = { cand: number; date: unknown }
 
+/**
+ * Ce citiri se invechesc dupa fiecare scriere.
+ *
+ * Scris pe fata, ca sa se vada dintr-o privire ce atinge ce. Ce nu e in lista
+ * sterge tot, adica varianta prudenta pentru orice actiune noua.
+ */
+const LEGATURI: Record<string, string[]> = {
+  programare: ['programari', 'sumar', 'clienti'],
+  propune: ['programari', 'sumar', 'clienti'],
+  'trimite-link': ['programari'],
+  'orar-zi': ['orar-zi'],
+  disponibilitate: ['disponibilitate'],
+  blocaj: ['blocaje'],
+  setari: ['setari'],
+  client: ['clienti', 'sumar'],
+  pachet: ['clienti'],
+  grupa: ['grupe', 'programari', 'sumar'],
+  'grupa-cursant': ['grupe', 'programari', 'clienti', 'sumar'],
+  articol: ['articole'],
+}
+
 const memorie = new Map<string, Intrare>()
-const VIATA = 30_000
+const VIATA = 120_000
 
 /** Uita tot ce s-a citit. Se cheama dupa fiecare scriere si la iesirea din cont. */
 export function uitaCitirile(): void {
@@ -71,7 +92,17 @@ export async function apel<T = Record<string, unknown>>(actiune: string, o: Opti
   if (!r.ok || d.ok === false) throw new EroareApi(r.status, d.eroare || 'Eroare pe server')
 
   if (metoda === 'GET') memorie.set(cheie, { cand: Date.now(), date: d })
-  else uitaCitirile()
+  else {
+    /*
+     * Dupa o scriere se sterg doar citirile atinse de ea, nu toate.
+     * Inainte se golea tot, deci o singura salvare facea ca fiecare pagina sa
+     * ceara iar totul de la capat, si cabinetul parea greu fara motiv.
+     */
+    for (const a of LEGATURI[actiune] ?? ['*']) {
+      if (a === '*') memorie.clear()
+      else for (const k of [...memorie.keys()]) if (k.startsWith(`${a}?`)) memorie.delete(k)
+    }
+  }
   return d as T
 }
 
