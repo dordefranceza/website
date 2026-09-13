@@ -296,7 +296,21 @@ si trimitea Google spre alt sitemap.
 
 `send.dordefranceza.com`, regiunea Ireland (eu-west-1), verificat pe 12
 septembrie. Inregistrarile DKIM, SPF, MX si DMARC sunt in Cloudflare, toate pe
-DNS only. Urmarirea clicurilor si a deschiderilor e **oprita**, ca sa nu
+DNS only.
+
+**Reparat pe 13 septembrie:** SPF si MX erau pe `send.send.dordefranceza.com`,
+nu pe `send.dordefranceza.com`. Cand adaugi o inregistrare in Cloudflare, in
+campul Name se scrie doar eticheta, `send`, nu numele intreg: dashboardul pune
+domeniul dupa el oricum, iar cine scrie `send.dordefranceza.com` primeste
+`send.send.dordefranceza.com` fara sa-l anunte nimeni. Tabelul arata numele
+scurtat, deci greseala nu se vede decat daca dai Edit sau intrebi DNS-ul din
+afara. Pana la reparare, emailurile plecau de pe un domeniu fara SPF publicat
+si cu bounce-urile catre nicaieri, iar Gmail le trata ca atare. Se verifica
+asa, si trebuie sa raspunda toate patru:
+
+```bash
+dig +short TXT send.dordefranceza.com; dig +short MX send.dordefranceza.com; dig +short TXT resend._domainkey.send.dordefranceza.com; dig +short TXT _dmarc.dordefranceza.com
+``` Urmarirea clicurilor si a deschiderilor e **oprita**, ca sa nu
 rescrie linkurile din emailuri si ca sa nu contrazica politica de
 confidentialitate.
 
