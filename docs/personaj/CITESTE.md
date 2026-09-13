@@ -56,3 +56,39 @@ aceleiași idei, biscuite într-o mână și foaia cu reguli în cealaltă. Amâ
 au ieșit bune din prima; Artiom a ales-o pe cea care citește foaia. Compozițiile
 cu două obiecte diferite, câte unul în fiecare mână, sunt cele mai riscante:
 merită generate în două variante, nu una.
+
+## Unde stau, pe scurt, toate fisierele
+
+Sectiunea asta e scrisa ca sa poata fi trimisa unui chat nou, fara explicatii.
+
+| Ce | Unde |
+|---|---|
+| Caietul de referinta, obligatoriu la fiecare generare | `docs/personaj/caiet-fara-biscuite.webp` |
+| Pozele folosite pe site si in cabinet | `public/images/personaj/*.webp` |
+| Pozele folosite in emailuri, 240x240, cerc crem pe navy | `public/images/email/*.png` |
+| Aceleasi poze scrise in cod, ca sa calatoreasca in email | `src/server/figuri.ts` |
+| Componenta care le incadreaza in cerc, pe site | `src/components/PersonajCerc.astro` |
+| Aceeasi, pentru cabinet | `src/cabinet/PersonajCerc.tsx` |
+
+Numele spun pozitia: `saluta`, `scrie`, `cauta`, `telefon`, `arata`, `prezinta`,
+`incurajeaza`, `inima`, `asezata`, `ganditoare`, `citeste`, `cu-biscuite`,
+`bienvenue-sus`, `bienvenue-lateral`, `se-uita-jos-a`, `se-uita-jos-b`.
+
+## Doua tabele de completat la fiecare poza noua
+
+In amandoua componentele PersonajCerc stau `RAPORT`, latimea impartita la
+inaltime pentru fiecare fisier, si `DEPLASARE`, cat se muta pe orizontala ca sa
+vina CAPUL in mijlocul cercului, nu cutia desenului. Fara a doua, pozitiile cu un
+brat intins par strambe desi matematic nu sunt. **O poza noua trebuie adaugata in
+amandoua tabelele, in amandoua fisierele.**
+
+## In emailuri poza NU se ia de pe site
+
+Calatoreste inauntrul mesajului, legata prin `content_id`. Altfel Gmail de pe
+telefon nu o arata pana nu apesi butonul de afisare a imaginilor, si cursantul
+care primeste primul email de la noi vede un gol. De aceea exista `figuri.ts`:
+
+    node scripts/fa-poze-email.mjs      face PNG-urile din webp-urile de pe site
+    node scripts/fa-figuri-email.mjs    scrie figuri.ts din PNG-uri
+
+Cele patru folosite acum in emailuri: `saluta`, `scrie`, `telefon`, `incurajeaza`.
