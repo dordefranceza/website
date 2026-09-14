@@ -66,7 +66,7 @@ export const site = {
    * din subsol, fara alte modificari. Instagram se pune la loc scriind aici
    * adresa, in ziua in care contul e facut.
    */
-  instagram: '',
+  instagram: 'https://www.instagram.com/dordefranceza/',
   tiktok: 'https://www.tiktok.com/@dordefranceza',
 
   durataLectie: 50,
