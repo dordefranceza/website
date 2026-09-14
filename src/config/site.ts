@@ -121,7 +121,7 @@ export const pachete = [
     nume: 'O lecție',
     lectii: 1,
     pretLectie: site.preturi.individual,
-    nota: 'Plătești lecția înainte. Te oprești când vrei.',
+    nota: 'O alegere flexibilă, fără pachet.',
     evidentiat: false,
   },
   {
@@ -129,7 +129,7 @@ export const pachete = [
     nume: 'Pachet de 5 lecții',
     lectii: 5,
     pretLectie: 36,
-    nota: 'Cât să apuci să vezi primele rezultate. Valabil 3 luni.',
+    nota: 'Un început bun pentru a vedea dacă ți se potrivește.',
     evidentiat: false,
   },
   {

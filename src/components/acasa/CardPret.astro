@@ -45,12 +45,12 @@ const economie = reducere(pretLectie, baza)
   </p>
 
   {lectii === 1 ? (
-    <p class:list={['text-sm', evidentiat ? 'text-alb/60' : 'text-gri']}>{inLei(pretLectie)} lei la cursul de azi</p>
+    <p class:list={['text-sm', evidentiat ? 'text-alb/60' : 'text-gri']}>~{inLei(pretLectie)} lei</p>
   ) : (
     <p class:list={['text-sm font-medium', evidentiat ? 'text-alb' : 'text-cerneala']}>
       {total(lectii, pretLectie)} {site.moneda} cu totul
       <span class:list={['font-normal', evidentiat ? 'text-alb/60' : 'text-gri']}>
-        {' '}· {inLei(total(lectii, pretLectie))} lei
+        {' '}· ~{inLei(total(lectii, pretLectie))} lei
       </span>
     </p>
   )}
